@@ -1,27 +1,38 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserTitle } from 'src/user-title/user-title.entity';
 import { User } from './user.entity';
 import { UserService } from './user.service';
+import { UserModule } from './user.module';
+import { UsertitleModule } from 'src/user-title/user-title.module';
+import { PatchUsersDetailDto } from './dto/patch.users.detail.dto';
+import { Title } from 'src/title/title.entity';
+import { TitleModule } from 'src/title/title.module';
 
 describe('UserService', () => {
   let service: UserService;
   let userRepository: Repository<User>;
+  let titleRepository: Repository<Title>;
   let userTitleRepository: Repository<UserTitle>;
+  let dataSources: DataSource;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(typeORMConfig),
-        TypeOrmModule.forFeature([User]),
-        TypeOrmModule.forFeature([UserTitle]),
+        UserModule,
+        TitleModule,
+        UsertitleModule,
       ],
       providers: [
-        UserService,
         {
           provide: getRepositoryToken(User),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(Title),
           useClass: Repository,
         },
         {
@@ -36,27 +47,55 @@ describe('UserService', () => {
     userTitleRepository = module.get<Repository<UserTitle>>(
       getRepositoryToken(UserTitle),
     );
+    titleRepository = module.get<Repository<Title>>(getRepositoryToken(Title));
+    dataSources = module.get<DataSource>(DataSource);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     jest.resetAllMocks();
+    await dataSources.dropDatabase();
+    await dataSources.destroy();
   });
 
   it('should be defined', async () => {
-    const user = new User();
-    user.nickname = 'test';
-    user.email = 'testemail';
-    user.imageUrl = 'testurl';
-    user.level = 1;
-    user.statusMessage = 'testmessage';
-    userRepository.save(user);
+    //given
+    const user = await userRepository.save({
+      nickname: 'testnick',
+      email: 'testemail',
+      imageUrl: 'testurl',
+      level: 1,
+      statusMessage: 'testmessage',
+    });
 
-    const result = await service.userDetailByNicknameGet('test');
+    const savedTitle = await titleRepository.save({
+      name: 'the one',
+      contents: 'neo',
+    });
 
-    expect(result.nickname).toBe(user.nickname);
-    expect(result.imgUrl).toBe(user.imageUrl);
-    expect(result.level).toBe(user.level);
-    expect(result.statusMessage).toBe(user.statusMessage);
-    expect(result.title).toBe(null);
+    await userTitleRepository.save({
+      user: user,
+      title: savedTitle,
+      isSelected: true,
+    });
+
+    const patchUserDetailDto: PatchUsersDetailDto = {
+      nickname: 'testnick',
+      imgUrl: 'testurl',
+      titleId: savedTitle.id,
+      message: 'testmessage',
+    };
+
+    //when
+    await service.userDetailByDtoPatch(patchUserDetailDto);
+
+    const result = await userTitleRepository.findOne({
+      where: { user: { id: user.id }, title: { id: savedTitle.id } },
+    });
+
+    expect(result.user.nickname).toBe(user.nickname);
+    expect(result.user.imageUrl).toBe(user.imageUrl);
+    expect(result.user.level).toBe(user.level);
+    expect(result.user.statusMessage).toBe(user.statusMessage);
+    expect(result.title.name).toBe(savedTitle.name);
   });
 });

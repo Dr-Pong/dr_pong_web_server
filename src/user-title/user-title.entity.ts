@@ -1,4 +1,4 @@
-import { BaseTimeEntity } from 'src/base-entity/';
+import { BaseTimeEntity } from 'src/base-entity/base-time.entity';
 import { Title } from 'src/title/title.entity';
 import { User } from 'src/user/user.entity';
 import {
@@ -12,7 +12,7 @@ import {
 @Entity()
 export class UserTitle extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'user_id' })
