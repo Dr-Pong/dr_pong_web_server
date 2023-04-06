@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
 import { Repository } from 'typeorm';
-import { UsersDetailDto } from './dto/users.detail.dto';
 import { UserTitle } from 'src/user-title/user-title.entity';
+import { User } from './user.entity';
+import { UsersDetailDto } from './dto/users.detail.dto';
 import { PatchUsersDetailDto } from './dto/patch.users.detail.dto';
 import { UsersTitlesDto } from './dto/users.title.dto';
 
@@ -12,12 +12,13 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(UserTitle)
     private userTitleRepository: Repository<UserTitle>,
   ) {}
 
   async userDetailByNicknameGet(nickname: string): Promise<UsersDetailDto> {
     const user = await this.userRepository.findOne({
-      where: { nickname: nickname },
+      where: { nickname },
     });
     if (!user) throw new NotFoundException('No such User');
     const userTitle = await this.userTitleRepository.findOne({
@@ -31,13 +32,13 @@ export class UserService {
       statusMessage: user.statusMessage,
     };
     return responseDto;
-  } /*dto 가 nickname하나만 받는데 이걸 dto로받기보다 pathvariable로 받을것 validationpipe nickname이 string 인지 intiger인지
-  detail get 함수*/
+  } /* dto 가 nickname하나만 받는데 이걸 dto로받기보다 pathvariable로 받을것 validationpipe nickname이 string 인지 intiger인지
+  detail get 함수 */
 
   async userDetailByDtoPatch(patchUserDetailDto: PatchUsersDetailDto) {
     const { nickname } = patchUserDetailDto; // 구조분해 할당
     const user = await this.userRepository.findOne({
-      where: { nickname: nickname },
+      where: { nickname },
     });
     const userTitle = await this.userTitleRepository.findOne({
       where: { user: { id: user.id }, isSelected: true },
@@ -55,7 +56,7 @@ export class UserService {
 
   async userTitleGet(nickname: string): Promise<UsersTitlesDto> {
     const user = await this.userRepository.findOne({
-      where: { nickname: nickname },
+      where: { nickname },
     });
     if (!user) throw new NotFoundException('No such User');
     const userTitle = await this.userTitleRepository.findOne({
@@ -66,5 +67,5 @@ export class UserService {
       title: userTitle.title.name,
     };
     return responseDto;
-  } /*title get함수 */
+  } /* title get함수 */
 }

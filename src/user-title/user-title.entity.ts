@@ -1,4 +1,4 @@
-import { BaseTimeEntity } from 'src/base-entity/base-time.entity';
+import { BaseTimeEntity } from 'src/base-entity/';
 import { Title } from 'src/title/title.entity';
 import { User } from 'src/user/user.entity';
 import {
