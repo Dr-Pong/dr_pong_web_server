@@ -3,7 +3,5 @@ export class PatchUsersDetailDto {
 
   imgUrl: string;
 
-  titleId: number;
-
   message: string;
 }

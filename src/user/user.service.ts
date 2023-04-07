@@ -9,8 +9,11 @@ import { UserTitle } from 'src/user-title/user-title.entity';
 import { User } from './user.entity';
 import { UsersDetailDto } from './dto/users.detail.dto';
 import { PatchUsersDetailDto } from './dto/patch.users.detail.dto';
-import { UsersTitlesDto } from './dto/users.title.dto';
+import { UsersTitlesDto } from './dto/users.titles.dto';
 import { GetUsersDetailDto } from './dto/get.users.detail.dto';
+import { GetUsersTitlesDto } from './dto/get.users.titles.dto';
+import { UserSelectedTitleDto } from './dto/user.selected.title.dto';
+import { PatchUsersTitleDto } from './dto/patch.users.title.dto';
 
 @Injectable()
 export class UserService {
@@ -21,31 +24,51 @@ export class UserService {
     private userTitleRepository: Repository<UserTitle>,
   ) {}
 
-  async userDetailByNicknameGet(
+  //get detail service
+  async usersDetailByDtoGet(
     getDto: GetUsersDetailDto,
   ): Promise<UsersDetailDto> {
     const user = await this.userRepository.findOne({
       where: { nickname: getDto.nickname },
     });
     if (!user) throw new NotFoundException('No such User');
-    const userTitle = await this.userTitleRepository.findOne({
-      where: { user: { id: user.id }, isSelected: true },
-    });
+
     const responseDto: UsersDetailDto = {
       nickname: user.nickname,
       imgUrl: user.imageUrl,
       level: user.level,
-      title: userTitle != null ? userTitle.title.name : null,
       statusMessage: user.statusMessage,
     };
     return responseDto;
-  } /* dto 가 nickname하나만 받는데 이걸 dto로받기보다 pathvariable로 받을것 validationpipe nickname이 string 인지 intiger인지
-  detail get 함수 */
+  }
 
-  async userDetailByDtoPatch(patchDto: PatchUsersDetailDto): Promise<void> {
-    const { nickname } = patchDto; // 구조분해 할당
+  async userSelectedTitleByDtoGet(
+    getDto: GetUsersTitlesDto,
+  ): Promise<UserSelectedTitleDto> {
+    const userTitle = await this.userTitleRepository.findOne({
+      where: { user: { nickname: getDto.nickname }, isSelected: true },
+    });
+    const responseDto: UserSelectedTitleDto = {
+      title: userTitle != null ? userTitle.title.name : null,
+    };
+    return responseDto;
+  }
+
+  //patch detail service
+  async usersDetailByDtoPatch(patchDto: PatchUsersDetailDto): Promise<void> {
     const user = await this.userRepository.findOne({
-      where: { nickname },
+      where: { nickname: patchDto.nickname },
+    });
+    if (!user) throw new NotFoundException('No such User');
+    user.nickname = patchDto.nickname;
+    user.imageUrl = patchDto.imgUrl;
+    user.statusMessage = patchDto.message;
+    await this.userRepository.save(user);
+  }
+
+  async usersTitleIdByDtoPatch(patchDto: PatchUsersTitleDto): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { nickname: patchDto.nickname },
     });
     if (!user) throw new NotFoundException('No such User');
 
@@ -61,13 +84,28 @@ export class UserService {
       old_title.isSelected = false;
       await this.userTitleRepository.save(old_title);
     }
-
-    user.nickname = patchDto.nickname;
-    user.imageUrl = patchDto.imgUrl;
-    user.statusMessage = patchDto.message;
-    await this.userRepository.save(user);
-
     to_change.isSelected = true;
     await this.userTitleRepository.save(to_change);
-  } /* detail fetch함수 */
+  }
+
+  //get title service
+  async usersTitlesByNicknameGet(
+    getDto: GetUsersTitlesDto,
+  ): Promise<UsersTitlesDto> {
+    const user = await this.userRepository.findOne({
+      where: { nickname: getDto.nickname },
+    });
+    if (!user) throw new NotFoundException('no such user');
+    const userTitles = await this.userTitleRepository.find({
+      where: { user: { id: user.id } },
+    });
+
+    const titles = userTitles.map((userTitle) => {
+      return { id: userTitle.title.id, title: userTitle.title.name };
+    });
+    const responseDto: UsersTitlesDto = {
+      titles: titles,
+    };
+    return responseDto;
+  }
 }

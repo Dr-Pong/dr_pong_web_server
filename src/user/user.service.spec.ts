@@ -10,6 +10,9 @@ import { UsertitleModule } from 'src/user-title/user-title.module';
 import { PatchUsersDetailDto } from './dto/patch.users.detail.dto';
 import { Title } from 'src/title/title.entity';
 import { TitleModule } from 'src/title/title.module';
+import { GetUsersDetailDto } from './dto/get.users.detail.dto';
+import { PatchUsersTitleDto } from './dto/patch.users.title.dto';
+import { PatchUsersDetailRequestDto } from './dto/patch.users.detail.request.dto';
 
 describe('UserService', () => {
   let service: UserService;
@@ -18,7 +21,7 @@ describe('UserService', () => {
   let userTitleRepository: Repository<UserTitle>;
   let dataSources: DataSource;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(typeORMConfig),
@@ -57,6 +60,88 @@ describe('UserService', () => {
     await dataSources.destroy();
   });
 
+  it('get user title ', async () => {
+    //given
+    const user1 = await userRepository.save({
+      level: 1,
+      nickname: 'titleTestNickname',
+      imageUrl: 'titleTestUrl',
+      statusMessage: 'titleTestStatus',
+      email: 'titleTest@email',
+    });
+
+    const user2 = await userRepository.save({
+      level: 2,
+      nickname: '2titleTestNickname',
+      imageUrl: '2titleTestUrl',
+      statusMessage: '2titleTestStatus',
+      email: '2titleTest@email',
+    });
+
+    const title1 = await titleRepository.save({
+      name: '1titleName',
+      contents: '1titleContents',
+    });
+    const title2 = await titleRepository.save({
+      name: '2titleName',
+      contents: '2titleContents',
+    });
+    const title3 = await titleRepository.save({
+      name: '3titleName',
+      contents: '3titleContents',
+    });
+    const title4 = await titleRepository.save({
+      name: '4titleName',
+      contents: '4titleContents',
+    });
+    const title5 = await titleRepository.save({
+      name: '5titleName',
+      contents: '5titleContents',
+    });
+
+    await userTitleRepository.save({
+      user: user1,
+      title: title1,
+      isSelected: true,
+    });
+    await userTitleRepository.save({
+      user: user1,
+      title: title2,
+      isSelected: false,
+    });
+    await userTitleRepository.save({
+      user: user1,
+      title: title3,
+      isSelected: false,
+    });
+    await userTitleRepository.save({
+      user: user2,
+      title: title1,
+      isSelected: true,
+    });
+    await userTitleRepository.save({
+      user: user2,
+      title: title5,
+      isSelected: false,
+    });
+
+    const getUsersDetailsDto: GetUsersDetailDto = {
+      nickname: 'titleTestNickname',
+    };
+
+    //when
+    const result = await service.usersTitlesByNicknameGet(getUsersDetailsDto);
+
+    //then
+    expect(result.titles.length).toBe(3);
+    expect(result.titles[0].id).toBe(title1.id);
+    expect(result.titles[1].id).toBe(title2.id);
+    expect(result.titles[2].id).toBe(title3.id);
+    expect(result.titles[0].title).toBe(title1.name);
+    expect(result.titles[1].title).toBe(title2.name);
+    expect(result.titles[2].title).toBe(title3.name);
+  });
+
   it('should be defined', async () => {
     //given
     const user = await userRepository.save({
@@ -78,15 +163,26 @@ describe('UserService', () => {
       isSelected: true,
     });
 
-    const patchUserDetailDto: PatchUsersDetailDto = {
+    const patchUsersDetailDto: PatchUsersDetailDto = {
       nickname: 'testnick',
       imgUrl: 'testurl',
-      titleId: savedTitle.id,
       message: 'testmessage',
     };
 
+    const patchUsersTitleDto: PatchUsersTitleDto = {
+      nickname: user.nickname,
+      titleId: savedTitle.id,
+    };
+
+    const patchUsersDetailRequestDto: PatchUsersDetailRequestDto = {
+      imgUrl: patchUsersDetailDto.imgUrl,
+
+      titleId: patchUsersTitleDto.titleId,
+
+      message: patchUsersDetailDto.message,
+    };
     //when
-    await service.userDetailByDtoPatch(patchUserDetailDto);
+    await service.usersDetailByDtoPatch(patchUsersDetailDto);
 
     const result = await userTitleRepository.findOne({
       where: { user: { id: user.id }, title: { id: savedTitle.id } },
