@@ -61,7 +61,7 @@ describe('UserService', () => {
     await dataSources.destroy();
   });
 
-  it('get user selected title ', async () => {
+  it('유저 Get 정보 & 선택 title 테스트 ', async () => {
     //given
     const user1 = await userRepository.save({
       level: 1,
@@ -144,7 +144,7 @@ describe('UserService', () => {
     expect(result2.title).toBe(user2SelectedTitle.name);
   });
 
-  it('should be defined', async () => {
+  it('유저 Patch 정보 & title 테스트', async () => {
     //given
     const user = await userRepository.save({
       nickname: 'testnick',
@@ -195,5 +195,63 @@ describe('UserService', () => {
     expect(result.user.level).toBe(user.level);
     expect(result.user.statusMessage).toBe(user.statusMessage);
     expect(result.title.name).toBe(savedTitle.name);
+  });
+
+  it('유저 Get 모든 titles 테스트', async () => {
+    //유저생성
+    const user = await userRepository.save({
+      nickname: 'testnick',
+      email: 'testemail',
+      imageUrl: 'testurl',
+      level: 1,
+      statusMessage: 'testmessage',
+    });
+
+    // 타이틀생성
+    const savedTitle = await titleRepository.save({
+      name: 'the one',
+      contents: 'neo',
+    });
+    const savedTitle2 = await titleRepository.save({
+      name: 'the two',
+      contents: 'two',
+    });
+    const savedTitle3 = await titleRepository.save({
+      name: 'the three',
+      contents: 'three',
+    });
+
+    // 유저에 저장
+    await userTitleRepository.save({
+      user: user,
+      title: savedTitle,
+      isSelected: true,
+    });
+    await userTitleRepository.save({
+      user: user,
+      title: savedTitle2,
+      isSelected: true,
+    });
+    await userTitleRepository.save({
+      user: user,
+      title: savedTitle3,
+      isSelected: true,
+    });
+
+    const getUsersTitlesDto: GetUserTitlesDto = {
+      nickname: 'testnick',
+    };
+    const result = await service.getUserTitles(getUserTitlesDto);
+
+    //타이틀의 갯수
+    expect(result.titles.length).toBe(3);
+    //타이틀의 이름
+    expect(result.title[0].name).toBe(savedTitle.name);
+    expect(result.title[1].name).toBe(savedTitle2.name);
+    expect(result.title[2].name).toBe(savedTitle3.name);
+    //타이틀의 컨텐츠
+    expect(result.title[0].contents).toBe(savedTitle.contents);
+    expect(result.title[1].contents).toBe(savedTitle2.contents);
+    expect(result.title[2].contents).toBe(savedTitle3.contents);
   });
 });
