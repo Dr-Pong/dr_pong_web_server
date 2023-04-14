@@ -12,7 +12,7 @@ import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
 import { UserTitlesDto } from './dto/user.titles.dto';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserSelectedTitleDto } from './dto/user.selected.title.dto';
-import { PatchUsersTitleDto } from './dto/patch.users.title.dto';
+import { PatchUserTitleDto } from './dto/patch.user.title.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 
 @Injectable()
@@ -66,7 +66,7 @@ export class UserService {
   }
 
   //patch user title
-  async patchUserTitle(patchDto: PatchUsersTitleDto): Promise<void> {
+  async patchUserTitle(patchDto: PatchUserTitleDto): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { nickname: patchDto.nickname },
     });

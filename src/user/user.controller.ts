@@ -4,7 +4,7 @@ import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserDetailResponseDto } from './dto/user.detail.response.dto';
 import { PatchUsersDetailRequestDto } from './dto/patch.users.detail.request.dto';
 import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
-import { PatchUsersTitleDto } from './dto/patch.users.title.dto';
+import { PatchUserTitleDto } from './dto/patch.user.title.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 
 @Controller('users')
@@ -41,7 +41,7 @@ export class UserController {
       imgUrl: patchRequestDto.imgUrl,
       message: patchRequestDto.message,
     };
-    const patchUsersTitleDto: PatchUsersTitleDto = {
+    const patchUsersTitleDto: PatchUserTitleDto = {
       nickname,
       titleId: patchRequestDto.titleId,
     };

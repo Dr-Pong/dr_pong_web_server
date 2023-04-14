@@ -1,4 +1,4 @@
-export class PatchUsersTitleDto {
+export class PatchUserTitleDto {
   nickname: string;
 
   titleId: number;

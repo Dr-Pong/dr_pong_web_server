@@ -10,8 +10,7 @@ import { UsertitleModule } from 'src/user-title/user-title.module';
 import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
 import { Title } from 'src/title/title.entity';
 import { TitleModule } from 'src/title/title.module';
-import { GetUserDetailDto } from './dto/get.user.detail.dto';
-import { PatchUsersTitleDto } from './dto/patch.users.title.dto';
+import { PatchUserTitleDto } from './dto/patch.user.title.dto';
 import { PatchUsersDetailRequestDto } from './dto/patch.users.detail.request.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 import exp from 'constants';
@@ -172,7 +171,7 @@ describe('UserService', () => {
       message: 'testmessage',
     };
 
-    const patchUsersTitleDto: PatchUsersTitleDto = {
+    const patchUsersTitleDto: PatchUserTitleDto = {
       nickname: user.nickname,
       titleId: savedTitle.id,
     };
