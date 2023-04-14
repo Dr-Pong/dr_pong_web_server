@@ -25,9 +25,7 @@ export class UserService {
   ) {}
 
   //get detail service
-  async usersDetailByDtoGet(
-    getDto: GetUsersDetailDto,
-  ): Promise<UsersDetailDto> {
+  async getUsersDetail(getDto: GetUsersDetailDto): Promise<UsersDetailDto> {
     const user = await this.userRepository.findOne({
       where: { nickname: getDto.nickname },
     });
@@ -42,7 +40,8 @@ export class UserService {
     return responseDto;
   }
 
-  async userSelectedTitleByDtoGet(
+  //get user title
+  async getUserSelectedTitle(
     getDto: GetUsersTitlesDto,
   ): Promise<UserSelectedTitleDto> {
     const userTitle = await this.userTitleRepository.findOne({
@@ -55,7 +54,7 @@ export class UserService {
   }
 
   //patch detail service
-  async usersDetailByDtoPatch(patchDto: PatchUsersDetailDto): Promise<void> {
+  async patchUserDetail(patchDto: PatchUsersDetailDto): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { nickname: patchDto.nickname },
     });
@@ -66,7 +65,8 @@ export class UserService {
     await this.userRepository.save(user);
   }
 
-  async usersTitleIdByDtoPatch(patchDto: PatchUsersTitleDto): Promise<void> {
+  //patch user title
+  async patchUserTitle(patchDto: PatchUsersTitleDto): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { nickname: patchDto.nickname },
     });
@@ -86,26 +86,5 @@ export class UserService {
     }
     to_change.isSelected = true;
     await this.userTitleRepository.save(to_change);
-  }
-
-  //get title service
-  async usersTitlesByNicknameGet(
-    getDto: GetUsersTitlesDto,
-  ): Promise<UsersTitlesDto> {
-    const user = await this.userRepository.findOne({
-      where: { nickname: getDto.nickname },
-    });
-    if (!user) throw new NotFoundException('no such user');
-    const userTitles = await this.userTitleRepository.find({
-      where: { user: { id: user.id } },
-    });
-
-    const titles = userTitles.map((userTitle) => {
-      return { id: userTitle.title.id, title: userTitle.title.name };
-    });
-    const responseDto: UsersTitlesDto = {
-      titles: titles,
-    };
-    return responseDto;
   }
 }

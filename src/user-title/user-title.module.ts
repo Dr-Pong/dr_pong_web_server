@@ -4,7 +4,7 @@ import { UserTitle } from './user-title.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserTitle])],
-  providers: [],
-  exports: [],
+  providers: [UserTitle],
+  exports: [TypeOrmModule.forFeature([UserTitle])],
 })
 export class UsertitleModule {}
