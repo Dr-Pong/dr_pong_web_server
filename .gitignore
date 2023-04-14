@@ -1,7 +1,7 @@
 # compiled output
 /dist
 /node_modules
-/src/configs/typeorm.configs.ts
+src/configs/typeorm.config.ts
 # Logs
 logs
 *.log
