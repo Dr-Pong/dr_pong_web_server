@@ -1,23 +1,23 @@
 import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
 import { UserService } from './user.service';
-import { GetUsersDetailDto } from './dto/get.users.detail.dto';
-import { GetUsersTitlesDto } from './dto/get.users.titles.dto';
+import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserDetailResponseDto } from './dto/user.detail.response.dto';
 import { PatchUsersDetailRequestDto } from './dto/patch.users.detail.request.dto';
-import { PatchUsersDetailDto } from './dto/patch.users.detail.dto';
+import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
 import { PatchUsersTitleDto } from './dto/patch.users.title.dto';
+import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('/:nickname/detail')
-  async getUsersDetailByNickname(@Param('nickname') nickname: string) {
-    const getUsersDetailDto: GetUsersDetailDto = { nickname };
-    const getUsersTitlesDto: GetUsersTitlesDto = { nickname };
+  async UsersDetailByNicknameGet(@Param('nickname') nickname: string) {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const getUsersTitlesDto: GetUserSelectedTitleDto = { nickname };
 
-    const user = await this.userService.usersDetailByDtoGet(getUsersDetailDto);
-    const title = await this.userService.userSelectedTitleByDtoGet(
+    const user = await this.userService.getUsersDetail(getUsersDetailDto);
+    const title = await this.userService.getUserSelectedTitle(
       getUsersTitlesDto,
     );
     const responseDto: UserDetailResponseDto = {
@@ -36,7 +36,7 @@ export class UserController {
     @Body('body')
     patchRequestDto: PatchUsersDetailRequestDto,
   ) {
-    const patchUsersDetailDto: PatchUsersDetailDto = {
+    const patchUsersDetailDto: PatchUserDetailDto = {
       nickname,
       imgUrl: patchRequestDto.imgUrl,
       message: patchRequestDto.message,
@@ -49,6 +49,6 @@ export class UserController {
 
   @Get('/:nickname/titles')
   async getUsersTitlesByNickname(@Param('nickname') nickname: string) {
-    const getUsersTitlesDto: GetUsersTitlesDto = { nickname };
+    const getUsersTitlesDto: GetUserSelectedTitleDto = { nickname };
   }
 }

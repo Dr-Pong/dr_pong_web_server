@@ -8,12 +8,12 @@ import { Repository } from 'typeorm';
 import { UserTitle } from 'src/user-title/user-title.entity';
 import { User } from './user.entity';
 import { UsersDetailDto } from './dto/users.detail.dto';
-import { PatchUsersDetailDto } from './dto/patch.users.detail.dto';
-import { UsersTitlesDto } from './dto/users.titles.dto';
-import { GetUsersDetailDto } from './dto/get.users.detail.dto';
-import { GetUsersTitlesDto } from './dto/get.users.titles.dto';
+import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
+import { UserTitlesDto } from './dto/user.titles.dto';
+import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserSelectedTitleDto } from './dto/user.selected.title.dto';
 import { PatchUsersTitleDto } from './dto/patch.users.title.dto';
+import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 
 @Injectable()
 export class UserService {
@@ -25,7 +25,7 @@ export class UserService {
   ) {}
 
   //get detail service
-  async getUsersDetail(getDto: GetUsersDetailDto): Promise<UsersDetailDto> {
+  async getUsersDetail(getDto: GetUserDetailDto): Promise<UsersDetailDto> {
     const user = await this.userRepository.findOne({
       where: { nickname: getDto.nickname },
     });
@@ -42,7 +42,7 @@ export class UserService {
 
   //get user title
   async getUserSelectedTitle(
-    getDto: GetUsersTitlesDto,
+    getDto: GetUserSelectedTitleDto,
   ): Promise<UserSelectedTitleDto> {
     const userTitle = await this.userTitleRepository.findOne({
       where: { user: { nickname: getDto.nickname }, isSelected: true },
@@ -54,7 +54,7 @@ export class UserService {
   }
 
   //patch detail service
-  async patchUserDetail(patchDto: PatchUsersDetailDto): Promise<void> {
+  async patchUserDetail(patchDto: PatchUserDetailDto): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { nickname: patchDto.nickname },
     });

@@ -1,4 +1,4 @@
-export class PatchUsersDetailDto {
+export class PatchUserDetailDto {
   nickname: string;
 
   imgUrl: string;
