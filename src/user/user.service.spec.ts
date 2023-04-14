@@ -14,6 +14,7 @@ import { PatchUserTitleDto } from './dto/patch.user.title.dto';
 import { PatchUsersDetailRequestDto } from './dto/patch.users.detail.request.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 import exp from 'constants';
+import { async } from 'rxjs';
 
 describe('UserService', () => {
   let service: UserService;
@@ -21,8 +22,33 @@ describe('UserService', () => {
   let titleRepository: Repository<Title>;
   let userTitleRepository: Repository<UserTitle>;
   let dataSources: DataSource;
+  let users: User[];
 
   beforeEach(async () => {
+    users = await userRepository.save([
+      {
+        nickname: 'testnick1',
+        email: 'testemail1',
+        imageUrl: 'testurl1',
+        level: 1,
+        statusMessage: 'testmessage1',
+      },
+      {
+        nickname: 'testnick2',
+        email: 'testemail2',
+        imageUrl: 'testurl2',
+        level: 2,
+        statusMessage: 'testmessage2',
+      },
+      {
+        nickname: 'testnick3',
+        email: 'testemail3',
+        imageUrl: 'testurl3',
+        level: 3,
+        statusMessage: 'testmessage3',
+      },
+    ]);
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(typeORMConfig),
@@ -198,15 +224,6 @@ describe('UserService', () => {
   });
 
   it('유저 Get 모든 titles 테스트', async () => {
-    //유저생성
-    const user = await userRepository.save({
-      nickname: 'testnick',
-      email: 'testemail',
-      imageUrl: 'testurl',
-      level: 1,
-      statusMessage: 'testmessage',
-    });
-
     // 타이틀생성
     const savedTitle = await titleRepository.save({
       name: 'the one',
@@ -221,37 +238,67 @@ describe('UserService', () => {
       contents: 'three',
     });
 
-    // 유저에 저장
-    await userTitleRepository.save({
-      user: user,
-      title: savedTitle,
-      isSelected: true,
-    });
-    await userTitleRepository.save({
-      user: user,
-      title: savedTitle2,
-      isSelected: true,
-    });
-    await userTitleRepository.save({
-      user: user,
-      title: savedTitle3,
-      isSelected: true,
-    });
+    let i = 0;
+    for (const user of users) {
+      // 유저에 저장
+      await userTitleRepository.save({
+        user: user,
+        title: savedTitle,
+        isSelected: i % 3 === 0,
+      });
+      await userTitleRepository.save({
+        user: user,
+        title: savedTitle2,
+        isSelected: i % 3 === 1,
+      });
+      await userTitleRepository.save({
+        user: user,
+        title: savedTitle3,
+        isSelected: i % 3 === 2,
+      });
+      i++;
+    }
 
-    const getUsersTitlesDto: GetUserTitlesDto = {
-      nickname: 'testnick',
+    //유저닉에따라 찾는부분
+    const getUsersTitlesDto1: GetUserTitlesDto = {
+      nickname: 'testnick1',
     };
-    const result = await service.getUserTitles(getUserTitlesDto);
+    const getUsersTitlesDto2: GetUserTitlesDto = {
+      nickname: 'testnick2',
+    };
+    const getUsersTitlesDto3: GetUserTitlesDto = {
+      nickname: 'testnick3',
+    };
+
+    const result1 = await service.getUserTitles(getUsersTitlesDto1);
+    const result2 = await service.getUserTitles(getUsersTitlesDto2);
+    const result3 = await service.getUserTitles(getUsersTitlesDto3);
 
     //타이틀의 갯수
-    expect(result.titles.length).toBe(3);
-    //타이틀의 이름
-    expect(result.title[0].name).toBe(savedTitle.name);
-    expect(result.title[1].name).toBe(savedTitle2.name);
-    expect(result.title[2].name).toBe(savedTitle3.name);
-    //타이틀의 컨텐츠
-    expect(result.title[0].contents).toBe(savedTitle.contents);
-    expect(result.title[1].contents).toBe(savedTitle2.contents);
-    expect(result.title[2].contents).toBe(savedTitle3.contents);
+    expect(result1.titles.length).toBe(3);
+    expect(result2.titles.length).toBe(3);
+    expect(result3.titles.length).toBe(3);
+
+    //모든 타이틀의 이름
+    expect(result1.titles).toBe([
+      savedTitle.name,
+      savedTitle2.name,
+      savedTitle3.name,
+    ]);
+    expect(result2.titles).toBe([
+      savedTitle.name,
+      savedTitle2.name,
+      savedTitle3.name,
+    ]);
+    expect(result3.titles).toBe([
+      savedTitle.name,
+      savedTitle2.name,
+      savedTitle3.name,
+    ]);
+
+    //선택된 타이틀의 이름
+    expect(result1.selectedTitle).toBe(savedTitle.name);
+    expect(result2.selectedTitle).toBe(savedTitle2.name);
+    expect(result3.selectedTitle).toBe(savedTitle3.name);
   });
 });
