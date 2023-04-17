@@ -10,7 +10,7 @@ import {
 } from './dto/user.achievements.dto';
 import { AchievementStatus } from './dto/enum.achivement.status';
 import { Achievemet } from 'src/achievemet/achievement.entity';
-import { UserCollectable } from 'src/global/utils/user.collectable';
+import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 
 @Injectable()
 export class UserAchievemetService {
@@ -49,16 +49,8 @@ export class UserAchievemetService {
       where: { user: { id: getDto.userId } },
     });
     const achievements: UserAchievementDto[] = [];
-    const status = new UserCollectable(allAchievement.length);
-
-    for (const c of userAchievement) {
-      status.setStatus(
-        c.achievement.id,
-        c.isSelected === true
-          ? AchievementStatus.SELECTED
-          : AchievementStatus.ACHIEVED,
-      );
-    }
+    const status = new UserCollectablesStatus(allAchievement.length);
+    status.setAchievement(userAchievement); // userAchievement 에 있는 status 를 allAchievement 에 변경
 
     for (const c of allAchievement) {
       achievements.push({
