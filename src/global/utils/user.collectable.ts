@@ -1,6 +1,7 @@
 import { AchievementStatus } from 'src/user-achievemet/dto/enum.achivement.status';
+import { UserAchievement } from 'src/user-achievemet/user-achievement.entity';
 
-export class UserCollectable {
+export class UserCollectablesStatus {
   private collectables: AchievementStatus[];
 
   constructor(length: number) {
@@ -14,7 +15,12 @@ export class UserCollectable {
     return this.collectables[id - 1];
   }
 
-  setStatus(id: number, status: AchievementStatus) {
-    this.collectables[id - 1] = status;
+  setAchievement(userAchievements: UserAchievement[]) {
+    for (const c of userAchievements) {
+      this.collectables[c.achievement.id - 1] =
+        c.isSelected === true
+          ? AchievementStatus.SELECTED
+          : AchievementStatus.ACHIEVED;
+    }
   }
 }
