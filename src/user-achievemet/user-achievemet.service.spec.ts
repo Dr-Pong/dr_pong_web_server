@@ -162,7 +162,7 @@ describe('UserAchievemetService', () => {
     const user3Acheivements = await service.getUserAchievements(getDto3);
 
     //then
-    console.log(user1Acheivements.achievements);
+    // console.log(user1Acheivements.achievements);
     expect(user1Acheivements.achievements.length).toBe(achieves.length);
     expect(user1Acheivements.achievements[0].status).toBe('unachieved');
     expect(user1Acheivements.achievements[1].status).toBe('unachieved');
@@ -298,42 +298,27 @@ describe('UserAchievemetService', () => {
     //정상적으로 요청이왔을때 (isSelected 가 false 인 1~3개의 업적요청)
     const validUpdateDto: PatchUserAchievementsDto = {
       userId: users[0].id,
-      achievementsId: [
-        userAchievements[0].id,
-        userAchievements[1].id,
-        userAchievements[2].id,
-      ],
+      achievementsId: [achieves[0].id, achieves[1].id, achieves[2].id],
     };
     // 정상적으로 요청이왔을때 2(isSelected 가 true & false 인 1~3개의 업적요청)
     const validUpdateDto2: PatchUserAchievementsDto = {
       userId: users[1].id,
-      achievementsId: [
-        userAchievements[0].id,
-        userAchievements[1].id,
-        userAchievements[2].id,
-      ],
+      achievementsId: [achieves[0].id, achieves[1].id, achieves[2].id],
     };
     // 비정상적으로 요청이 왔을때 (userAcheivement 배열이 아닌 테이블이 들어올때)
     const invalidUpdateDto: PatchUserAchievementsDto = {
       userId: users[0].id,
-      achievementsId: [
-        userAchievements[0].id,
-        userAchievements[1].id,
-        achieves[4].id,
-      ],
+      achievementsId: [achieves[0].id, achieves[1].id, achieves[4].id],
     };
     //비정상적으로 요청이 왔을때2 (userAcheivement 에 존재하지 않는 테이블의 인덱스에 접근)
     const invalidUpdateDto2: PatchUserAchievementsDto = {
       userId: users[0].id,
-      achievementsId: [achieves[4].id, userAchievements[3].id],
+      achievementsId: [achieves[4].id, achieves[3].id],
     };
 
     //when
     await service.patchUserAchievements(validUpdateDto);
     await service.patchUserAchievements(validUpdateDto2);
-
-    const error = await service.patchUserAchievements(invalidUpdateDto);
-    const error2 = await service.patchUserAchievements(invalidUpdateDto2);
 
     const results1 = await userAchievementRepository.find({
       where: { user: { id: users[0].id } },
@@ -343,6 +328,7 @@ describe('UserAchievemetService', () => {
       where: { user: { id: users[1].id } },
     });
 
+    // console.log(results1);
     //then
     expect(results1[0].isSelected).toBe(true);
     expect(results1[1].isSelected).toBe(true);
@@ -350,7 +336,12 @@ describe('UserAchievemetService', () => {
     expect(results2[0].isSelected).toBe(true);
     expect(results2[1].isSelected).toBe(true);
     expect(results2[2].isSelected).toBe(true);
-    expect(error).rejects.toEqual(new BadRequestException('error'));
-    expect(error2).rejects.toEqual(new BadRequestException('error2'));
+    await expect(async () => {
+      await service.patchUserAchievements(invalidUpdateDto);
+    }).rejects.toEqual(new BadRequestException('No such Achievements'));
+
+    await expect(async () => {
+      await service.patchUserAchievements(invalidUpdateDto2);
+    }).rejects.toEqual(new BadRequestException('No such Achievements'));
   });
 });
