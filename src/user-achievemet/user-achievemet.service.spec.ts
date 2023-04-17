@@ -162,28 +162,28 @@ describe('UserAchievemetService', () => {
     //then
     console.log(user1Acheivements.achievements);
     expect(user1Acheivements.achievements.length).toBe(acheives.length);
-    expect(user1Acheivements.achievements[0].status).toBe('UNACHIEVED');
-    expect(user1Acheivements.achievements[1].status).toBe('UNACHIEVED');
-    expect(user1Acheivements.achievements[2].status).toBe('UNACHIEVED');
-    expect(user1Acheivements.achievements[3].status).toBe('SELECTED');
-    expect(user1Acheivements.achievements[4].status).toBe('ACHIEVED');
-    expect(user1Acheivements.achievements[5].status).toBe('UNACHIEVED');
+    expect(user1Acheivements.achievements[0].status).toBe('unachieved');
+    expect(user1Acheivements.achievements[1].status).toBe('unachieved');
+    expect(user1Acheivements.achievements[2].status).toBe('unachieved');
+    expect(user1Acheivements.achievements[3].status).toBe('selected');
+    expect(user1Acheivements.achievements[4].status).toBe('achieved');
+    expect(user1Acheivements.achievements[5].status).toBe('unachieved');
 
     expect(user2Acheivements.achievements.length).toBe(acheives.length);
-    expect(user2Acheivements.achievements[0].status).toBe('UNACHIEVED');
-    expect(user2Acheivements.achievements[1].status).toBe('UNACHIEVED');
-    expect(user2Acheivements.achievements[2].status).toBe('UNACHIEVED');
-    expect(user2Acheivements.achievements[3].status).toBe('UNACHIEVED');
-    expect(user2Acheivements.achievements[4].status).toBe('UNACHIEVED');
-    expect(user2Acheivements.achievements[5].status).toBe('ACHIEVED');
+    expect(user2Acheivements.achievements[0].status).toBe('unachieved');
+    expect(user2Acheivements.achievements[1].status).toBe('unachieved');
+    expect(user2Acheivements.achievements[2].status).toBe('unachieved');
+    expect(user2Acheivements.achievements[3].status).toBe('unachieved');
+    expect(user2Acheivements.achievements[4].status).toBe('unachieved');
+    expect(user2Acheivements.achievements[5].status).toBe('achieved');
 
     expect(user3Acheivements.achievements.length).toBe(acheives.length);
-    expect(user3Acheivements.achievements[0].status).toBe('UNACHIEVED');
-    expect(user3Acheivements.achievements[1].status).toBe('UNACHIEVED');
-    expect(user3Acheivements.achievements[2].status).toBe('UNACHIEVED');
-    expect(user3Acheivements.achievements[3].status).toBe('UNACHIEVED');
-    expect(user3Acheivements.achievements[4].status).toBe('UNACHIEVED');
-    expect(user3Acheivements.achievements[5].status).toBe('UNACHIEVED');
+    expect(user3Acheivements.achievements[0].status).toBe('unachieved');
+    expect(user3Acheivements.achievements[1].status).toBe('unachieved');
+    expect(user3Acheivements.achievements[2].status).toBe('unachieved');
+    expect(user3Acheivements.achievements[3].status).toBe('unachieved');
+    expect(user3Acheivements.achievements[4].status).toBe('unachieved');
+    expect(user3Acheivements.achievements[5].status).toBe('unachieved');
   });
 
   it('선택한 업적 조회', async () => {

@@ -1,5 +1,5 @@
 export enum AchievementStatus {
-  SELECTED = 'SELECTED',
-  ACHIEVED = 'ACHIEVED',
-  UNACHIEVED = 'UNACHIEVED',
+  SELECTED = 'selected',
+  ACHIEVED = 'achieved',
+  UNACHIEVED = 'unachieved',
 }
