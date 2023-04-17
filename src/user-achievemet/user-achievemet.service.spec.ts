@@ -348,6 +348,6 @@ describe('UserAchievemetService', () => {
     expect(results[1].isSelected).toBe(true);
     expect(results[2].isSelected).toBe(true);
     expect(error).rejects.toEqual(new BadRequestException('error'));
-    expect(error2).rejects.toEqual(new BadRequestException('error'));
+    expect(error2).rejects.toEqual(new BadRequestException('error2'));
   });
 });
