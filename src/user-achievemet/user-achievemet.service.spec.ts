@@ -310,7 +310,7 @@ describe('UserAchievemetService', () => {
       achievementsId: [
         userAchievements[0].id,
         userAchievements[1].id,
-        userAchievements[3].id,
+        userAchievements[2].id,
       ],
     };
     // 비정상적으로 요청이 왔을때 (userAcheivement 배열이 아닌 테이블이 들어올때)
@@ -335,18 +335,21 @@ describe('UserAchievemetService', () => {
     const error = await service.patchUserAchievements(invalidUpdateDto);
     const error2 = await service.patchUserAchievements(invalidUpdateDto2);
 
-    const results = await userAchievementRepository.find({
+    const results1 = await userAchievementRepository.find({
       where: { user: { id: users[0].id } },
     });
 
     const results2 = await userAchievementRepository.find({
-      where: { user: { id: users[0].id } },
+      where: { user: { id: users[1].id } },
     });
 
     //then
-    expect(results[0].isSelected).toBe(true);
-    expect(results[1].isSelected).toBe(true);
-    expect(results[2].isSelected).toBe(true);
+    expect(results1[0].isSelected).toBe(true);
+    expect(results1[1].isSelected).toBe(true);
+    expect(results1[2].isSelected).toBe(true);
+    expect(results2[0].isSelected).toBe(true);
+    expect(results2[1].isSelected).toBe(true);
+    expect(results2[2].isSelected).toBe(true);
     expect(error).rejects.toEqual(new BadRequestException('error'));
     expect(error2).rejects.toEqual(new BadRequestException('error2'));
   });
