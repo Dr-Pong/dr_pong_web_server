@@ -9,6 +9,7 @@ import { TitleModule } from 'src/title/title.module';
 import { User } from 'src/user/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { UserTitleService } from './user-title.service';
+import { GetUserTitlesDto } from './dto/get.user.titles.dto';
 
 describe('UserTitleService', () => {
   let service: UserTitleService;
@@ -19,30 +20,6 @@ describe('UserTitleService', () => {
   let users: User[];
 
   beforeEach(async () => {
-    users = await userRepository.save([
-      {
-        nickname: 'testnick1',
-        email: 'testemail1',
-        imageUrl: 'testurl1',
-        level: 1,
-        statusMessage: 'testmessage1',
-      },
-      {
-        nickname: 'testnick2',
-        email: 'testemail2',
-        imageUrl: 'testurl2',
-        level: 2,
-        statusMessage: 'testmessage2',
-      },
-      {
-        nickname: 'testnick3',
-        email: 'testemail3',
-        imageUrl: 'testurl3',
-        level: 3,
-        statusMessage: 'testmessage3',
-      },
-    ]);
-
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(typeORMConfig),
@@ -73,6 +50,30 @@ describe('UserTitleService', () => {
     );
     titleRepository = module.get<Repository<Title>>(getRepositoryToken(Title));
     dataSources = module.get<DataSource>(DataSource);
+
+    users = await userRepository.save([
+      {
+        nickname: 'testnick1',
+        email: 'testemail1',
+        imageUrl: 'testurl1',
+        level: 1,
+        statusMessage: 'testmessage1',
+      },
+      {
+        nickname: 'testnick2',
+        email: 'testemail2',
+        imageUrl: 'testurl2',
+        level: 2,
+        statusMessage: 'testmessage2',
+      },
+      {
+        nickname: 'testnick3',
+        email: 'testemail3',
+        imageUrl: 'testurl3',
+        level: 3,
+        statusMessage: 'testmessage3',
+      },
+    ]);
   });
 
   afterEach(async () => {
@@ -119,13 +120,13 @@ describe('UserTitleService', () => {
 
     //유저닉에따라 찾는부분
     const getUsersTitlesDto1: GetUserTitlesDto = {
-      nickname: 'testnick1',
+      userId: users[0].id,
     };
     const getUsersTitlesDto2: GetUserTitlesDto = {
-      nickname: 'testnick2',
+      userId: users[1].id,
     };
     const getUsersTitlesDto3: GetUserTitlesDto = {
-      nickname: 'testnick3',
+      userId: users[2].id,
     };
 
     const result1 = await service.getUserTitles(getUsersTitlesDto1);
@@ -137,26 +138,18 @@ describe('UserTitleService', () => {
     expect(result2.titles.length).toBe(3);
     expect(result3.titles.length).toBe(3);
 
-    //모든 타이틀의 이름
-    expect(result1.titles).toBe([
-      savedTitle.name,
-      savedTitle2.name,
-      savedTitle3.name,
-    ]);
-    expect(result2.titles).toBe([
-      savedTitle.name,
-      savedTitle2.name,
-      savedTitle3.name,
-    ]);
-    expect(result3.titles).toBe([
-      savedTitle.name,
-      savedTitle2.name,
-      savedTitle3.name,
-    ]);
+    //resul1의 타이틀이름
 
-    //선택된 타이틀의 이름
-    expect(result1.selectedTitle).toBe(savedTitle.name);
-    expect(result2.selectedTitle).toBe(savedTitle2.name);
-    expect(result3.selectedTitle).toBe(savedTitle3.name);
+    expect(result1.titles[0].title).toBe(savedTitle.name);
+    expect(result1.titles[1].title).toBe(savedTitle2.name);
+    expect(result1.titles[2].title).toBe(savedTitle3.name);
+
+    expect(result2.titles[0].title).toBe(savedTitle.name);
+    expect(result2.titles[1].title).toBe(savedTitle2.name);
+    expect(result2.titles[2].title).toBe(savedTitle3.name);
+
+    expect(result3.titles[0].title).toBe(savedTitle.name);
+    expect(result3.titles[1].title).toBe(savedTitle2.name);
+    expect(result3.titles[2].title).toBe(savedTitle3.name);
   });
 });
