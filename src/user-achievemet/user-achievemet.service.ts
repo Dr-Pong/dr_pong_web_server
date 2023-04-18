@@ -1,6 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import { UserAchievement } from './user-achievement.entity';
 import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
@@ -11,18 +10,18 @@ import {
 import { AchievementStatus } from './dto/enum.achivement.status';
 import { Achievemet } from 'src/achievemet/achievement.entity';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
+import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
 
 @Injectable()
 export class UserAchievemetService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
     @InjectRepository(UserAchievement)
     private userAchievementRepository: Repository<UserAchievement>,
     @InjectRepository(Achievemet)
     private achievementRepository: Repository<Achievemet>,
   ) {}
 
+  //get user achievements
   async getUserAchievements(
     getDto: GetUserAchievementsDto,
   ): Promise<UserAchievementsDto> {
@@ -64,5 +63,26 @@ export class UserAchievemetService {
       achievements: achievements,
     };
     return responseDto;
+  }
+
+  //patch user achievement
+  async patchUserAchievements(getDto: PatchUserAchievementsDto): Promise<void> {
+    const savedAchievements: UserAchievement[] = [];
+    for (const achieveId of getDto.achievementsId) {
+      const userAchievement = await this.userAchievementRepository.findOne({
+        where: {
+          user: { id: getDto.userId },
+          achievement: { id: achieveId },
+        },
+      });
+      if (!userAchievement) {
+        throw new BadRequestException('No such Achievements');
+      }
+      savedAchievements.push(userAchievement);
+    }
+    for (const c of savedAchievements) {
+      c.isSelected = true;
+    }
+    await this.userAchievementRepository.save(savedAchievements);
   }
 }

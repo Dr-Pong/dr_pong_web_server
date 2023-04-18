@@ -11,6 +11,8 @@ import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
 import { UserModule } from 'src/user/user.module';
 import { AchievemetModule } from 'src/achievemet/achievemet.module';
 import { UserAchievemetModule } from './user-achievemet.module';
+import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
+import { BadRequestException } from '@nestjs/common';
 
 describe('UserAchievemetService', () => {
   let service: UserAchievemetService;
@@ -19,7 +21,7 @@ describe('UserAchievemetService', () => {
   let acheivementRepository: Repository<Achievemet>;
   let dataSources: DataSource;
   let users: User[];
-  let acheives: Achievemet[];
+  let achieves: Achievemet[];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -77,7 +79,7 @@ describe('UserAchievemetService', () => {
     ]);
 
     //acheivement 6개 저장
-    acheives = await acheivementRepository.save([
+    achieves = await acheivementRepository.save([
       {
         name: 'acheive1',
         content: 'acheive content1',
@@ -123,17 +125,17 @@ describe('UserAchievemetService', () => {
     await userAchievementRepository.save([
       {
         user: users[0],
-        achievement: acheives[3],
+        achievement: achieves[3],
         isSelected: true,
       },
       {
         user: users[0],
-        achievement: acheives[4],
+        achievement: achieves[4],
         isSelected: false,
       },
       {
         user: users[1],
-        achievement: acheives[5],
+        achievement: achieves[5],
         isSelected: false,
       },
     ]);
@@ -160,8 +162,8 @@ describe('UserAchievemetService', () => {
     const user3Acheivements = await service.getUserAchievements(getDto3);
 
     //then
-    console.log(user1Acheivements.achievements);
-    expect(user1Acheivements.achievements.length).toBe(acheives.length);
+    // console.log(user1Acheivements.achievements);
+    expect(user1Acheivements.achievements.length).toBe(achieves.length);
     expect(user1Acheivements.achievements[0].status).toBe('unachieved');
     expect(user1Acheivements.achievements[1].status).toBe('unachieved');
     expect(user1Acheivements.achievements[2].status).toBe('unachieved');
@@ -169,7 +171,7 @@ describe('UserAchievemetService', () => {
     expect(user1Acheivements.achievements[4].status).toBe('achieved');
     expect(user1Acheivements.achievements[5].status).toBe('unachieved');
 
-    expect(user2Acheivements.achievements.length).toBe(acheives.length);
+    expect(user2Acheivements.achievements.length).toBe(achieves.length);
     expect(user2Acheivements.achievements[0].status).toBe('unachieved');
     expect(user2Acheivements.achievements[1].status).toBe('unachieved');
     expect(user2Acheivements.achievements[2].status).toBe('unachieved');
@@ -177,7 +179,7 @@ describe('UserAchievemetService', () => {
     expect(user2Acheivements.achievements[4].status).toBe('unachieved');
     expect(user2Acheivements.achievements[5].status).toBe('achieved');
 
-    expect(user3Acheivements.achievements.length).toBe(acheives.length);
+    expect(user3Acheivements.achievements.length).toBe(achieves.length);
     expect(user3Acheivements.achievements[0].status).toBe('unachieved');
     expect(user3Acheivements.achievements[1].status).toBe('unachieved');
     expect(user3Acheivements.achievements[2].status).toBe('unachieved');
@@ -191,22 +193,22 @@ describe('UserAchievemetService', () => {
     await userAchievementRepository.save([
       {
         user: users[0],
-        achievement: acheives[0],
+        achievement: achieves[0],
         isSelected: true,
       },
       {
         user: users[0],
-        achievement: acheives[1],
+        achievement: achieves[1],
         isSelected: true,
       },
       {
         user: users[0],
-        achievement: acheives[2],
+        achievement: achieves[2],
         isSelected: true,
       },
       {
         user: users[1],
-        achievement: acheives[0],
+        achievement: achieves[0],
         isSelected: true,
       },
     ]);
@@ -241,20 +243,106 @@ describe('UserAchievemetService', () => {
     //then
     expect(user1SelectedAcheivements.achievements.length).toBe(3);
     expect(user1SelectedAcheivements.achievements[0].name).toBe(
-      acheives[0].name,
+      achieves[0].name,
     );
     expect(user1SelectedAcheivements.achievements[1].name).toBe(
-      acheives[1].name,
+      achieves[1].name,
     );
     expect(user1SelectedAcheivements.achievements[2].name).toBe(
-      acheives[2].name,
+      achieves[2].name,
     );
 
     expect(user2SelectedAcheivements.achievements.length).toBe(1);
     expect(user2SelectedAcheivements.achievements[0].name).toBe(
-      acheives[0].name,
+      achieves[0].name,
     );
 
     expect(user3SelectedAcheivements.achievements.length).toBe(0);
+  });
+
+  it('업적 수정', async () => {
+    //given
+    const userAchievements = await userAchievementRepository.save([
+      {
+        user: users[0],
+        achievement: achieves[0],
+        isSelected: false,
+      },
+      {
+        user: users[0],
+        achievement: achieves[1],
+        isSelected: false,
+      },
+      {
+        user: users[0],
+        achievement: achieves[2],
+        isSelected: false,
+      },
+      {
+        user: users[1],
+        achievement: achieves[0],
+        isSelected: false,
+      },
+      {
+        user: users[1],
+        achievement: achieves[1],
+        isSelected: true,
+      },
+      {
+        user: users[1],
+        achievement: achieves[2],
+        isSelected: false,
+      },
+    ]);
+
+    //정상적으로 요청이왔을때 (isSelected 가 false 인 1~3개의 업적요청)
+    const validUpdateDto1: PatchUserAchievementsDto = {
+      userId: users[0].id,
+      achievementsId: [achieves[0].id, achieves[1].id, achieves[2].id],
+    };
+    // 정상적으로 요청이왔을때 2(isSelected 가 true & false 인 1~3개의 업적요청)
+    const validUpdateDto2: PatchUserAchievementsDto = {
+      userId: users[1].id,
+      achievementsId: [achieves[0].id, achieves[1].id, achieves[2].id],
+    };
+    // 비정상적으로 요청이 왔을때 (userAcheivement 배열이 아닌 테이블이 들어올때)
+    const invalidUpdateDto1: PatchUserAchievementsDto = {
+      userId: users[0].id,
+      achievementsId: [achieves[0].id, achieves[1].id, achieves[4].id],
+    };
+    //비정상적으로 요청이 왔을때2 (userAcheivement 에 존재하지 않는 테이블의 인덱스에 접근)
+    const invalidUpdateDto2: PatchUserAchievementsDto = {
+      userId: users[0].id,
+      achievementsId: [achieves[4].id, achieves[3].id],
+    };
+
+    //when
+    await service.patchUserAchievements(validUpdateDto1);
+    await service.patchUserAchievements(validUpdateDto2);
+
+    const results1 = await userAchievementRepository.find({
+      where: { user: { id: users[0].id } },
+    });
+
+    const results2 = await userAchievementRepository.find({
+      where: { user: { id: users[1].id } },
+    });
+
+    // console.log(results1);
+    //then
+    expect(results1[0].isSelected).toBe(true);
+    expect(results1[1].isSelected).toBe(true);
+    expect(results1[2].isSelected).toBe(true);
+    expect(results2[0].isSelected).toBe(true);
+    expect(results2[1].isSelected).toBe(true);
+    expect(results2[2].isSelected).toBe(true);
+    await expect(
+      // 이게 예외를 받는 맞는방법이다
+      service.patchUserAchievements(invalidUpdateDto1),
+    ).rejects.toThrow(new BadRequestException('No such Achievements'));
+
+    await expect(
+      service.patchUserAchievements(invalidUpdateDto2),
+    ).rejects.toThrow(new BadRequestException('No such Achievements'));
   });
 });
