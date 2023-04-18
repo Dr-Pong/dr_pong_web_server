@@ -296,7 +296,7 @@ describe('UserAchievemetService', () => {
     ]);
 
     //정상적으로 요청이왔을때 (isSelected 가 false 인 1~3개의 업적요청)
-    const validUpdateDto: PatchUserAchievementsDto = {
+    const validUpdateDto1: PatchUserAchievementsDto = {
       userId: users[0].id,
       achievementsId: [achieves[0].id, achieves[1].id, achieves[2].id],
     };
@@ -306,7 +306,7 @@ describe('UserAchievemetService', () => {
       achievementsId: [achieves[0].id, achieves[1].id, achieves[2].id],
     };
     // 비정상적으로 요청이 왔을때 (userAcheivement 배열이 아닌 테이블이 들어올때)
-    const invalidUpdateDto: PatchUserAchievementsDto = {
+    const invalidUpdateDto1: PatchUserAchievementsDto = {
       userId: users[0].id,
       achievementsId: [achieves[0].id, achieves[1].id, achieves[4].id],
     };
@@ -317,7 +317,7 @@ describe('UserAchievemetService', () => {
     };
 
     //when
-    await service.patchUserAchievements(validUpdateDto);
+    await service.patchUserAchievements(validUpdateDto1);
     await service.patchUserAchievements(validUpdateDto2);
 
     const results1 = await userAchievementRepository.find({
@@ -337,11 +337,11 @@ describe('UserAchievemetService', () => {
     expect(results2[1].isSelected).toBe(true);
     expect(results2[2].isSelected).toBe(true);
     await expect(
-      service.patchUserAchievements(invalidUpdateDto),
-    ).rejects.toEqual(new BadRequestException('No such Achievements'));
+      // 이게 예외를 받는 맞는방법이다
+      service.patchUserAchievements(invalidUpdateDto1),
+    ).rejects.toThrow(new BadRequestException('No such Achievements'));
 
     await expect(
-      // 이게 예외를 받는 맞는방법이다
       service.patchUserAchievements(invalidUpdateDto2),
     ).rejects.toThrow(new BadRequestException('No such Achievements'));
   });
