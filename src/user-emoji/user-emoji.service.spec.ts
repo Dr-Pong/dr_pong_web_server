@@ -277,6 +277,12 @@ describe('UserEmojiService', () => {
         isSelected: false,
       },
       {
+        //user 0 이 true로 가지고 있던 이모찌4
+        user: users[0],
+        emoji: emojies[4],
+        isSelected: true,
+      },
+      {
         user: users[1],
         emoji: emojies[0],
         isSelected: true,
@@ -331,6 +337,8 @@ describe('UserEmojiService', () => {
     expect(resutls1[1].isSelected).toBe(true);
     expect(resutls1[2].isSelected).toBe(true);
     expect(resutls1[3].isSelected).toBe(true);
+    expect(resutls1[4].isSelected).toBe(false); //실행후 emoji4가 false로 바뀌어있는지 확인 하는 부분
+
     expect(resutls2[0].isSelected).toBe(true);
     expect(resutls2[1].isSelected).toBe(true);
     expect(resutls2[2].isSelected).toBe(true);

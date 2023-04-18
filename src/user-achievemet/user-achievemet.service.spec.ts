@@ -262,7 +262,7 @@ describe('UserAchievemetService', () => {
 
   it('업적 수정', async () => {
     //given
-    const userAchievements = await userAchievementRepository.save([
+    await userAchievementRepository.save([
       {
         user: users[0],
         achievement: achieves[0],
@@ -277,6 +277,11 @@ describe('UserAchievemetService', () => {
         user: users[0],
         achievement: achieves[2],
         isSelected: false,
+      },
+      {
+        user: users[0],
+        achievement: achieves[3],
+        isSelected: true,
       },
       {
         user: users[1],
@@ -333,6 +338,8 @@ describe('UserAchievemetService', () => {
     expect(results1[0].isSelected).toBe(true);
     expect(results1[1].isSelected).toBe(true);
     expect(results1[2].isSelected).toBe(true);
+    expect(results1[3].isSelected).toBe(false);
+
     expect(results2[0].isSelected).toBe(true);
     expect(results2[1].isSelected).toBe(true);
     expect(results2[2].isSelected).toBe(true);
