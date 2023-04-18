@@ -336,12 +336,13 @@ describe('UserAchievemetService', () => {
     expect(results2[0].isSelected).toBe(true);
     expect(results2[1].isSelected).toBe(true);
     expect(results2[2].isSelected).toBe(true);
-    await expect(async () => {
-      await service.patchUserAchievements(invalidUpdateDto);
-    }).rejects.toEqual(new BadRequestException('No such Achievements'));
+    await expect(
+      service.patchUserAchievements(invalidUpdateDto),
+    ).rejects.toEqual(new BadRequestException('No such Achievements'));
 
-    await expect(async () => {
-      await service.patchUserAchievements(invalidUpdateDto2);
-    }).rejects.toEqual(new BadRequestException('No such Achievements'));
+    await expect(
+      // 이게 예외를 받는 맞는방법이다
+      service.patchUserAchievements(invalidUpdateDto2),
+    ).rejects.toThrow(new BadRequestException('No such Achievements'));
   });
 });

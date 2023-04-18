@@ -1,11 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserAchievement } from './user-achievement.entity';
 import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
 import {
@@ -20,8 +15,6 @@ import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
 @Injectable()
 export class UserAchievemetService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
     @InjectRepository(UserAchievement)
     private userAchievementRepository: Repository<UserAchievement>,
     @InjectRepository(Achievemet)
@@ -91,6 +84,5 @@ export class UserAchievemetService {
       c.isSelected = true;
     }
     await this.userAchievementRepository.save(savedAchievements);
-    // console.log(savedAchievements);
   }
 }
