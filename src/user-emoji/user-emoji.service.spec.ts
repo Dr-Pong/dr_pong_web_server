@@ -110,7 +110,7 @@ describe('UserEmojiService', () => {
     await dataSources.destroy();
   });
 
-  it('유저 이모지 전체 조회 (false요청)', async () => {
+  it('유저 이모지 전체 Get(false요청)', async () => {
     //given
     await userEmojiRepository.save([
       {
@@ -185,7 +185,7 @@ describe('UserEmojiService', () => {
     expect(user2AllEmojies.emojies[4].status).toBe('unachieved');
   });
 
-  it('유저 선택 이모지 조회 (true요청)', async () => {
+  it('유저 선택 이모지 Get (true요청)', async () => {
     //given
     await userEmojiRepository.save([
       {
@@ -250,10 +250,10 @@ describe('UserEmojiService', () => {
     expect(user0SelectedEmojis.emojies[2].name).toBe(emojies[2].name);
     expect(user0SelectedEmojis.emojies[3].name).toBe(emojies[3].name);
 
-    expect(user1SelectedEmojis.emojies[3].name).toBe(emojies[3].name);
+    expect(user1SelectedEmojis.emojies[0].name).toBe(emojies[3].name);
   });
 
-  it('유저 이모지 수정 (false/ true 요청을 true로 변환)', async () => {
+  it('유저 이모지 Patch (false/ true 요청을 true로 변환)', async () => {
     //get
     await userEmojiRepository.save([
       {

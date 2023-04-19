@@ -22,7 +22,7 @@ export class UserEmoji extends BaseTimeEntity {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToMany(() => Emoji, { eager: true })
+  @ManyToOne(() => Emoji, { eager: true })
   @JoinColumn({ name: 'emoji_id' })
   emoji: Emoji;
 }
