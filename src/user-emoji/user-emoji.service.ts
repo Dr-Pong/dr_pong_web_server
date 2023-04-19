@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEmoji } from './user-emoji.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { GetUserEmojiesDto } from './dto/get.user.emojies.dto';
 import { UserEmojiDto, UserEmojiesDto } from './dto/user.emojis.dto';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { CollectableStatus } from 'src/global/type/enum.collectable.status';
+import { PatchUserEmojiesDto } from './dto/patch.user.emojies.dto';
 
 @Injectable()
 export class UserEmojiService {
@@ -57,4 +58,28 @@ export class UserEmojiService {
   }
 
   //patchUserEmojies함수
+  async patchUserEmojies(patchDto: PatchUserEmojiesDto): Promise<void> {
+    const old_emojies: UserEmoji[] = await this.userEmojiRepository.find({
+      where: { user: { id: patchDto.userId }, isSelected: true },
+    });
+    const to_change_emojies: UserEmoji[] = await this.userEmojiRepository.find({
+      where: {
+        user: { id: patchDto.userId },
+        emoji: In(patchDto.emojiesId),
+      },
+    });
+    if (to_change_emojies.length !== patchDto.emojiesId.length) {
+      throw new BadRequestException('No such Emojies');
+    }
+    for (const c of old_emojies) {
+      if (c.isSelected === true) {
+        c.isSelected = false;
+      }
+      await this.userEmojiRepository.save(c);
+    }
+    for (const c of to_change_emojies) {
+      c.isSelected = true;
+    }
+    await this.userEmojiRepository.save(to_change_emojies);
+  }
 }

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UserAchievement } from './user-achievement.entity';
 import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
 import {
@@ -65,24 +65,33 @@ export class UserAchievemetService {
     return responseDto;
   }
 
-  //patch user achievement
-  async patchUserAchievements(getDto: PatchUserAchievementsDto): Promise<void> {
-    const savedAchievements: UserAchievement[] = [];
-    for (const achieveId of getDto.achievementsId) {
-      const userAchievement = await this.userAchievementRepository.findOne({
+  //patch user achievement Patch 가 old 랑 to_change로 저장하고 return 하는 로직을 구현해야한다
+  async patchUserAchievements(
+    patchDto: PatchUserAchievementsDto,
+  ): Promise<void> {
+    const old_achievements: UserAchievement[] =
+      await this.userAchievementRepository.find({
+        where: { user: { id: patchDto.userId }, isSelected: true },
+      });
+    const to_change_achievements: UserAchievement[] =
+      await this.userAchievementRepository.find({
         where: {
-          user: { id: getDto.userId },
-          achievement: { id: achieveId },
+          user: { id: patchDto.userId },
+          achievement: In(patchDto.achievementsId),
         },
       });
-      if (!userAchievement) {
-        throw new BadRequestException('No such Achievements');
-      }
-      savedAchievements.push(userAchievement);
+    if (to_change_achievements.length !== patchDto.achievementsId.length) {
+      throw await new BadRequestException('No such Achievements');
     }
-    for (const c of savedAchievements) {
+    for (const c of old_achievements) {
+      if (c.isSelected) {
+        c.isSelected = false;
+      }
+      await this.userAchievementRepository.save(old_achievements);
+    }
+    for (const c of to_change_achievements) {
       c.isSelected = true;
     }
-    await this.userAchievementRepository.save(savedAchievements);
+    await this.userAchievementRepository.save(to_change_achievements);
   }
 }

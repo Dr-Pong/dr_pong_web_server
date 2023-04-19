@@ -101,6 +101,22 @@ describe('UserEmojiService', () => {
         name: 'emoji5',
         imageUrl: 'emojiImageUrl5',
       },
+      {
+        name: 'emoji6',
+        imageUrl: 'emojiImageUrl6',
+      },
+      {
+        name: 'emoji7',
+        imageUrl: 'emojiImageUrl7',
+      },
+      {
+        name: 'emoji8',
+        imageUrl: 'emojiImageUrl8',
+      },
+      {
+        name: 'emoji9',
+        imageUrl: 'emojiImageUrl9',
+      },
     ]);
   });
 
@@ -312,7 +328,7 @@ describe('UserEmojiService', () => {
     //일부 없는 emoji에 접근
     const invalidUpdateDto1: PatchUserEmojiesDto = {
       userId: users[2].id,
-      emojiesId: [emojies[1].id, emojies[2].id, emojies[6].id],
+      emojiesId: [emojies[1].id, emojies[2].id, emojies[5].id],
     };
     //전부 없는 emoji에 접근
     const invalidUpdateDto2: PatchUserEmojiesDto = {
