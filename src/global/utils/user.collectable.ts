@@ -1,26 +1,26 @@
-import { AchievementStatus } from 'src/user-achievemet/dto/enum.achivement.status';
+import { CollectableStatus } from 'src/global/type/enum.collectable.status';
 import { UserAchievement } from 'src/user-achievemet/user-achievement.entity';
 
 export class UserCollectablesStatus {
-  private collectables: AchievementStatus[];
+  private collectables: CollectableStatus[];
 
   constructor(length: number) {
     this.collectables = Array.from(
       { length: length },
-      () => AchievementStatus.UNACHIEVED,
+      () => CollectableStatus.UNACHIEVED,
     );
   }
 
-  getStatus(id: number): AchievementStatus {
+  getStatus(id: number): CollectableStatus {
     return this.collectables[id - 1];
   }
 
-  setAchievement(userAchievements: UserAchievement[]) {
-    for (const c of userAchievements) {
+  setStatus(usercollectable: UserAchievement[]) {
+    for (const c of usercollectable) {
       this.collectables[c.achievement.id - 1] =
         c.isSelected === true
-          ? AchievementStatus.SELECTED
-          : AchievementStatus.ACHIEVED;
+          ? CollectableStatus.SELECTED
+          : CollectableStatus.ACHIEVED;
     }
   }
 }

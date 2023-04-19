@@ -7,7 +7,7 @@ import {
   UserAchievementDto,
   UserAchievementsDto,
 } from './dto/user.achievements.dto';
-import { AchievementStatus } from './dto/enum.achivement.status';
+import { CollectableStatus } from '../global/type/enum.collectable.status';
 import { Achievemet } from 'src/achievemet/achievement.entity';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
@@ -34,7 +34,7 @@ export class UserAchievemetService {
         return {
           id: userAchievement.achievement.id,
           name: userAchievement.achievement.name,
-          status: AchievementStatus.SELECTED,
+          status: CollectableStatus.SELECTED,
         };
       });
       const responseDto: UserAchievementsDto = {
@@ -49,7 +49,7 @@ export class UserAchievemetService {
     });
     const achievements: UserAchievementDto[] = [];
     const status = new UserCollectablesStatus(allAchievement.length);
-    status.setAchievement(userAchievement); // userAchievement 에 있는 status 를 allAchievement 에 변경
+    status.setStatus(userAchievement); // userAchievement 에 있는 status 를 allAchievement 에 변경
 
     for (const c of allAchievement) {
       achievements.push({
