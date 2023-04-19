@@ -84,11 +84,9 @@ export class UserAchievemetService {
       throw await new BadRequestException('No such Achievements');
     }
     for (const c of old_achievements) {
-      if (c.isSelected) {
-        c.isSelected = false;
-      }
-      await this.userAchievementRepository.save(old_achievements);
+      c.isSelected = false;
     }
+    await this.userAchievementRepository.save(old_achievements);
     for (const c of to_change_achievements) {
       c.isSelected = true;
     }

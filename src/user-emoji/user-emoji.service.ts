@@ -36,7 +36,6 @@ export class UserEmojiService {
       };
       return responseDto;
     }
-    //이하 내일 구현할부분 setemoji getstatus 함수 만들기
     const allEmoji = await this.emojiRepository.find();
     const userEmoji = await this.userEmojiRepository.find({
       where: { user: { id: getDto.userId } },
@@ -72,11 +71,9 @@ export class UserEmojiService {
       throw new BadRequestException('No such Emojies');
     }
     for (const c of old_emojies) {
-      if (c.isSelected === true) {
-        c.isSelected = false;
-      }
-      await this.userEmojiRepository.save(c);
+      c.isSelected = false;
     }
+    await this.userEmojiRepository.save(old_emojies);
     for (const c of to_change_emojies) {
       c.isSelected = true;
     }
