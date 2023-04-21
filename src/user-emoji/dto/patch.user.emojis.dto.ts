@@ -1,4 +1,4 @@
-export class PatchUseremojisDto {
+export class PatchUserEmojisDto {
   userId: number;
   emojisId: number[];
 }
