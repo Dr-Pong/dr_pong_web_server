@@ -8,6 +8,6 @@ export class UserEmojiDto {
   status: CollectableStatus;
 }
 
-export class UserEmojiesDto {
-  emojies: UserEmojiDto[];
+export class UseremojisDto {
+  emojis: UserEmojiDto[];
 }
