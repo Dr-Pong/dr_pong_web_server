@@ -100,14 +100,23 @@ describe('JwtStrategy', () => {
   it('에러 케이스', async () => {
     const normalUser = await userRepository.save(
       {
-        nickname: 'admin',
-        email: 'admin@email',
-        imageUrl: 'admin.png',
+        nickname: 'normal',
+        email: 'normal@email',
+        imageUrl: 'normal.png',
         level: 1,
-        statusMessage: 'im admin',
-        roleType: RoleType.ADMIN,
+        statusMessage: 'im normal',
+        roleType: RoleType.USER,
       },)
-    const npc = await userRepository.save(
+      const noNickNameUser = await userRepository.save(
+        {
+          nickname: '',
+          email: 'normal@email',
+          imageUrl: 'normal.png',
+          level: 1,
+          statusMessage: 'im normal',
+          roleType: RoleType.USER,
+        },)
+      const npc = await userRepository.save(
       {
         nickname: 'npc',
         email: 'npc@email',
@@ -118,10 +127,15 @@ describe('JwtStrategy', () => {
       },)
 
     const notRegisteredUserToken = jwtService.sign({
-      id: normalUser.id,
-      nickname: '',
+      id: -1,
+      nickname: 'not Rejistered',
       // roleType: normalUser.roleType,
     });
+    const noNickNameUserToken = jwtService.sign({
+      id:noNickNameUser.id,
+      nickname: noNickNameUser.nickname,
+      // roleType: normalUser.roleType,
+    })
     const invalidUserToken = jwtService.sign({
       id: normalUser.id,
       nickname: 'npc',
@@ -134,7 +148,8 @@ describe('JwtStrategy', () => {
       // roleType: normalUser.roleType,
     }, {expiresIn:0});
 
-    await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException('nickname required'));
+    await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException());
+    await expect(jwtStrategy.validate(noNickNameUserToken)).rejects.toThrow(new UnauthorizedException('nickname required'));
     await expect(jwtStrategy.validate(invalidUserToken)).rejects.toThrow(new UnauthorizedException('invalid token'));
     await expect(jwtStrategy.validate(invaliedFormetToken)).rejects.toThrow(new UnauthorizedException('invalid token'));
     await expect(jwtStrategy.validate(expiredToken)).rejects.toThrow(new UnauthorizedException('jwt expired'));
