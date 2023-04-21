@@ -9,7 +9,7 @@ import { UsersDetailDto } from 'src/user/dto/users.detail.dto';
 import { JwtStrategy } from './auth.jwt.strategy';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from '../dto/auth.dto';
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 describe('JwtStrategy', () => {
   let jwtStrategy: JwtStrategy;
@@ -95,26 +95,6 @@ describe('JwtStrategy', () => {
     expect(findedNormalUser2.nickname).toBe(normalUser.nickname);
     // expect(findedAdmin2.roleType).toBe(RoleType.ADMIN);
     // expect(findedNormalUser2.roleType).toBe(RoleType.USER);
-
-    const notRegisteredUserToken = jwtService.sign({
-      id: normalUser.id,
-      nickname: admin.nickname,
-      // roleType: normalUser.roleType,
-    });
-    const invaliedFromToken = jwtService.sign({
-      name: normalUser.id,
-      nick: normalUser.nickname,
-      // roleType: normalUser.roleType,
-    });
-    const expiredToken = jwtService.sign({
-      id: normalUser.id,
-      nickname: normalUser.nickname,
-      // roleType: normalUser.roleType,
-    }, {expiresIn:0});
-
-    await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException());
-    await expect(jwtStrategy.validate(invaliedFromToken)).rejects.toThrow(new UnauthorizedException());
-    await expect(jwtStrategy.validate(expiredToken)).rejects.toThrow(new UnauthorizedException('jwt expired'));
   });
 
   it('에러 케이스', async () => {
@@ -127,25 +107,36 @@ describe('JwtStrategy', () => {
         statusMessage: 'im admin',
         roleType: RoleType.ADMIN,
       },)
+    const npc = await userRepository.save(
+      {
+        nickname: 'npc',
+        email: 'npc@email',
+        imageUrl: 'npc.png',
+        level: 1,
+        statusMessage: 'im npc',
+        roleType: RoleType.USER,
+      },)
 
     const notRegisteredUserToken = jwtService.sign({
       id: normalUser.id,
-      nickname: 'noNickName',
+      nickname: '',
       // roleType: normalUser.roleType,
     });
-    const invaliedFromToken = jwtService.sign({
-      name: normalUser.id,
-      nick: normalUser.nickname,
+    const invalidUserToken = jwtService.sign({
+      id: normalUser.id,
+      nickname: 'npc',
       // roleType: normalUser.roleType,
     });
+    const invaliedFormetToken = 'wrong token';
     const expiredToken = jwtService.sign({
       id: normalUser.id,
       nickname: normalUser.nickname,
       // roleType: normalUser.roleType,
     }, {expiresIn:0});
 
-    await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException());
-    await expect(jwtStrategy.validate(invaliedFromToken)).rejects.toThrow(new UnauthorizedException());
+    await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException('nickname required'));
+    await expect(jwtStrategy.validate(invalidUserToken)).rejects.toThrow(new UnauthorizedException('invalid token'));
+    await expect(jwtStrategy.validate(invaliedFormetToken)).rejects.toThrow(new UnauthorizedException('invalid token'));
     await expect(jwtStrategy.validate(expiredToken)).rejects.toThrow(new UnauthorizedException('jwt expired'));
   });
 });
