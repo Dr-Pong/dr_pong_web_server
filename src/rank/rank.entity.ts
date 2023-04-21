@@ -23,14 +23,14 @@ export class Rank extends BaseTimeEntity {
   user: User;
 
   @Column()
-  rank: number;
+  ladderRank: number;
 
   @Column()
-  record: number;
+  ladderPoint: number;
 
   @Column()
-  bestRank: number;
+  bestRanking: number;
 
   @Column()
-  bestRecord: number;
+  bestPoint: number;
 }

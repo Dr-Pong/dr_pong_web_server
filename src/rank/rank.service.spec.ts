@@ -140,26 +140,26 @@ describe('RankService', () => {
       {
         user: users[0],
         season: seasons[0],
-        rank: 10,
-        record: 1100,
-        bestRank: 1,
-        bestRecord: 1111,
+        ladderRank: 10,
+        ladderPoint: 1100,
+        highestRank: 1,
+        highestPoint: 1111,
       },
       {
         user: users[0],
         season: seasons[1],
-        rank: 20,
-        record: 2200,
-        bestRank: 2,
-        bestRecord: 2222,
+        ladderRank: 20,
+        ladderPoint: 2200,
+        highestRank: 2,
+        highestPoint: 2222,
       },
       {
         user: users[0],
         season: seasons[2],
-        rank: 3300,
-        record: 3300,
-        bestRank: 3,
-        bestRecord: 3333,
+        ladderRank: 3300,
+        ladderPoint: 3300,
+        highestRank: 3,
+        highestPoint: 3333,
       },
     ]);
     //Dto로 반환할때는 rank, bestRank만 반환하도록 수정해야함
@@ -177,16 +177,16 @@ describe('RankService', () => {
 
     //then
     expect(result1).toEqual({
-      rank: 10,
-      record: 1100,
+      ladderRanking: 10,
+      ladderPoint: 1100,
     });
     expect(result2).toEqual({
-      rank: 20,
-      record: 2200,
+      ladderRanking: 20,
+      ladderPoint: 2200,
     });
     expect(result3).toEqual({
-      rank: 3300,
-      record: 3300,
+      ladderRanking: 3300,
+      ladderPoint: 3300,
     });
     await expect(service.getUserRankBySeason(invalidgetDto1)).rejects.toThrow(
       new BadRequestException(),
@@ -205,30 +205,30 @@ describe('RankService', () => {
       {
         user: users[0],
         season: seasons[0],
-        rank: 10,
-        record: 1100,
-        bestRank: 1,
-        bestRecord: 1111,
+        ladderRanking: 10,
+        ladderPoint: 1100,
+        highestRank: 1,
+        highestPoint: 1111,
       },
       {
         user: users[0],
         season: seasons[1],
-        rank: 20,
-        record: 2200,
-        bestRank: 2,
-        bestRecord: 2222,
+        ladderRanking: 20,
+        ladderPoint: 2200,
+        highestRank: 2,
+        highestPoint: 2222,
       },
       {
         user: users[0],
         season: seasons[2],
-        rank: 3300,
-        record: 3300,
-        bestRank: 3,
-        bestRecord: 3333,
+        ladderRanking: 3300,
+        ladderPoint: 3300,
+        highestRank: 3,
+        highestPoint: 3333,
       },
     ]);
 
-    //Dto로 반환할때는 bestRank, bestRecord만 반환하도록 수정해야함
+    //Dto로 반환할때는 highestRank, highestPoint만 반환하도록 수정해야함
     //const getDto1: GetRankDto = { userId: users[0].id, seasonId: seasons[0].id };// 시즌1데이터
     //const getDto2: GetRankDto = { userId: users[0].id, seasonId: seasons[1].id };// 시즌2데이터
     //const getDto3: GetRankDto = { userId: users[0].id, seasonId: seasons[2].id };// 시즌3데이터
@@ -243,16 +243,16 @@ describe('RankService', () => {
 
     //then
     expect(result1).toEqual({
-      bestRank: 1,
-      bestRecord: 1111,
+      highestRank: 1,
+      highestPoint: 1111,
     });
     expect(result2).toEqual({
-      bestRank: 2,
-      bestRecord: 2222,
+      highestRank: 2,
+      highestPoint: 2222,
     });
     expect(result3).toEqual({
-      bestRank: 3,
-      bestRecord: 3333,
+      highestRank: 3,
+      highestPoint: 3333,
     });
     await expect(
       service.getUserBestRankBySeason(invalidgetDto1),
