@@ -37,7 +37,6 @@ describe('JwtStrategy', () => {
   });
 
   afterEach(async () => {
-    // afterEach가 없어서 일단 만들었는데 여기가 맞는지 모르겠음
     jest.resetAllMocks();
     await dataSources.dropDatabase();
     await dataSources.destroy();
