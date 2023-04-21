@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 import { User } from 'src/user/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { AppModule } from 'src/app.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { RoleType } from '../global/utils/enum.user.roletype';
+import { RoleType } from '../../global/utils/enum.user.roletype';
 import { UsersDetailDto } from 'src/user/dto/users.detail.dto';
 import { JwtStrategy } from './auth.jwt.strategy';
 import { JwtService } from '@nestjs/jwt';
-import { UserDto } from './user.dto';
+import { AuthDto } from '../dto/auth.dto';
 import { UnauthorizedException } from '@nestjs/common';
 
 describe('JwtStrategy', () => {
