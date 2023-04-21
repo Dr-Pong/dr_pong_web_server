@@ -1,26 +1,28 @@
-import { AchievementStatus } from 'src/user-achievemet/dto/enum.achivement.status';
+import { CollectableStatus } from 'src/global/type/enum.collectable.status';
 import { UserAchievement } from 'src/user-achievemet/user-achievement.entity';
+import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
 
 export class UserCollectablesStatus {
-  private collectables: AchievementStatus[];
+  private collectables: CollectableStatus[];
 
   constructor(length: number) {
     this.collectables = Array.from(
       { length: length },
-      () => AchievementStatus.UNACHIEVED,
+      () => CollectableStatus.UNACHIEVED,
     );
   }
 
-  getStatus(id: number): AchievementStatus {
+  getStatus(id: number): CollectableStatus {
     return this.collectables[id - 1];
   }
 
-  setAchievement(userAchievements: UserAchievement[]) {
-    for (const c of userAchievements) {
-      this.collectables[c.achievement.id - 1] =
+  setStatus(userCollectable: UserAchievement[] | UserEmoji[]) {
+    for (const c of userCollectable) {
+      const id = c instanceof UserAchievement ? c.achievement.id : c.emoji.id;
+      this.collectables[id - 1] =
         c.isSelected === true
-          ? AchievementStatus.SELECTED
-          : AchievementStatus.ACHIEVED;
+          ? CollectableStatus.SELECTED
+          : CollectableStatus.ACHIEVED;
     }
   }
 }

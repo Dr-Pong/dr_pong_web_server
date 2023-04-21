@@ -101,6 +101,22 @@ describe('UserEmojiService', () => {
         name: 'emoji5',
         imageUrl: 'emojiImageUrl5',
       },
+      {
+        name: 'emoji6',
+        imageUrl: 'emojiImageUrl6',
+      },
+      {
+        name: 'emoji7',
+        imageUrl: 'emojiImageUrl7',
+      },
+      {
+        name: 'emoji8',
+        imageUrl: 'emojiImageUrl8',
+      },
+      {
+        name: 'emoji9',
+        imageUrl: 'emojiImageUrl9',
+      },
     ]);
   });
 
@@ -110,7 +126,7 @@ describe('UserEmojiService', () => {
     await dataSources.destroy();
   });
 
-  it('유저 이모지 전체 조회 (false요청)', async () => {
+  it('유저 이모지 전체 Get(false요청)', async () => {
     //given
     await userEmojiRepository.save([
       {
@@ -185,7 +201,7 @@ describe('UserEmojiService', () => {
     expect(user2AllEmojies.emojies[4].status).toBe('unachieved');
   });
 
-  it('유저 선택 이모지 조회 (true요청)', async () => {
+  it('유저 선택 이모지 Get (true요청)', async () => {
     //given
     await userEmojiRepository.save([
       {
@@ -250,10 +266,10 @@ describe('UserEmojiService', () => {
     expect(user0SelectedEmojis.emojies[2].name).toBe(emojies[2].name);
     expect(user0SelectedEmojis.emojies[3].name).toBe(emojies[3].name);
 
-    expect(user1SelectedEmojis.emojies[3].name).toBe(emojies[3].name);
+    expect(user1SelectedEmojis.emojies[0].name).toBe(emojies[3].name);
   });
 
-  it('유저 이모지 수정 (false/ true 요청을 true로 변환)', async () => {
+  it('유저 이모지 Patch (false/ true 요청을 true로 변환)', async () => {
     //get
     await userEmojiRepository.save([
       {
@@ -312,7 +328,7 @@ describe('UserEmojiService', () => {
     //일부 없는 emoji에 접근
     const invalidUpdateDto1: PatchUserEmojiesDto = {
       userId: users[2].id,
-      emojiesId: [emojies[1].id, emojies[2].id, emojies[6].id],
+      emojiesId: [emojies[1].id, emojies[2].id, emojies[5].id],
     };
     //전부 없는 emoji에 접근
     const invalidUpdateDto2: PatchUserEmojiesDto = {

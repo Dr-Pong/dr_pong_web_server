@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UserAchievement } from './user-achievement.entity';
 import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
 import {
   UserAchievementDto,
   UserAchievementsDto,
 } from './dto/user.achievements.dto';
-import { AchievementStatus } from './dto/enum.achivement.status';
+import { CollectableStatus } from '../global/type/enum.collectable.status';
 import { Achievemet } from 'src/achievemet/achievement.entity';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
@@ -34,7 +34,7 @@ export class UserAchievemetService {
         return {
           id: userAchievement.achievement.id,
           name: userAchievement.achievement.name,
-          status: AchievementStatus.SELECTED,
+          status: CollectableStatus.SELECTED,
         };
       });
       const responseDto: UserAchievementsDto = {
@@ -49,7 +49,7 @@ export class UserAchievemetService {
     });
     const achievements: UserAchievementDto[] = [];
     const status = new UserCollectablesStatus(allAchievement.length);
-    status.setAchievement(userAchievement); // userAchievement 에 있는 status 를 allAchievement 에 변경
+    status.setStatus(userAchievement); // userAchievement 에 있는 status 를 allAchievement 에 변경
 
     for (const c of allAchievement) {
       achievements.push({
@@ -65,24 +65,31 @@ export class UserAchievemetService {
     return responseDto;
   }
 
-  //patch user achievement
-  async patchUserAchievements(getDto: PatchUserAchievementsDto): Promise<void> {
-    const savedAchievements: UserAchievement[] = [];
-    for (const achieveId of getDto.achievementsId) {
-      const userAchievement = await this.userAchievementRepository.findOne({
+  //patch user achievement Patch 가 old 랑 to_change로 저장하고 return 하는 로직을 구현해야한다
+  async patchUserAchievements(
+    patchDto: PatchUserAchievementsDto,
+  ): Promise<void> {
+    const old_achievements: UserAchievement[] =
+      await this.userAchievementRepository.find({
+        where: { user: { id: patchDto.userId }, isSelected: true },
+      });
+    const to_change_achievements: UserAchievement[] =
+      await this.userAchievementRepository.find({
         where: {
-          user: { id: getDto.userId },
-          achievement: { id: achieveId },
+          user: { id: patchDto.userId },
+          achievement: In(patchDto.achievementsId),
         },
       });
-      if (!userAchievement) {
-        throw new BadRequestException('No such Achievements');
-      }
-      savedAchievements.push(userAchievement);
+    if (to_change_achievements.length !== patchDto.achievementsId.length) {
+      throw await new BadRequestException('No such Achievements');
     }
-    for (const c of savedAchievements) {
+    for (const c of old_achievements) {
+      c.isSelected = false;
+    }
+    await this.userAchievementRepository.save(old_achievements);
+    for (const c of to_change_achievements) {
       c.isSelected = true;
     }
-    await this.userAchievementRepository.save(savedAchievements);
+    await this.userAchievementRepository.save(to_change_achievements);
   }
 }
