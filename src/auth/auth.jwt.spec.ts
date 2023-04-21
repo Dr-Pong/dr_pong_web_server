@@ -9,6 +9,7 @@ import { UsersDetailDto } from 'src/user/dto/users.detail.dto';
 import { JwtStrategy } from './auth.jwt.strategy';
 import { JwtService } from '@nestjs/jwt';
 import { UserDto } from './user.dto';
+import { UnauthorizedException } from '@nestjs/common';
 
 describe('JwtStrategy', () => {
   let jwtStrategy: JwtStrategy;
@@ -66,13 +67,11 @@ describe('JwtStrategy', () => {
       id: admin.id,
       nickname: admin.nickname,
       roleType: admin.roleType,
-      imageUrl: admin.imageUrl
     });
     const normalToken = jwtService.sign({
       id: normalUser.id,
       nickname: normalUser.nickname,
       roleType: normalUser.roleType,
-      imageUrl: normalUser.imageUrl
     });
     
     //find from DB
@@ -96,5 +95,26 @@ describe('JwtStrategy', () => {
     expect(findedNormalUser2.nickname).toBe(normalUser.nickname);
     // expect(findedAdmin2.roleType).toBe(RoleType.ADMIN);
     // expect(findedNormalUser2.roleType).toBe(RoleType.USER);
+
+    const notRegisteredUserToken = jwtService.sign({
+      id: normalUser.id,
+      nickname: admin.nickname,
+      // roleType: normalUser.roleType,
+    });
+    const invaliedFromToken = jwtService.sign({
+      name: normalUser.id,
+      nick: normalUser.nickname,
+      // roleType: normalUser.roleType,
+    });
+    console.log('time', Date.now);
+    const expiredToken = jwtService.sign({
+      id: normalUser.id,
+      nickname: normalUser.nickname,
+      // roleType: normalUser.roleType,
+    }, {expiresIn:0});
+
+    await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException());
+    await expect(jwtStrategy.validate(invaliedFromToken)).rejects.toThrow(new UnauthorizedException());
+    await expect(jwtStrategy.validate(expiredToken)).rejects.toThrow(new UnauthorizedException('token expired'));
   });
 });
