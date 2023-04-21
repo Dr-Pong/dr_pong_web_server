@@ -43,7 +43,7 @@ describe('JwtStrategy', () => {
     await dataSources.destroy();
   });
 
-  it('should be defined', async () => {
+  it('정상 작동 케이스', async () => {
     const admin = await userRepository.save(
       {
         nickname: 'admin',
@@ -99,6 +99,38 @@ describe('JwtStrategy', () => {
     const notRegisteredUserToken = jwtService.sign({
       id: normalUser.id,
       nickname: admin.nickname,
+      // roleType: normalUser.roleType,
+    });
+    const invaliedFromToken = jwtService.sign({
+      name: normalUser.id,
+      nick: normalUser.nickname,
+      // roleType: normalUser.roleType,
+    });
+    const expiredToken = jwtService.sign({
+      id: normalUser.id,
+      nickname: normalUser.nickname,
+      // roleType: normalUser.roleType,
+    }, {expiresIn:0});
+
+    await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException());
+    await expect(jwtStrategy.validate(invaliedFromToken)).rejects.toThrow(new UnauthorizedException());
+    await expect(jwtStrategy.validate(expiredToken)).rejects.toThrow(new UnauthorizedException('jwt expired'));
+  });
+
+  it('에러 케이스', async () => {
+    const normalUser = await userRepository.save(
+      {
+        nickname: 'admin',
+        email: 'admin@email',
+        imageUrl: 'admin.png',
+        level: 1,
+        statusMessage: 'im admin',
+        roleType: RoleType.ADMIN,
+      },)
+
+    const notRegisteredUserToken = jwtService.sign({
+      id: normalUser.id,
+      nickname: 'noNickName',
       // roleType: normalUser.roleType,
     });
     const invaliedFromToken = jwtService.sign({
