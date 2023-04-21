@@ -29,8 +29,8 @@ export class Rank extends BaseTimeEntity {
   ladderPoint: number;
 
   @Column()
-  bestRanking: number;
+  highestRanking: number;
 
   @Column()
-  bestPoint: number;
+  highestPoint: number;
 }
