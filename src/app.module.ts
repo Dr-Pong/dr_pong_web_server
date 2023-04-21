@@ -9,6 +9,7 @@ import { typeORMConfig } from './configs/typeorm.config';
 import { AchievemetModule } from './achievemet/achievemet.module';
 import { UserAchievemetService } from './user-achievemet/user-achievemet.service';
 import { UserAchievemetModule } from './user-achievemet/user-achievemet.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UserAchievemetModule } from './user-achievemet/user-achievemet.module';
     UsertitleModule,
     AchievemetModule,
     UserAchievemetModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserAchievemetService],
