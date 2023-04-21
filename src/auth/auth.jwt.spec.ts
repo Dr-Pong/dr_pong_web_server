@@ -106,7 +106,6 @@ describe('JwtStrategy', () => {
       nick: normalUser.nickname,
       // roleType: normalUser.roleType,
     });
-    console.log('time', Date.now);
     const expiredToken = jwtService.sign({
       id: normalUser.id,
       nickname: normalUser.nickname,
@@ -115,6 +114,6 @@ describe('JwtStrategy', () => {
 
     await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException());
     await expect(jwtStrategy.validate(invaliedFromToken)).rejects.toThrow(new UnauthorizedException());
-    await expect(jwtStrategy.validate(expiredToken)).rejects.toThrow(new UnauthorizedException('token expired'));
+    await expect(jwtStrategy.validate(expiredToken)).rejects.toThrow(new UnauthorizedException('jwt expired'));
   });
 });
