@@ -78,52 +78,20 @@ describe('RankService', () => {
       {
         name: 'testseason1',
         startTime: '2021-01-01',
+        endTime: '2021-01-08',
         imageUrl: 'testurl1',
       },
       {
         name: 'testseason2',
         startTime: '2022-01-01',
+        endTime: '2022-01-08',
         imageUrl: 'testurl2',
       },
       {
         name: 'testseason3',
         startTime: '2023-01-01',
+        endTime: '2023-01-08',
         imageUrl: 'testurl3',
-      },
-      {
-        name: 'testseason4',
-        startTime: '2024-01-01',
-        imageUrl: 'testurl4',
-      },
-      {
-        name: 'testseason5',
-        startTime: '2025-01-01',
-        imageUrl: 'testurl5',
-      },
-      {
-        name: 'testseason6',
-        startTime: '2026-01-01',
-        imageUrl: 'testurl6',
-      },
-      {
-        name: 'testseason7',
-        startTime: '2027-01-01',
-        imageUrl: 'testurl7',
-      },
-      {
-        name: 'testseason8',
-        startTime: '2028-01-01',
-        imageUrl: 'testurl8',
-      },
-      {
-        name: 'testseason9',
-        startTime: '2029-01-01',
-        imageUrl: 'testurl9',
-      },
-      {
-        name: 'testseason10',
-        startTime: '2030-01-01',
-        imageUrl: 'testurl10',
       },
     ]);
   });

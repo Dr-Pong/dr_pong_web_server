@@ -13,5 +13,8 @@ export class Season extends BaseTimeEntity {
   startTime: Date;
 
   @Column()
+  endTime: Date;
+
+  @Column()
   imageUrl: string;
 }
