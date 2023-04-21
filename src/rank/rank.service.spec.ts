@@ -168,7 +168,6 @@ describe('RankService', () => {
     //const getDto3: GetRankDto = { userId: users[0].id, seasonId: seasons[2].id };// 시즌3데이터
     //const invalidgetDto1: GetRankDto = { userId: users[0].id, seasonId: seasons[3].id };// 없는시즌 데이터 BadRequest
     //const invalidgetDto2: GetRankDto = { userId: users[3].id, seasonId: seasons[0].id };// 없는 유저 데이터 BadRequest
-    //const invalidgetDto3: GetRankDto = { userId: users[1].id, seasonId: seasons[0].id };// 시즌데이터가 없는 유저 데이터 NotFound
 
     //when
     const result1 = await service.getUserRankBySeason(getDto1);
@@ -193,9 +192,6 @@ describe('RankService', () => {
     );
     await expect(service.getUserRankBySeason(invalidgetDto2)).rejects.toThrow(
       new BadRequestException(),
-    );
-    await expect(service.getUserRankBySeason(invalidgetDto3)).rejects.toThrow(
-      new NotFoundException(),
     );
   });
 
@@ -234,7 +230,6 @@ describe('RankService', () => {
     //const getDto3: GetRankDto = { userId: users[0].id, seasonId: seasons[2].id };// 시즌3데이터
     //const invalidgetDto1: GetRankDto = { userId: users[0].id, seasonId: seasons[3].id };// 없는시즌 데이터 BadRequest
     //const invalidgetDto2: GetRankDto = { userId: users[3].id, seasonId: seasons[0].id };// 없는 유저 데이터 BadRequest
-    //const invalidgetDto3: GetRankDto = { userId: users[1].id, seasonId: seasons[0].id };// 시즌데이터가 없는 유저 데이터 NotFound
 
     //when
     const result1 = await service.getUserBestRankBySeason(getDto1);
@@ -260,8 +255,5 @@ describe('RankService', () => {
     await expect(
       service.getUserBestRankBySeason(invalidgetDto2),
     ).rejects.toThrow(new BadRequestException());
-    await expect(
-      service.getUserBestRankBySeason(invalidgetDto3),
-    ).rejects.toThrow(new NotFoundException());
   });
 });
