@@ -1,4 +1,4 @@
-export class GetUserEmojiesDto {
+export class GetUserEmojisDto {
   userId: number;
   isSelected: boolean;
 }
