@@ -7,7 +7,7 @@ import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { UserEmojiDto, UseremojisDto } from './dto/user.emojis.dto';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { CollectableStatus } from 'src/global/type/enum.collectable.status';
-import { PatchUseremojisDto } from './dto/patch.user.emojis.dto';
+import { PatchUserEmojisDto } from './dto/patch.user.emojis.dto';
 
 @Injectable()
 export class UserEmojiService {
@@ -57,7 +57,7 @@ export class UserEmojiService {
   }
 
   //patchUseremojis함수
-  async patchUseremojis(patchDto: PatchUseremojisDto): Promise<void> {
+  async patchUseremojis(patchDto: PatchUserEmojisDto): Promise<void> {
     const old_emojis: UserEmoji[] = await this.userEmojiRepository.find({
       where: { user: { id: patchDto.userId }, isSelected: true },
     });

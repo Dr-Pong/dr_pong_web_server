@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserEmojiService } from './user-emoji.service';
-import { DataSource, Repository, RepositoryNotTreeError } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { UserEmoji } from './user-emoji.entity';
@@ -11,7 +11,7 @@ import { EmojiModule } from 'src/emoji/emoji.module';
 import { UserEmojiModule } from './user-emoji.module';
 import { async } from 'rxjs';
 import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
-import { PatchUseremojisDto } from './dto/patch.user.emojis.dto';
+import { PatchUserEmojisDto } from './dto/patch.user.emojis.dto';
 import { BadRequestException } from '@nestjs/common';
 
 describe('UserEmojiService', () => {
@@ -316,22 +316,22 @@ describe('UserEmojiService', () => {
     ]);
 
     // isSelected가 다 false인경우
-    const validUpdateDto1: PatchUseremojisDto = {
+    const validUpdateDto1: PatchUserEmojisDto = {
       userId: users[0].id,
       emojisId: [emojis[0].id, emojis[1].id, emojis[2].id, emojis[3].id],
     };
     //isSelected가 false와 true가 섞여서 온경우
-    const validUpdateDto2: PatchUseremojisDto = {
+    const validUpdateDto2: PatchUserEmojisDto = {
       userId: users[1].id,
       emojisId: [emojis[0].id, emojis[1].id, emojis[2].id],
     };
     //일부 없는 emoji에 접근
-    const invalidUpdateDto1: PatchUseremojisDto = {
+    const invalidUpdateDto1: PatchUserEmojisDto = {
       userId: users[2].id,
       emojisId: [emojis[1].id, emojis[2].id, emojis[5].id],
     };
     //전부 없는 emoji에 접근
-    const invalidUpdateDto2: PatchUseremojisDto = {
+    const invalidUpdateDto2: PatchUserEmojisDto = {
       userId: users[2].id,
       emojisId: [emojis[6].id, emojis[7].id, emojis[8].id],
     };
