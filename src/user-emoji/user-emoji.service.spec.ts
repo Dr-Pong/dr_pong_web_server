@@ -9,7 +9,6 @@ import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserModule } from 'src/user/user.module';
 import { EmojiModule } from 'src/emoji/emoji.module';
 import { UserEmojiModule } from './user-emoji.module';
-import { async } from 'rxjs';
 import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { PatchUserEmojisDto } from './dto/patch.user.emojis.dto';
 import { BadRequestException } from '@nestjs/common';
