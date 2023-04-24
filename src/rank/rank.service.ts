@@ -37,18 +37,23 @@ export class RankService {
   async getUserBestRank(
     getDto: GetUserBestRankStatDto,
   ): Promise<UserRankStatDto> {
-    const userRanks = await this.rankRepository.findOne({
+    const userRanks = await this.rankRepository.find({
       where: { user: { id: getDto.userId } },
+      order: { highestRanking: 'ASC' },
     });
-    if (!userRanks) {
-      throw new BadRequestException('No Rank Data');
+
+    if (!userRanks || userRanks.length === 0) {
+      throw new BadRequestException('No BEST Rank Data');
     }
-    const userBestRank = userRanks.highestRanking;
-    const userBestRecord = userRanks.highestPoint;
+
+    const bestRank = userRanks[0].highestRanking;
+    const bestRecord = userRanks[0].highestPoint;
+
     const responseDto: UserRankStatDto = {
-      rank: userBestRank,
-      record: userBestRecord,
+      rank: bestRank,
+      record: bestRecord,
     };
+
     return responseDto;
   }
 }
