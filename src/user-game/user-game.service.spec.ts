@@ -219,5 +219,17 @@ describe('UserGameService', () => {
     expect(result4.win).toBe(0);
     expect(result4.lose).toBe(0);
     expect(result4.ties).toBe(0);
+
+    //game[0]의 데이터 user[0], user[1] 의 경기
+    expect(savedUserGames[0].game).toEqual(games[0]);
+    expect(savedUserGames[3].game).toEqual(games[0]);
+
+    //game[1]의 데이터 user[0], user[1] 의 경기
+    expect(savedUserGames[1].game).toEqual(games[1]);
+    expect(savedUserGames[4].game).toEqual(games[1]);
+
+    //game[2]의 데이터 user[0], user[2] 의 경기
+    expect(savedUserGames[2].game).toEqual(games[2]);
+    expect(savedUserGames[5].game).toEqual(games[2]);
   });
 });
