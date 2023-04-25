@@ -164,6 +164,8 @@ describe('RankService', () => {
     const result1 = await service.getUserRankBySeason(getDto1);
     const result2 = await service.getUserRankBySeason(getDto2);
     const result3 = await service.getUserRankBySeason(getDto3);
+    const result4 = await service.getUserRankBySeason(invalidgetDto1);
+    const result5 = await service.getUserRankBySeason(invalidgetDto2);
 
     //then
     expect(result1.rank).toEqual(savedRank[0].ladderRank);
@@ -174,12 +176,9 @@ describe('RankService', () => {
     expect(result2.record).toEqual(savedRank[1].ladderPoint);
     expect(result3.record).toEqual(savedRank[2].ladderPoint);
 
-    await expect(service.getUserRankBySeason(invalidgetDto1)).rejects.toThrow(
-      new BadRequestException('No Rank Data'),
-    );
-    await expect(service.getUserRankBySeason(invalidgetDto2)).rejects.toThrow(
-      new BadRequestException('No Rank Data'),
-    );
+    //없는시즌 데이터는 null로 반환
+    expect(result4).toEqual({ rank: null, record: null });
+    expect(result5).toEqual({ rank: null, record: null });
   });
 
   it('유저 시즌 최고점 랭크데이터 반환', async () => {
@@ -241,6 +240,7 @@ describe('RankService', () => {
     const result2 = await service.getUserBestRank(getDto2);
     const result3 = await service.getUserBestRank(getDto3);
     const result4 = await service.getUserBestRank(getDto4);
+    const result5 = await service.getUserBestRank(invalidgetDto1);
 
     //then
     expect(result1.rank).toEqual(savedBestRank[1].highestRanking);
@@ -253,8 +253,7 @@ describe('RankService', () => {
     expect(result3.record).toEqual(savedBestRank[1].highestPoint);
     expect(result4.record).toEqual(savedBestRank[3].highestPoint);
 
-    await expect(service.getUserBestRank(invalidgetDto1)).rejects.toThrow(
-      new BadRequestException('No BEST Rank Data'),
-    );
+    //없는시즌 데이터는 null로 반환
+    expect(result5).toEqual({ rank: null, record: null });
   });
 });
