@@ -9,6 +9,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Season } from 'src/season/season.entity';
 import { GetUserGameStatDto } from './dto/get.user.game.stat.dot';
 import { UserGameStatDto } from './dto/user.game.stat.dto';
+import { GetUserGameSeasonStatDto } from './dto/get.user.game.season.stat.dto';
 
 //밥묵고와서 테스트 파일 만들기
 describe('UserGameService', () => {
@@ -125,7 +126,7 @@ describe('UserGameService', () => {
     await dataSources.destroy();
   });
 
-  it('유저의 게임 데이터 반환', async () => {
+  it('유저의 전체 게임 데이터 반환', async () => {
     //given
     //userGame 5개 생성
     const savedUserGames = await userGameRepository.save([
@@ -191,10 +192,10 @@ describe('UserGameService', () => {
     };
 
     //when
-    const result1 = await service.getUserGameStat(getDto1);
-    const result2 = await service.getUserGameStat(getDto2);
-    const result3 = await service.getUserGameStat(getDto3);
-    const result4 = await service.getUserGameStat(getDto4);
+    const result1 = await service.getUserGameTotalStat(getDto1);
+    const result2 = await service.getUserGameTotalStat(getDto2);
+    const result3 = await service.getUserGameTotalStat(getDto3);
+    const result4 = await service.getUserGameTotalStat(getDto4);
 
     //then
 
@@ -231,5 +232,132 @@ describe('UserGameService', () => {
     //game[2]의 데이터 user[0], user[2] 의 경기
     expect(savedUserGames[2].game).toEqual(games[2]);
     expect(savedUserGames[5].game).toEqual(games[2]);
+  });
+
+  it('유저의 시즌별 게임 데이터 반환', async () => {
+    //given
+    //userGame 5개 생성
+    const savedUserGames = await userGameRepository.save([
+      //user[0]의 게임 3개
+      {
+        user: users[0],
+        game: games[0],
+        score: 3,
+        lpChange: 100,
+        lpResult: 100,
+      },
+      {
+        user: users[0],
+        game: games[1],
+        score: 2,
+        lpChange: -100,
+        lpResult: 0,
+      },
+      {
+        user: users[0],
+        game: games[2],
+        score: 2,
+        lpChange: 600,
+        lpResult: 600,
+      },
+      //user[1]의 게임 2개
+      {
+        user: users[1],
+        game: games[0],
+        score: 1,
+        lpChange: -300,
+        lpResult: -300,
+      },
+      {
+        user: users[1],
+        game: games[1],
+        score: 4,
+        lpChange: 400,
+        lpResult: 100,
+      },
+      //user[2]의 게임 1개
+      {
+        user: users[2],
+        game: games[2],
+        score: 5,
+        lpChange: -500,
+        lpResult: -500,
+      },
+    ]);
+
+    const getU0S0Dto: GetUserGameSeasonStatDto = {
+      userId: users[0].id,
+      seasonId: seasons[0].id,
+    }; //user[0]의 1시즌 데이터
+    const getU0S1Dto: GetUserGameSeasonStatDto = {
+      userId: users[0].id,
+      seasonId: seasons[1].id,
+    }; //user[0]의 2시즌 데이터
+    const getU0S2Dto: GetUserGameSeasonStatDto = {
+      userId: users[0].id,
+      seasonId: seasons[2].id,
+    }; //user[0]의 3시즌 데이터
+
+    const getU1S0Dto: GetUserGameSeasonStatDto = {
+      userId: users[1].id,
+      seasonId: seasons[0].id,
+    }; //user[1]의 1시즌 데이터
+    const getU1S1Dto: GetUserGameSeasonStatDto = {
+      userId: users[1].id,
+      seasonId: seasons[1].id,
+    }; //user[1]의 2시즌 데이터
+
+    const getU2S2Dto: GetUserGameSeasonStatDto = {
+      userId: users[2].id,
+      seasonId: seasons[2].id,
+    }; //user[2]의 3시즌 데이터
+
+    //when
+    const resultU0S0 = await service.getUserGameSeasonStat(getU0S0Dto);
+    const resultU0S1 = await service.getUserGameSeasonStat(getU0S1Dto);
+    const resultU0S2 = await service.getUserGameSeasonStat(getU0S2Dto);
+
+    const resultU1S0 = await service.getUserGameSeasonStat(getU1S0Dto);
+    const resultU1S1 = await service.getUserGameSeasonStat(getU1S1Dto);
+
+    const resultU2S2 = await service.getUserGameSeasonStat(getU2S2Dto);
+
+    //then
+
+    //user[0]의 1시즌 데이터
+    expect(resultU0S0.winRate).toBe(100);
+    expect(resultU0S0.win).toBe(1);
+    expect(resultU0S0.lose).toBe(0);
+    expect(resultU0S0.ties).toBe(0);
+
+    //user[0]의 2시즌 데이터
+    expect(resultU0S1.winRate).toBe(0);
+    expect(resultU0S1.win).toBe(0);
+    expect(resultU0S1.lose).toBe(1);
+    expect(resultU0S1.ties).toBe(0);
+
+    //user[0]의 3시즌 데이터
+    expect(resultU0S2.winRate).toBe(100);
+    expect(resultU0S2.win).toBe(1);
+    expect(resultU0S2.lose).toBe(0);
+    expect(resultU0S2.ties).toBe(0);
+
+    //user[1]의 1시즌 데이터
+    expect(resultU1S0.winRate).toBe(0);
+    expect(resultU1S0.win).toBe(0);
+    expect(resultU1S0.lose).toBe(1);
+    expect(resultU1S0.ties).toBe(0);
+
+    //user[1]의 2시즌 데이터
+    expect(resultU1S1.winRate).toBe(100);
+    expect(resultU1S1.win).toBe(1);
+    expect(resultU1S1.lose).toBe(0);
+    expect(resultU1S1.ties).toBe(0);
+
+    //user[2]의 3시즌 데이터
+    expect(resultU2S2.winRate).toBe(0);
+    expect(resultU2S2.win).toBe(0);
+    expect(resultU2S2.lose).toBe(1);
+    expect(resultU2S2.ties).toBe(0);
   });
 });
