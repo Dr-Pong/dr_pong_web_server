@@ -321,7 +321,7 @@ describe('UserAchievemetService', () => {
       achievementsId: [achieves[4].id, achieves[3].id],
     };
 
-    //when
+    // //when
     await service.patchUserAchievements(validUpdateDto1);
     await service.patchUserAchievements(validUpdateDto2);
 
@@ -333,8 +333,7 @@ describe('UserAchievemetService', () => {
       where: { user: { id: users[1].id } },
     });
 
-    // console.log(results1);
-    //then
+    // then
     expect(results1[0].isSelected).toBe(true);
     expect(results1[1].isSelected).toBe(true);
     expect(results1[2].isSelected).toBe(true);
@@ -344,7 +343,6 @@ describe('UserAchievemetService', () => {
     expect(results2[1].isSelected).toBe(true);
     expect(results2[2].isSelected).toBe(true);
     await expect(
-      // 이게 예외를 받는 맞는방법이다
       service.patchUserAchievements(invalidUpdateDto1),
     ).rejects.toThrow(new BadRequestException('No such Achievements'));
 

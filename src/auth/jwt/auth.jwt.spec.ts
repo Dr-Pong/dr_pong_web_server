@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 import { User } from 'src/user/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { AppModule } from 'src/app.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { RoleType } from '../global/utils/enum.user.roletype';
+import { RoleType } from '../../global/utils/enum.user.roletype';
 import { UsersDetailDto } from 'src/user/dto/users.detail.dto';
 import { JwtStrategy } from './auth.jwt.strategy';
 import { JwtService } from '@nestjs/jwt';
-import { UserDto } from './user.dto';
-import { UnauthorizedException } from '@nestjs/common';
+import { AuthDto } from '../dto/auth.dto';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 describe('JwtStrategy', () => {
   let jwtStrategy: JwtStrategy;
@@ -37,7 +37,6 @@ describe('JwtStrategy', () => {
   });
 
   afterEach(async () => {
-    // afterEach가 없어서 일단 만들었는데 여기가 맞는지 모르겠음
     jest.resetAllMocks();
     await dataSources.dropDatabase();
     await dataSources.destroy();
@@ -95,49 +94,53 @@ describe('JwtStrategy', () => {
     expect(findedNormalUser2.nickname).toBe(normalUser.nickname);
     // expect(findedAdmin2.roleType).toBe(RoleType.ADMIN);
     // expect(findedNormalUser2.roleType).toBe(RoleType.USER);
-
-    const notRegisteredUserToken = jwtService.sign({
-      id: normalUser.id,
-      nickname: admin.nickname,
-      // roleType: normalUser.roleType,
-    });
-    const invaliedFromToken = jwtService.sign({
-      name: normalUser.id,
-      nick: normalUser.nickname,
-      // roleType: normalUser.roleType,
-    });
-    const expiredToken = jwtService.sign({
-      id: normalUser.id,
-      nickname: normalUser.nickname,
-      // roleType: normalUser.roleType,
-    }, {expiresIn:0});
-
-    await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException());
-    await expect(jwtStrategy.validate(invaliedFromToken)).rejects.toThrow(new UnauthorizedException());
-    await expect(jwtStrategy.validate(expiredToken)).rejects.toThrow(new UnauthorizedException('jwt expired'));
   });
 
   it('에러 케이스', async () => {
     const normalUser = await userRepository.save(
       {
-        nickname: 'admin',
-        email: 'admin@email',
-        imageUrl: 'admin.png',
+        nickname: 'normal',
+        email: 'normal@email',
+        imageUrl: 'normal.png',
         level: 1,
-        statusMessage: 'im admin',
-        roleType: RoleType.ADMIN,
+        statusMessage: 'im normal',
+        roleType: RoleType.USER,
+      },)
+      const noNickNameUser = await userRepository.save(
+        {
+          nickname: '',
+          email: 'normal@email',
+          imageUrl: 'normal.png',
+          level: 1,
+          statusMessage: 'im normal',
+          roleType: RoleType.USER,
+        },)
+      const npc = await userRepository.save(
+      {
+        nickname: 'npc',
+        email: 'npc@email',
+        imageUrl: 'npc.png',
+        level: 1,
+        statusMessage: 'im npc',
+        roleType: RoleType.USER,
       },)
 
     const notRegisteredUserToken = jwtService.sign({
+      id: -1,
+      nickname: 'not Rejistered',
+      // roleType: normalUser.roleType,
+    });
+    const noNickNameUserToken = jwtService.sign({
+      id:noNickNameUser.id,
+      nickname: noNickNameUser.nickname,
+      // roleType: normalUser.roleType,
+    })
+    const invalidUserToken = jwtService.sign({
       id: normalUser.id,
-      nickname: 'noNickName',
+      nickname: 'npc',
       // roleType: normalUser.roleType,
     });
-    const invaliedFromToken = jwtService.sign({
-      name: normalUser.id,
-      nick: normalUser.nickname,
-      // roleType: normalUser.roleType,
-    });
+    const invaliedFormetToken = 'wrong token';
     const expiredToken = jwtService.sign({
       id: normalUser.id,
       nickname: normalUser.nickname,
@@ -145,7 +148,9 @@ describe('JwtStrategy', () => {
     }, {expiresIn:0});
 
     await expect(jwtStrategy.validate(notRegisteredUserToken)).rejects.toThrow(new UnauthorizedException());
-    await expect(jwtStrategy.validate(invaliedFromToken)).rejects.toThrow(new UnauthorizedException());
+    await expect(jwtStrategy.validate(noNickNameUserToken)).rejects.toThrow(new UnauthorizedException('nickname required'));
+    await expect(jwtStrategy.validate(invalidUserToken)).rejects.toThrow(new UnauthorizedException('invalid token'));
+    await expect(jwtStrategy.validate(invaliedFormetToken)).rejects.toThrow(new UnauthorizedException('invalid token'));
     await expect(jwtStrategy.validate(expiredToken)).rejects.toThrow(new UnauthorizedException('jwt expired'));
   });
 });

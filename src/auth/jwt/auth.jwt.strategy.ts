@@ -25,6 +25,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	async validate(payload) : Promise<AuthDto> {
 		const token : TokenInterface = this.jwtService.verify(payload);
 
+		if (token.nickname === '')
+			throw new UnauthorizedException('nickname required');
 		const user = await this.findUser(token);
 		this.validateUser(token, user);
 		return user;
@@ -49,6 +51,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 	validateUser(token: TokenInterface, user: AuthDto): void {
 		if (token.id !== user.id || token.nickname !== user.nickname) // RoleType 검증 필요
-			throw (new UnauthorizedException());
+			throw (new UnauthorizedException('invalid token'));
 	}
 }

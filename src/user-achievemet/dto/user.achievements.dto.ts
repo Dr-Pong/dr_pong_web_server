@@ -1,11 +1,11 @@
-import { AchievementStatus } from './enum.achivement.status';
+import { CollectableStatus } from '../../global/type/enum.collectable.status';
 
 export class UserAchievementDto {
   id: number;
 
   name: string;
 
-  status: AchievementStatus;
+  status: CollectableStatus;
 }
 
 export class UserAchievementsDto {
