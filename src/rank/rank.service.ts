@@ -25,11 +25,9 @@ export class RankService {
     });
 
     if (!userRanks) {
-      const userRank = null;
-      const userRecord = null;
       const responseDto: UserRankStatDto = {
-        rank: userRank,
-        record: userRecord,
+        rank: null,
+        record: null,
       };
       return responseDto;
     }
@@ -52,11 +50,9 @@ export class RankService {
     });
 
     if (!userRanks) {
-      const bestRank = null;
-      const bestRecord = null;
       const responseDto: UserRankStatDto = {
-        rank: bestRank,
-        record: bestRecord,
+        rank: null,
+        record: null,
       };
       return responseDto;
     }
