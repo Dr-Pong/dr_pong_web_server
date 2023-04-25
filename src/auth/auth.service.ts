@@ -37,20 +37,18 @@ export class AuthService {
 		let authdto : AuthDto;
 		if (!existUser) {
 			const newUser = await this.userRepository.save({
-				nickname:'',
 				email,
-				level:1,
-				imageUrl:'default_image',
-				statusMessage:'',
 			})
 			authdto = {
 				id:newUser.id,
 				nickname:newUser.nickname,
+				roleType:newUser.roleType,
 			};
 		} else {
 			authdto = {
 				id:existUser.id,
 				nickname:existUser.nickname,
+				roleType:existUser.roleType,
 			};
 		}
 		return authdto;
@@ -60,7 +58,7 @@ export class AuthService {
 		const token = this.jwtService.sign({
 			id: user.id,
 			nickname: user.nickname,
-			// roleType: user.roleType,
+			roleType: user.roleType,
 		})
 		return token;
 	}

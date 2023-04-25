@@ -44,7 +44,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		const existUser : AuthDto = {
 			id:userFromDb.id,
 			nickname:userFromDb.nickname,
-			// roleType:userFromDb.roleType,
+			roleType:userFromDb.roleType,
 		};
 		return existUser;
 	}
