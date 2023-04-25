@@ -1,0 +1,3 @@
+class JwtDto {
+	token:string
+}
