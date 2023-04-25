@@ -7,7 +7,7 @@ import { Game } from 'src/game/game.entity';
 import { AppModule } from 'src/app.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Season } from 'src/season/season.entity';
-import { GetUserGameStatDto } from './dto/get.user.game.stat.dot';
+import { GetUserGameTotalStatDto } from './dto/get.user.game.stat.dto';
 import { UserGameStatDto } from './dto/user.game.stat.dto';
 import { GetUserGameSeasonStatDto } from './dto/get.user.game.season.stat.dto';
 
@@ -177,17 +177,17 @@ describe('UserGameService', () => {
       },
     ]);
 
-    const getDto1: GetUserGameStatDto = {
+    const getDto1: GetUserGameTotalStatDto = {
       userId: users[0].id,
     };
-    const getDto2: GetUserGameStatDto = {
+    const getDto2: GetUserGameTotalStatDto = {
       userId: users[1].id,
     };
-    const getDto3: GetUserGameStatDto = {
+    const getDto3: GetUserGameTotalStatDto = {
       userId: users[2].id,
     };
     //user[3] 은 게임 데이터가 없음
-    const getDto4: GetUserGameStatDto = {
+    const getDto4: GetUserGameTotalStatDto = {
       userId: users[3].id,
     };
 
