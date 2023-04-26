@@ -78,7 +78,6 @@ export class TestService {
 	}
 
 	async createUserWithUnSelectedEmojis() : Promise<User> {
-		let emojisId: number[] = [];
 		const user : User = await this.userRepository.save({
 			nickname: 'userWithUEmoji',
 			email: 'emoji@mail.com',
@@ -88,7 +87,6 @@ export class TestService {
 		for (const c of this.emojis) {
 			if (4 < c.id)
 				continue;
-			emojisId.push(c.id);
 			await this.userEmojiRepository.save({
 				user: user,
 				emoji: c,
@@ -203,6 +201,45 @@ export class TestService {
 				selectedOrder: i < 3 ? i : null,
 			});
 		}
+		return user;
+	}
+
+	async createReverseSelectedEmojiUser(): Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithMixedEmoji',
+			email: 'emoji@mail.com',
+			imageUrl: 'basicImage',
+		});
+		this.users.push(user);
+		for (const c of this.emojis) {
+			if (4 < c.id)
+				continue;
+			await this.userEmojiRepository.save({
+				user: user,
+				emoji: c,
+				selectedOrder: 4 - c.id,
+			})
+		}
+		return user;
+	}
+
+	async createMixedSelectedEmojiUser(): Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithMixedWithNullEmoji',
+			email: 'emoji@mail.com',
+			imageUrl: 'basicImage',
+		});
+		this.users.push(user);
+		await this.userEmojiRepository.save({
+			user: user,
+			emoji: this.emojis[2],
+			selectedOrder: 1,
+		})
+		await this.userEmojiRepository.save({
+			user: user,
+			emoji: this.emojis[0],
+			selectedOrder: 3,
+		})
 		return user;
 	}
 }
