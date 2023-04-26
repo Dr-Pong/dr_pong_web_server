@@ -10,6 +10,7 @@ import { AchievemetModule } from './achievemet/achievemet.module';
 import { UserAchievemetService } from './user-achievemet/user-achievemet.service';
 import { UserAchievemetModule } from './user-achievemet/user-achievemet.module';
 import { AuthModule } from './auth/auth.module';
+import { TestModule } from './test/test.module';
 
 @Module({
   imports: [
@@ -20,8 +21,9 @@ import { AuthModule } from './auth/auth.module';
     AchievemetModule,
     UserAchievemetModule,
     AuthModule,
+    TestModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UserAchievemetService],
+  providers: [AppService],
 })
 export class AppModule {}
