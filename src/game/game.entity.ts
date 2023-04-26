@@ -20,7 +20,7 @@ export class Game extends BaseTimeEntity {
   @Column({name: 'start_time' , type: 'date'})
   startTime: Date;
 
-  @Column({name: 'play_time', type: 'bigint'})
+  @Column({name: 'play_time', type: 'int'})
   playTime: number;
 
   @Column({name: 'type', type: 'varchar'})
