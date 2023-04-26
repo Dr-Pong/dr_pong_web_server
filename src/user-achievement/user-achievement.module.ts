@@ -4,11 +4,11 @@ import { Achievemet } from 'src/achievemet/achievement.entity';
 import { User } from 'src/user/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { UserAchievement } from './user-achievement.entity';
-import { UserAchievemetService } from './user-achievemet.service';
+import { UserAchievementService } from './user-achievement.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, UserAchievement, Achievemet])],
-  providers: [UserAchievemetService],
-  exports: [TypeOrmModule.forFeature([UserAchievement]), UserAchievemetService],
+  providers: [UserAchievementService],
+  exports: [TypeOrmModule.forFeature([UserAchievement]), UserAchievementService],
 })
-export class UserAchievemetModule {}
+export class UserAchievementModule {}

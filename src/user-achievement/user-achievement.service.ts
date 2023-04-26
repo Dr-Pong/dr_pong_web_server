@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Not, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { UserAchievement } from './user-achievement.entity';
 import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
 import {
@@ -13,7 +13,7 @@ import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
 
 @Injectable()
-export class UserAchievemetService {
+export class UserAchievementService {
   constructor(
     @InjectRepository(UserAchievement)
     private userAchievementRepository: Repository<UserAchievement>,
@@ -28,7 +28,7 @@ export class UserAchievemetService {
     if (getDto.isSelected == true) {
       //achieved이고 selected된 업적 return
       const selectAchievement = await this.userAchievementRepository.find({
-        where: { user: { id: getDto.userId }, selectedOrder: Not(null) },
+        where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
       });
       const achievements = selectAchievement.map((userAchievement) => {
         return {
@@ -73,7 +73,7 @@ export class UserAchievemetService {
       await this.userAchievementRepository.find({
         where: {
           user: { id: patchDto.userId },
-          selectedOrder: Not(null),
+          selectedOrder: Not(IsNull()),
         },
       });
     const to_change_achievement: UserAchievement[] =

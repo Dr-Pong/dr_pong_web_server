@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserEmojiService } from './user-emoji.service';
-import { DataSource, Not, Repository } from 'typeorm';
+import { DataSource, IsNull, Not, Repository } from 'typeorm';
 import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { PatchUserEmojisDto } from './dto/patch.user.emojis.dto';
 import { BadRequestException } from '@nestjs/common';
@@ -127,10 +127,6 @@ describe('UserEmojiService', () => {
 
     //then
     expect(selectedCase.emojis.length).toBe(4);
-    expect(unSelectedCase.emojis.length).toBe(0);
-    expect(noEmojiCase.emojis.length).toBe(0);
-
-    expect(selectedCase.emojis.length).toBeGreaterThan(0);
     expect(selectedCase.emojis[0].status).toBe('selected');
     expect(selectedCase.emojis[1].status).toBe('selected');
     expect(selectedCase.emojis[2].status).toBe('selected');
@@ -139,8 +135,17 @@ describe('UserEmojiService', () => {
     expect(selectedCase.emojis[1].id).toBe(2);
     expect(selectedCase.emojis[2].id).toBe(3);
     expect(selectedCase.emojis[3].id).toBe(4);
-    expect(unSelectedCase.emojis.length).toBe(0);
-    expect(noEmojiCase.emojis.length).toBe(0);
+  
+    expect(unSelectedCase.emojis.length).toBe(4);
+    expect(unSelectedCase.emojis[0]).toBe(null);
+    expect(unSelectedCase.emojis[1]).toBe(null);
+    expect(unSelectedCase.emojis[2]).toBe(null);
+    expect(unSelectedCase.emojis[3]).toBe(null);
+    expect(noEmojiCase.emojis.length).toBe(4);
+    expect(noEmojiCase.emojis[0]).toBe(null);
+    expect(noEmojiCase.emojis[1]).toBe(null);
+    expect(noEmojiCase.emojis[2]).toBe(null);
+    expect(noEmojiCase.emojis[3]).toBe(null);
 
     expect(reversedCase.emojis.length).toBeGreaterThan(0);
     expect(reversedCase.emojis[0].status).toBe('selected');
@@ -203,15 +208,15 @@ describe('UserEmojiService', () => {
     await service.patchUseremojis(mixedWithNullRequest);
 
     const orderedCase : UserEmoji[] = await userEmojiRepository.find({
-      where: { user: { id: orderedUser.id }, selectedOrder:Not(null) },
+      where: { user: { id: orderedUser.id }, selectedOrder:Not(IsNull()) },
       order:{selectedOrder:'ASC'},
     });
     const mixedCase : UserEmoji[] = await userEmojiRepository.find({
-      where: { user: { id: mixedUser.id }, selectedOrder:Not(null) },
+      where: { user: { id: mixedUser.id }, selectedOrder:Not(IsNull()) },
       order:{selectedOrder:'ASC'},
     });
     const mixeWithNullCase: UserEmoji[] = await userEmojiRepository.find({
-      where:{user:{id:mixedWithNullUser.id}, selectedOrder:Not(null)},
+      where:{user:{id:mixedWithNullUser.id}, selectedOrder:Not(IsNull())},
       order:{selectedOrder:'ASC'},
     })
 
@@ -220,26 +225,26 @@ describe('UserEmojiService', () => {
     expect(orderedCase[1].selectedOrder).toBe(1);
     expect(orderedCase[2].selectedOrder).toBe(2);
     expect(orderedCase[3].selectedOrder).toBe(3);
-    expect(orderedCase[0].emoji.id).toBe(0);
-    expect(orderedCase[1].emoji.id).toBe(1);
-    expect(orderedCase[2].emoji.id).toBe(2);
-    expect(orderedCase[3].emoji.id).toBe(3);
+    expect(orderedCase[0].emoji.id).toBe(1);
+    expect(orderedCase[1].emoji.id).toBe(2);
+    expect(orderedCase[2].emoji.id).toBe(3);
+    expect(orderedCase[3].emoji.id).toBe(4);
 
     expect(mixedCase.length).toBe(4);
     expect(mixedCase[0].selectedOrder).toBe(0);
     expect(mixedCase[1].selectedOrder).toBe(1);
     expect(mixedCase[2].selectedOrder).toBe(2);
     expect(mixedCase[3].selectedOrder).toBe(3);
-    expect(mixedCase[0].emoji.id).toBe(2);
-    expect(mixedCase[1].emoji.id).toBe(1);
-    expect(mixedCase[2].emoji.id).toBe(0);
-    expect(mixedCase[3].emoji.id).toBe(3);
+    expect(mixedCase[0].emoji.id).toBe(3);
+    expect(mixedCase[1].emoji.id).toBe(2);
+    expect(mixedCase[2].emoji.id).toBe(1);
+    expect(mixedCase[3].emoji.id).toBe(4);
 
     expect(mixeWithNullCase.length).toBe(2);
     expect(mixeWithNullCase[0].selectedOrder).toBe(1);
     expect(mixeWithNullCase[1].selectedOrder).toBe(3);
-    expect(mixeWithNullCase[0].emoji.id).toBe(3);
-    expect(mixeWithNullCase[1].emoji.id).toBe(1);
+    expect(mixeWithNullCase[0].emoji.id).toBe(4);
+    expect(mixeWithNullCase[1].emoji.id).toBe(2);
   });
 
   it('유저 이모지 Patch (invalid case)', async () => {
@@ -272,10 +277,10 @@ describe('UserEmojiService', () => {
     //validUpdateDto1 에대한 실행
     await expect(
       service.patchUseremojis(oneValidTwoInvalidRequest)
-    ,).rejects.toThrow(new BadRequestException('No such emojis'));
+    ,).rejects.toThrow(new BadRequestException('No such emoji'));
     //validUpdateDto2 에대한 실행
     await expect(
       service.patchUseremojis(allInvalidRequest)
-    ,).rejects.toThrow(new BadRequestException('No such emojis'));
+    ,).rejects.toThrow(new BadRequestException('No such emoji'));
   });
 });
