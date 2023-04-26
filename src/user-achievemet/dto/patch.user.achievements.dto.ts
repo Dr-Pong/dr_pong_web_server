@@ -1,4 +1,4 @@
 export class PatchUserAchievementsDto {
   userId: number;
-  achievementsId: number[];
+  achievementsId: (number | null) [];
 }
