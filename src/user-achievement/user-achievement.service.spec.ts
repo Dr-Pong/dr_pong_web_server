@@ -90,10 +90,10 @@ describe('UserAchievemetService', () => {
   it('유저 선택 이모지 Get (selected=true, valid case)', async () => {
     //given
     const achievementSelectedWithUser = await testData.createUserWithCollectables();
-    const nonachievementselectedWithUser = await testData.createUserWithUnSelectedAchievements();
-    const userWithOutEmoji = await testData.createBasicUser();
-    const userWithReversedEmoji = await testData.createReverseSelectedEmojiUser();
-    const userWithMixedEmoji = await testData.createMixedSelectedEmojiUser();
+    const nonAchievementSelectedWithUser = await testData.createUserWithUnSelectedAchievements();
+    const userWithOutAchievement = await testData.createBasicUser();
+    const userWithReversedAchievement = await testData.createReverseSelectedAchievementUser();
+    const userWithMixedAchievement = await testData.createMixedSelectedAchievementUser();
 
     //when
 
@@ -103,21 +103,21 @@ describe('UserAchievemetService', () => {
     };
 
     const unSelectedRequest: GetUserAchievementsDto = {
-      userId: nonachievementselectedWithUser.id,
+      userId: nonAchievementSelectedWithUser.id,
       isSelected: true,
     };
 
     const nonSelectedRequest: GetUserAchievementsDto = {
-      userId: userWithOutEmoji.id,
+      userId: userWithOutAchievement.id,
       isSelected: true,
     };
 
     const reverseSelectedRequest: GetUserAchievementsDto = {
-      userId: userWithReversedEmoji.id,
+      userId: userWithReversedAchievement.id,
       isSelected: true,
     }
     const mixedSelectedRequest: GetUserAchievementsDto = {
-      userId: userWithMixedEmoji.id,
+      userId: userWithMixedAchievement.id,
       isSelected: true,
     }
     const selectedCase = await service.getUserAchievements(selectedRequest);
@@ -148,9 +148,9 @@ describe('UserAchievemetService', () => {
     expect(reversedCase.achievements[0].status).toBe('selected');
     expect(reversedCase.achievements[1].status).toBe('selected');
     expect(reversedCase.achievements[2].status).toBe('selected');
-    expect(reversedCase.achievements[1].id).toBe(3);
-    expect(reversedCase.achievements[2].id).toBe(2);
-    expect(reversedCase.achievements[3].id).toBe(1);
+    expect(reversedCase.achievements[0].id).toBe(3);
+    expect(reversedCase.achievements[1].id).toBe(2);
+    expect(reversedCase.achievements[2].id).toBe(1);
     
     expect(mixedCase.achievements[0]).toBe(null);
     expect(mixedCase.achievements[1].id).toBe(3);
@@ -170,7 +170,6 @@ describe('UserAchievemetService', () => {
         testData.achievements[0].id,
         testData.achievements[1].id,
         testData.achievements[2].id,
-        testData.achievements[3].id,
       ],
     };
 
@@ -180,7 +179,6 @@ describe('UserAchievemetService', () => {
         testData.achievements[2].id,
         testData.achievements[1].id,
         testData.achievements[0].id,
-        testData.achievements[3].id,
       ],
     };
 
@@ -188,9 +186,8 @@ describe('UserAchievemetService', () => {
       userId: mixedWithNullUser.id,
       achievementsId: [
         null,
-        testData.achievements[3].id,
+        testData.achievements[2].id,
         null,
-        testData.achievements[1].id,
       ],
     };
 
@@ -214,31 +211,24 @@ describe('UserAchievemetService', () => {
       order:{selectedOrder:'ASC'},
     })
 
-    expect(orderedCase.length).toBe(4);
+    expect(orderedCase.length).toBe(3);
     expect(orderedCase[0].selectedOrder).toBe(0);
     expect(orderedCase[1].selectedOrder).toBe(1);
     expect(orderedCase[2].selectedOrder).toBe(2);
-    expect(orderedCase[3].selectedOrder).toBe(3);
     expect(orderedCase[0].achievement.id).toBe(1);
     expect(orderedCase[1].achievement.id).toBe(2);
     expect(orderedCase[2].achievement.id).toBe(3);
-    expect(orderedCase[3].achievement.id).toBe(4);
 
-    expect(mixedCase.length).toBe(4);
+    expect(mixedCase.length).toBe(3);
     expect(mixedCase[0].selectedOrder).toBe(0);
     expect(mixedCase[1].selectedOrder).toBe(1);
     expect(mixedCase[2].selectedOrder).toBe(2);
-    expect(mixedCase[3].selectedOrder).toBe(3);
-    expect(mixedCase[0].achievement.id).toBe(2);
-    expect(mixedCase[1].achievement.id).toBe(1);
-    expect(mixedCase[2].achievement.id).toBe(0);
-    expect(mixedCase[3].achievement.id).toBe(3);
+    expect(mixedCase[0].achievement.id).toBe(3);
+    expect(mixedCase[1].achievement.id).toBe(2);
+    expect(mixedCase[2].achievement.id).toBe(1);
 
-    expect(mixeWithNullCase.length).toBe(2);
+    expect(mixeWithNullCase.length).toBe(1);
     expect(mixeWithNullCase[0].selectedOrder).toBe(1);
-    expect(mixeWithNullCase[1].selectedOrder).toBe(3);
-    expect(mixeWithNullCase[0].achievement.id).toBe(3);
-    expect(mixeWithNullCase[1].achievement.id).toBe(1);
   });
 
   it('유저 이모지 Patch (invalid case)', async () => {

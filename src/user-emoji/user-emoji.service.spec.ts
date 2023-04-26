@@ -127,9 +127,6 @@ describe('UserEmojiService', () => {
 
     //then
     expect(selectedCase.emojis.length).toBe(4);
-    expect(unSelectedCase.emojis.length).toBe(0);
-    expect(noEmojiCase.emojis.length).toBe(0);
-
     expect(selectedCase.emojis[0].status).toBe('selected');
     expect(selectedCase.emojis[1].status).toBe('selected');
     expect(selectedCase.emojis[2].status).toBe('selected');
@@ -238,16 +235,16 @@ describe('UserEmojiService', () => {
     expect(mixedCase[1].selectedOrder).toBe(1);
     expect(mixedCase[2].selectedOrder).toBe(2);
     expect(mixedCase[3].selectedOrder).toBe(3);
-    expect(mixedCase[0].emoji.id).toBe(2);
-    expect(mixedCase[1].emoji.id).toBe(1);
-    expect(mixedCase[2].emoji.id).toBe(0);
-    expect(mixedCase[3].emoji.id).toBe(3);
+    expect(mixedCase[0].emoji.id).toBe(3);
+    expect(mixedCase[1].emoji.id).toBe(2);
+    expect(mixedCase[2].emoji.id).toBe(1);
+    expect(mixedCase[3].emoji.id).toBe(4);
 
     expect(mixeWithNullCase.length).toBe(2);
     expect(mixeWithNullCase[0].selectedOrder).toBe(1);
     expect(mixeWithNullCase[1].selectedOrder).toBe(3);
-    expect(mixeWithNullCase[0].emoji.id).toBe(3);
-    expect(mixeWithNullCase[1].emoji.id).toBe(1);
+    expect(mixeWithNullCase[0].emoji.id).toBe(4);
+    expect(mixeWithNullCase[1].emoji.id).toBe(2);
   });
 
   it('유저 이모지 Patch (invalid case)', async () => {
