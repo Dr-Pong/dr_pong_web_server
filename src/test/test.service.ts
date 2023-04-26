@@ -98,8 +98,7 @@ export class TestService {
 		return user;
 	}
 
-	async createUserWithUnSelectedAchievements() : Promise<{user:User, achievementsId:number[]}> {
-		let achievementsId : number[] = [];
+	async createUserWithUnSelectedAchievements() : Promise<User> {
 		const user : User = await this.userRepository.save({
 			nickname: 'userWithAchievements',
 			email: 'achv@mail.com',
@@ -109,18 +108,16 @@ export class TestService {
 		for (const c of this.achievements) {
 			if (3 < c.id)
 				continue;
-			achievementsId.push(c.id);
 			await this.userAchievementRepository.save({
 				user: user,
 				achievement: c,
 				selectedOrder: null,
 			})
 		}
-		return {user, achievementsId};
+		return user;
 	}
 
-	async createUserWithUnSelectedTitles() : Promise<{user:User, titlesId: number[]}> {
-		let titlesId : number[] = []
+	async createUserWithUnSelectedTitles() : Promise<User> {
 		const user : User = await this.userRepository.save({
 			nickname: 'userWithAchievements',
 			email: 'achv@mail.com',
@@ -129,14 +126,13 @@ export class TestService {
 		for (const c of this.titles) {
 			if (this.titles.length / 2 < c.id)
 				continue;
-			titlesId.push(c.id);
 			await this.userTitleRepository.save({
 				user: user,
 				title: c,
 				selectedOrder: false,
 			})
 		}
-		return {user, titlesId};
+		return user;
 	}
 
 	async createBasicSeasons(n: number) : Promise<Season[]> {
