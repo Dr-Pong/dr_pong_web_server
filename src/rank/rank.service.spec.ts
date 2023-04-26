@@ -9,99 +9,36 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { GetUserRankStatDto } from './dto/get.user.rank.stat.dto';
 import { GetUserBestRankStatDto } from './dto/get.user.best.rnak.stat.dto';
+import { TestService } from 'src/test/test.service';
 
 describe('RankService', () => {
   let service: RankService;
+  let testData: TestService;
   let dataSources: DataSource;
-  let userRepository: Repository<User>;
   let rankRepository: Repository<Rank>;
-  let seasonRepository: Repository<Season>;
-  let users: User[];
-  let seasons: Season[];
+
   //game 레포 + user-game레포 넣기
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
       providers: [
-        RankService,
-        {
-          provide: getRepositoryToken(User),
-          useClass: Repository,
-        },
         {
           provide: getRepositoryToken(Rank),
           useClass: Repository,
         },
-        {
-          provide: getRepositoryToken(Season),
-          useClass: Repository,
-        },
-        //여기도 game + user-game레포넣기
       ],
     }).compile();
 
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     rankRepository = module.get<Repository<Rank>>(getRepositoryToken(Rank));
-    seasonRepository = module.get<Repository<Season>>(
-      getRepositoryToken(Season),
-    );
-    //game + user-game레포 대입(대학입시아님)하기
     dataSources = module.get<DataSource>(DataSource);
     service = module.get<RankService>(RankService);
+    testData = module.get<TestService>(TestService);
 
-    //유저 3명 생성
-    users = await userRepository.save([
-      {
-        nickname: 'testnick1',
-        email: 'testemail1',
-        imageUrl: 'testurl1',
-        level: 1,
-        statusMessage: 'testmessage1',
-      },
-      {
-        nickname: 'testnick2',
-        email: 'testemail2',
-        imageUrl: 'testurl2',
-        level: 2,
-        statusMessage: 'testmessage2',
-      },
-      {
-        nickname: 'testnick3',
-        email: 'testemail3',
-        imageUrl: 'testurl3',
-        level: 3,
-        statusMessage: 'testmessage3',
-      },
-    ]);
-
-    //시즌 10개 생성
-    seasons = await seasonRepository.save([
-      {
-        name: 'testseason1',
-        startTime: '2021-01-01',
-        endTime: '2021-01-08',
-        imageUrl: 'testurl1',
-      },
-      {
-        name: 'testseason2',
-        startTime: '2022-01-01',
-        endTime: '2022-01-08',
-        imageUrl: 'testurl2',
-      },
-      {
-        name: 'testseason3',
-        startTime: '2023-01-01',
-        endTime: '2023-01-08',
-        imageUrl: 'testurl3',
-      },
-      {
-        name: 'testseason4',
-        startTime: '2024-01-01',
-        endTime: '2024-01-08',
-        imageUrl: 'testurl4',
-      },
-    ]);
+    await testData.createBasicSeasons(3);
+    await testData.createBasicUser();
+    await testData.createBasicUser();
+    await testData.createBasicRank();
   });
 
   afterEach(async () => {
@@ -112,53 +49,28 @@ describe('RankService', () => {
 
   it('유저 현시즌 랭크 데이터 반환', async () => {
     //given
-    const savedRank = await rankRepository.save([
-      {
-        user: users[0],
-        season: seasons[0],
-        ladderRank: 10,
-        ladderPoint: 1100,
-        highestRanking: 1,
-        highestPoint: 1111,
-      },
-      {
-        user: users[0],
-        season: seasons[1],
-        ladderRank: 20,
-        ladderPoint: 2200,
-        highestRanking: 2,
-        highestPoint: 2222,
-      },
-      {
-        user: users[0],
-        season: seasons[2],
-        ladderRank: 3300,
-        ladderPoint: 3300,
-        highestRanking: 3,
-        highestPoint: 3333,
-      },
-    ]);
+
     //Dto로 반환할때는 rank, bestRank만 반환하도록 수정해야함
     const getDto1: GetUserRankStatDto = {
-      userId: users[0].id,
-      seasonId: seasons[0].id,
+      userId: testData.ranks[0].user.id,
+      seasonId: testData.seasons[0].id,
     }; // 시즌1데이터
     const getDto2: GetUserRankStatDto = {
-      userId: users[0].id,
-      seasonId: seasons[1].id,
+      userId: testData.ranks[0].user.id,
+      seasonId: testData.seasons[1].id,
     }; // 시즌2데이터
     const getDto3: GetUserRankStatDto = {
-      userId: users[0].id,
-      seasonId: seasons[2].id,
+      userId: testData.ranks[0].user.id,
+      seasonId: testData.seasons[2].id,
     }; // 시즌3데이터
     const invalidgetDto1: GetUserRankStatDto = {
-      userId: users[0].id,
-      seasonId: seasons[3].id,
-    }; // 유저의 없는시즌 데이터 BadRequest
+      userId: testData.ranks[0].user.id,
+      seasonId: 4,
+    }; // 없는시즌 데이터
     const invalidgetDto2: GetUserRankStatDto = {
-      userId: users[2].id,
-      seasonId: seasons[0].id,
-    }; // 유저의 없는시즌 데이터 2 BadRequest
+      userId: 4,
+      seasonId: testData.seasons[0].id,
+    }; // 없는유저 데이터
 
     //when
     const result1 = await service.getUserRankBySeason(getDto1);
@@ -168,13 +80,15 @@ describe('RankService', () => {
     const result5 = await service.getUserRankBySeason(invalidgetDto2);
 
     //then
-    expect(result1.rank).toEqual(savedRank[0].ladderRank);
-    expect(result2.rank).toEqual(savedRank[1].ladderRank);
-    expect(result3.rank).toEqual(savedRank[2].ladderRank);
+    //랭크데이터가 잘 반환되는지 확인
+    expect(result1.rank).toEqual(testData.ranks[0].ladderRank);
+    expect(result2.rank).toEqual(testData.ranks[1].ladderRank);
+    expect(result3.rank).toEqual(testData.ranks[2].ladderRank);
 
-    expect(result1.record).toEqual(savedRank[0].ladderPoint);
-    expect(result2.record).toEqual(savedRank[1].ladderPoint);
-    expect(result3.record).toEqual(savedRank[2].ladderPoint);
+    //랭크데이터가 잘 반환되는지 확인
+    expect(result1.record).toEqual(testData.ranks[0].ladderPoint);
+    expect(result2.record).toEqual(testData.ranks[1].ladderPoint);
+    expect(result3.record).toEqual(testData.ranks[2].ladderPoint);
 
     //없는시즌 데이터는 null로 반환
     expect(result4).toEqual({ rank: null, record: null });
@@ -183,56 +97,21 @@ describe('RankService', () => {
 
   it('유저 시즌 최고점 랭크데이터 반환', async () => {
     //given
-    const savedBestRank = await rankRepository.save([
-      {
-        user: users[0],
-        season: seasons[0],
-        ladderRank: 10,
-        ladderPoint: 1100,
-        highestRanking: 11,
-        highestPoint: 1111,
-      },
-      {
-        user: users[0],
-        season: seasons[1],
-        ladderRank: 20,
-        ladderPoint: 2200,
-        highestRanking: 2,
-        highestPoint: 2222,
-      },
-      {
-        user: users[0],
-        season: seasons[2],
-        ladderRank: 3300,
-        ladderPoint: 3300,
-        highestRanking: 3,
-        highestPoint: 3333,
-      },
-      {
-        user: users[1],
-        season: seasons[0],
-        ladderRank: 3300,
-        ladderPoint: 3300,
-        highestRanking: 3,
-        highestPoint: 3333,
-      },
-    ]);
-
     //Dto로 반환할때는 highestRank, highestPoint만 반환하도록 수정해야함
     const getDto1: GetUserBestRankStatDto = {
-      userId: users[0].id,
+      userId: testData.ranks[0].user.id,
     }; // 시즌1데이터
     const getDto2: GetUserBestRankStatDto = {
-      userId: users[0].id,
+      userId: testData.ranks[0].user.id,
     }; // 시즌2데이터
     const getDto3: GetUserBestRankStatDto = {
-      userId: users[0].id,
+      userId: testData.ranks[0].user.id,
     }; // 시즌3데이터
     const getDto4: GetUserBestRankStatDto = {
-      userId: users[1].id,
-    };
+      userId: testData.ranks[1].user.id,
+    }; // 시즌2데이터
     const invalidgetDto1: GetUserBestRankStatDto = {
-      userId: users[2].id,
+      userId: 4,
     }; // 없는시즌 데이터 BadRequest
 
     //when
@@ -243,15 +122,15 @@ describe('RankService', () => {
     const result5 = await service.getUserBestRank(invalidgetDto1);
 
     //then
-    expect(result1.rank).toEqual(savedBestRank[1].highestRanking);
-    expect(result2.rank).toEqual(savedBestRank[1].highestRanking);
-    expect(result3.rank).toEqual(savedBestRank[1].highestRanking);
-    expect(result4.rank).toEqual(savedBestRank[3].highestRanking);
+    expect(result1.rank).toEqual(testData.ranks[0].highestRanking);
+    expect(result2.rank).toEqual(testData.ranks[1].highestRanking);
+    expect(result3.rank).toEqual(testData.ranks[2].highestRanking);
+    expect(result4.rank).toEqual(testData.ranks[1].highestRanking);
 
-    expect(result1.record).toEqual(savedBestRank[1].highestPoint);
-    expect(result2.record).toEqual(savedBestRank[1].highestPoint);
-    expect(result3.record).toEqual(savedBestRank[1].highestPoint);
-    expect(result4.record).toEqual(savedBestRank[3].highestPoint);
+    expect(result1.record).toEqual(testData.ranks[0].highestPoint); //시즌1데이터
+    expect(result2.record).toEqual(testData.ranks[1].highestPoint); //시즌2데이터
+    expect(result3.record).toEqual(testData.ranks[2].highestPoint); //시즌3데이터
+    expect(result4.record).toEqual(testData.ranks[1].highestPoint); //시즌2데이터
 
     //없는시즌 데이터는 null로 반환
     expect(result5).toEqual({ rank: null, record: null });
