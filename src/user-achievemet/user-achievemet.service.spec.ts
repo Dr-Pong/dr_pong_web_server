@@ -334,14 +334,14 @@ describe('UserAchievemetService', () => {
     });
 
     // then
-    expect(results1[0].isSelected).toBe(true);
-    expect(results1[1].isSelected).toBe(true);
-    expect(results1[2].isSelected).toBe(true);
-    expect(results1[3].isSelected).toBe(false);
+    expect(results1[0].selectedOrder).toBe(true);
+    expect(results1[1].selectedOrder).toBe(true);
+    expect(results1[2].selectedOrder).toBe(true);
+    expect(results1[3].selectedOrder).toBe(false);
 
-    expect(results2[0].isSelected).toBe(true);
-    expect(results2[1].isSelected).toBe(true);
-    expect(results2[2].isSelected).toBe(true);
+    expect(results2[0].selectedOrder).toBe(true);
+    expect(results2[1].selectedOrder).toBe(true);
+    expect(results2[2].selectedOrder).toBe(true);
     await expect(
       service.patchUserAchievements(invalidUpdateDto1),
     ).rejects.toThrow(new BadRequestException('No such Achievements'));
