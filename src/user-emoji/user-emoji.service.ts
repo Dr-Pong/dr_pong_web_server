@@ -21,7 +21,7 @@ export class UserEmojiService {
   async getUseremojis(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
     if (getDto.isSelected) {
       const selectedEmoji = await this.userEmojiRepository.find({
-        where: { user: { id: getDto.userId }, isSelected: true },
+        where: { user: { id: getDto.userId }, selectedOrder: true },
       });
       const emojis: UserEmojiDto[] = [];
       for (const userEmoji of selectedEmoji) {
@@ -59,7 +59,7 @@ export class UserEmojiService {
   //patchUseremojis함수
   async patchUseremojis(patchDto: PatchUserEmojisDto): Promise<void> {
     const old_emojis: UserEmoji[] = await this.userEmojiRepository.find({
-      where: { user: { id: patchDto.userId }, isSelected: true },
+      where: { user: { id: patchDto.userId }, selectedOrder: true },
     });
     const to_change_emojis: UserEmoji[] = await this.userEmojiRepository.find({
       where: {
@@ -71,11 +71,11 @@ export class UserEmojiService {
       throw new BadRequestException('No such emojis');
     }
     for (const c of old_emojis) {
-      c.isSelected = false;
+      c.selectedOrder = false;
     }
     await this.userEmojiRepository.save(old_emojis);
     for (const c of to_change_emojis) {
-      c.isSelected = true;
+      c.selectedOrder = true;
     }
     await this.userEmojiRepository.save(to_change_emojis);
   }

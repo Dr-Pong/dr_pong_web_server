@@ -23,5 +23,5 @@ export class UserAchievement extends BaseTimeEntity {
   user: User;
 
   @Column()
-  isSelected: boolean;
+  selectedOrder: number;
 }

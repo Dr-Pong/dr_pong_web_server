@@ -28,7 +28,7 @@ export class UserAchievemetService {
     if (getDto.isSelected == true) {
       //achieved이고 selected된 업적 return
       const selectAchievement = await this.userAchievementRepository.find({
-        where: { user: { id: getDto.userId }, isSelected: true },
+        where: { user: { id: getDto.userId }, selectedOrder: true },
       });
       const achievements = selectAchievement.map((userAchievement) => {
         return {
@@ -71,7 +71,7 @@ export class UserAchievemetService {
   ): Promise<void> {
     const old_achievements: UserAchievement[] =
       await this.userAchievementRepository.find({
-        where: { user: { id: patchDto.userId }, isSelected: true },
+        where: { user: { id: patchDto.userId }, selectedOrder: true },
       });
     const to_change_achievements: UserAchievement[] =
       await this.userAchievementRepository.find({
@@ -84,11 +84,11 @@ export class UserAchievemetService {
       throw await new BadRequestException('No such Achievements');
     }
     for (const c of old_achievements) {
-      c.isSelected = false;
+      c.selectedOrder = false;
     }
     await this.userAchievementRepository.save(old_achievements);
     for (const c of to_change_achievements) {
-      c.isSelected = true;
+      c.selectedOrder = true;
     }
     await this.userAchievementRepository.save(to_change_achievements);
   }
