@@ -16,7 +16,7 @@ export class UserEmoji extends BaseTimeEntity {
   id: number;
 
   @Column()
-  isSelected: boolean;
+  selectedOrder: number;
 
   @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'user_id' })

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEmoji } from './user-emoji.entity';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { UserEmojiDto, UseremojisDto } from './dto/user.emojis.dto';
@@ -21,7 +21,7 @@ export class UserEmojiService {
   async getUseremojis(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
     if (getDto.isSelected) {
       const selectedEmoji = await this.userEmojiRepository.find({
-        where: { user: { id: getDto.userId }, isSelected: true },
+        where: { user: { id: getDto.userId }, selectedOrder: Not(null) },
       });
       const emojis: UserEmojiDto[] = [];
       for (const userEmoji of selectedEmoji) {
@@ -59,7 +59,10 @@ export class UserEmojiService {
   //patchUseremojis함수
   async patchUseremojis(patchDto: PatchUserEmojisDto): Promise<void> {
     const old_emojis: UserEmoji[] = await this.userEmojiRepository.find({
-      where: { user: { id: patchDto.userId }, isSelected: true },
+      where: {
+        user: { id: patchDto.userId },
+        selectedOrder: Not(null),
+      },
     });
     const to_change_emojis: UserEmoji[] = await this.userEmojiRepository.find({
       where: {
@@ -71,12 +74,24 @@ export class UserEmojiService {
       throw new BadRequestException('No such emojis');
     }
     for (const c of old_emojis) {
-      c.isSelected = false;
+      c.selectedOrder = null;
+    }
+    /*
+      원하는 것
+      - patchDto의 n 번째 인자로 x이라는 id가 들어오면 x 이모지의 order를 n으로 설정한다
+      
+    */
+    for (const c of to_change_emojis) {
+      let i = 0;
+      for (const d of patchDto.emojisId) {
+        if (c.emoji.id === d) {
+          c.selectedOrder = i;
+          break;
+        }
+        i++;
+      }
     }
     await this.userEmojiRepository.save(old_emojis);
-    for (const c of to_change_emojis) {
-      c.isSelected = true;
-    }
     await this.userEmojiRepository.save(to_change_emojis);
   }
 }

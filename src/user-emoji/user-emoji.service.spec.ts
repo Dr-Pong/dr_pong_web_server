@@ -348,15 +348,15 @@ describe('UserEmojiService', () => {
       where: { user: { id: users[1].id } },
     });
 
-    expect(resutls1[0].isSelected).toBe(true);
-    expect(resutls1[1].isSelected).toBe(true);
-    expect(resutls1[2].isSelected).toBe(true);
-    expect(resutls1[3].isSelected).toBe(true);
-    expect(resutls1[4].isSelected).toBe(false); //실행후 emoji4가 false로 바뀌어있는지 확인 하는 부분
+    expect(resutls1[0].selectedOrder).toBe(true);
+    expect(resutls1[1].selectedOrder).toBe(true);
+    expect(resutls1[2].selectedOrder).toBe(true);
+    expect(resutls1[3].selectedOrder).toBe(true);
+    expect(resutls1[4].selectedOrder).toBe(false); //실행후 emoji4가 false로 바뀌어있는지 확인 하는 부분
 
-    expect(resutls2[0].isSelected).toBe(true);
-    expect(resutls2[1].isSelected).toBe(true);
-    expect(resutls2[2].isSelected).toBe(true);
+    expect(resutls2[0].selectedOrder).toBe(true);
+    expect(resutls2[1].selectedOrder).toBe(true);
+    expect(resutls2[2].selectedOrder).toBe(true);
 
     //invalidUpateDto1 에대한실행
     await expect(service.patchUseremojis(invalidUpdateDto1)).rejects.toThrow(

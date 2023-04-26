@@ -20,7 +20,7 @@ export class UserCollectablesStatus {
     for (const c of userCollectable) {
       const id = c instanceof UserAchievement ? c.achievement.id : c.emoji.id;
       this.collectables[id - 1] =
-        c.isSelected === true
+        c.selectedOrder !== null
           ? CollectableStatus.SELECTED
           : CollectableStatus.ACHIEVED;
     }
