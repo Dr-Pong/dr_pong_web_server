@@ -108,7 +108,6 @@ export class TestService {
       email: 'achv@mail.com',
       imageUrl: 'basicImage',
     });
-
     for (const c of this.achievements) {
       if (3 < c.id) continue;
       await this.userAchievementRepository.save({
@@ -134,6 +133,7 @@ export class TestService {
         selectedOrder: false,
       });
     }
+    this.users.push(user);
     return user;
   }
 

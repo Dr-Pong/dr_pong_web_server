@@ -10,32 +10,19 @@ import { User } from 'src/user/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { UserTitleService } from './user-title.service';
 import { GetUserTitlesDto } from './dto/get.user.titles.dto';
+import { TestService } from 'src/test/test.service';
+import { AppModule } from 'src/app.module';
 
 describe('UserTitleService', () => {
   let service: UserTitleService;
-  let userRepository: Repository<User>;
-  let titleRepository: Repository<Title>;
+  let testData: TestService;
   let userTitleRepository: Repository<UserTitle>;
   let dataSources: DataSource;
-  let users: User[];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(typeORMConfig),
-        UserModule,
-        TitleModule,
-        UsertitleModule,
-      ],
+      imports: [AppModule],
       providers: [
-        {
-          provide: getRepositoryToken(User),
-          useClass: Repository,
-        },
-        {
-          provide: getRepositoryToken(Title),
-          useClass: Repository,
-        },
         {
           provide: getRepositoryToken(UserTitle),
           useClass: Repository,
@@ -44,36 +31,13 @@ describe('UserTitleService', () => {
     }).compile();
 
     service = module.get<UserTitleService>(UserTitleService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     userTitleRepository = module.get<Repository<UserTitle>>(
       getRepositoryToken(UserTitle),
     );
-    titleRepository = module.get<Repository<Title>>(getRepositoryToken(Title));
     dataSources = module.get<DataSource>(DataSource);
+    testData = module.get<TestService>(TestService);
 
-    users = await userRepository.save([
-      {
-        nickname: 'testnick1',
-        email: 'testemail1',
-        imageUrl: 'testurl1',
-        level: 1,
-        statusMessage: 'testmessage1',
-      },
-      {
-        nickname: 'testnick2',
-        email: 'testemail2',
-        imageUrl: 'testurl2',
-        level: 2,
-        statusMessage: 'testmessage2',
-      },
-      {
-        nickname: 'testnick3',
-        email: 'testemail3',
-        imageUrl: 'testurl3',
-        level: 3,
-        statusMessage: 'testmessage3',
-      },
-    ]);
+    await testData.createBasicCollectable();
   });
 
   afterEach(async () => {
@@ -83,73 +47,37 @@ describe('UserTitleService', () => {
   });
 
   it('유저 Get 모든 titles 테스트', async () => {
-    // 타이틀생성
-    const savedTitle = await titleRepository.save({
-      name: 'the one',
-      contents: 'neo',
-    });
-    const savedTitle2 = await titleRepository.save({
-      name: 'the two',
-      contents: 'two',
-    });
-    const savedTitle3 = await titleRepository.save({
-      name: 'the three',
-      contents: 'three',
-    });
-
-    let i = 0;
-    for (const user of users) {
-      // 유저에 저장
-      await userTitleRepository.save({
-        user: user,
-        title: savedTitle,
-        isSelected: i % 3 === 0,
-      });
-      await userTitleRepository.save({
-        user: user,
-        title: savedTitle2,
-        isSelected: i % 3 === 1,
-      });
-      await userTitleRepository.save({
-        user: user,
-        title: savedTitle3,
-        isSelected: i % 3 === 2,
-      });
-      i++;
-    }
+    const titleSelectedByUser = await testData.createUserWithCollectables();
+    const nonSelectedCase = await testData.createUserWithUnSelectedTitles();
 
     //유저닉에따라 찾는부분
-    const getUsersTitlesDto1: GetUserTitlesDto = {
-      userId: users[0].id,
+    const selectedRequest: GetUserTitlesDto = {
+      userId: titleSelectedByUser.id,
     };
-    const getUsersTitlesDto2: GetUserTitlesDto = {
-      userId: users[1].id,
+    const unSelectedCase: GetUserTitlesDto = {
+      userId: nonSelectedCase.id,
     };
-    const getUsersTitlesDto3: GetUserTitlesDto = {
-      userId: users[2].id,
+    const notExtistUser: GetUserTitlesDto = {
+      userId: 9,
     };
 
-    const result1 = await service.getUserTitles(getUsersTitlesDto1);
-    const result2 = await service.getUserTitles(getUsersTitlesDto2);
-    const result3 = await service.getUserTitles(getUsersTitlesDto3);
-
+    const result1 = await service.getUserTitles(selectedRequest);
+    const result2 = await service.getUserTitles(unSelectedCase);
+    const result3 = await service.getUserTitles(notExtistUser);
     //타이틀의 갯수
-    expect(result1.titles.length).toBe(3);
-    expect(result2.titles.length).toBe(3);
-    expect(result3.titles.length).toBe(3);
+
+    expect(result1.titles.length).toBe(5);
+    expect(result2.titles.length).toBe(5);
+    expect(result3.titles.length).toBe(0);
 
     //resul1의 타이틀이름
 
-    expect(result1.titles[0].title).toBe(savedTitle.name);
-    expect(result1.titles[1].title).toBe(savedTitle2.name);
-    expect(result1.titles[2].title).toBe(savedTitle3.name);
+    expect(result1.titles[0].title).toBe('emoji1');
+    expect(result1.titles[1].title).toBe('emoji3');
+    expect(result1.titles[2].title).toBe('emoji5');
 
-    expect(result2.titles[0].title).toBe(savedTitle.name);
-    expect(result2.titles[1].title).toBe(savedTitle2.name);
-    expect(result2.titles[2].title).toBe(savedTitle3.name);
-
-    expect(result3.titles[0].title).toBe(savedTitle.name);
-    expect(result3.titles[1].title).toBe(savedTitle2.name);
-    expect(result3.titles[2].title).toBe(savedTitle3.name);
+    expect(result2.titles[0].title).toBe('emoji0');
+    expect(result2.titles[1].title).toBe('emoji1');
+    expect(result2.titles[2].title).toBe('emoji2');
   });
 });
