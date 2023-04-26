@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEmoji } from './user-emoji.entity';
-import { In, Not, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { UserEmojiDto, UseremojisDto } from './dto/user.emojis.dto';
@@ -21,7 +21,7 @@ export class UserEmojiService {
   async getUseremojis(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
     if (getDto.isSelected) {
       const selectedEmoji = await this.userEmojiRepository.find({
-        where: { user: { id: getDto.userId }, selectedOrder: Not(null) },
+        where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
       });
       const emojis: UserEmojiDto[] = [];
       for (const userEmoji of selectedEmoji) {
@@ -61,7 +61,7 @@ export class UserEmojiService {
     const old_emojis: UserEmoji[] = await this.userEmojiRepository.find({
       where: {
         user: { id: patchDto.userId },
-        selectedOrder: Not(null),
+        selectedOrder: Not(IsNull()),
       },
     });
     const to_change_emojis: UserEmoji[] = await this.userEmojiRepository.find({
@@ -79,6 +79,7 @@ export class UserEmojiService {
     for (const c of old_emojis) {
       c.selectedOrder = null;
     }
+    
     for (const c of to_change_emojis) {
       let i = 0;
       for (const d of patchDto.emojisId) {

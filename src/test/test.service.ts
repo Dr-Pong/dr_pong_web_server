@@ -6,7 +6,7 @@ import { Game } from 'src/game/game.entity';
 import { Rank } from 'src/rank/rank.entity';
 import { Season } from 'src/season/season.entity';
 import { Title } from 'src/title/title.entity';
-import { UserAchievement } from 'src/user-achievemet/user-achievement.entity';
+import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
 import { UserGame } from 'src/user-game/user-game.entity';
 import { UserTitle } from 'src/user-title/user-title.entity';
@@ -208,42 +208,113 @@ export class TestService {
     }
     return user;
   }
+	async createUserWithCollectables() : Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithCollectable',
+			email: 'user@mail.com',
+			imageUrl: 'basicImage',
+		});
+		this.users.push(user);
+		for (let i : number = 0; i < this.emojis.length; i++) {
+			if (5 < i)
+				continue;
+			await this.userEmojiRepository.save({
+				user: user,
+				emoji: this.emojis[i],
+				selectedOrder: i < 4 ? i : null,
+			})
+		}
+		for (let i = 0; i < this.titles.length; i++) {
+			if (i % 2 === 0)
+				continue;
+			await this.userTitleRepository.save({
+				user: user,
+				title: this.titles[i],
+				isSelected: i == 0 ? true : false,
+			});
+		}
+		for (let i = 0; i < this.achievements.length; i++) {
+			if (5 < i)
+				continue;
+			await this.userAchievementRepository.save({
+				user: user,
+				achievement: this.achievements[i],
+				selectedOrder: i < 3 ? i : null,
+			});
+		}
+		return user;
+	}
 
-  async createReverseSelectedEmojiUser(): Promise<User> {
-    const user: User = await this.userRepository.save({
-      nickname: 'userWithMixedEmoji',
-      email: 'emoji@mail.com',
-      imageUrl: 'basicImage',
-    });
-    this.users.push(user);
-    for (const c of this.emojis) {
-      if (4 < c.id) continue;
-      await this.userEmojiRepository.save({
-        user: user,
-        emoji: c,
-        selectedOrder: 4 - c.id,
-      });
-    }
-    return user;
-  }
+	async createReverseSelectedEmojiUser(): Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithMixedEmoji',
+			email: 'emoji@mail.com',
+			imageUrl: 'basicImage',
+		});
+		this.users.push(user);
+		for (const c of this.emojis) {
+			if (4 < c.id)
+				continue;
+			await this.userEmojiRepository.save({
+				user: user,
+				emoji: c,
+				selectedOrder: 4 - c.id,
+			})
+		}
+		return user;
+	}
 
-  async createMixedSelectedEmojiUser(): Promise<User> {
-    const user: User = await this.userRepository.save({
-      nickname: 'userWithMixedWithNullEmoji',
-      email: 'emoji@mail.com',
-      imageUrl: 'basicImage',
-    });
-    this.users.push(user);
-    await this.userEmojiRepository.save({
-      user: user,
-      emoji: this.emojis[2],
-      selectedOrder: 1,
-    });
-    await this.userEmojiRepository.save({
-      user: user,
-      emoji: this.emojis[0],
-      selectedOrder: 3,
-    });
-    return user;
-  }
+	async createMixedSelectedEmojiUser(): Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithMixedWithNullEmoji',
+			email: 'emoji@mail.com',
+			imageUrl: 'basicImage',
+		});
+		this.users.push(user);
+		await this.userEmojiRepository.save({
+			user: user,
+			emoji: this.emojis[2],
+			selectedOrder: 1,
+		})
+		await this.userEmojiRepository.save({
+			user: user,
+			emoji: this.emojis[0],
+			selectedOrder: 3,
+		})
+		return user;
+	}
+
+	async createReverseSelectedAchievementUser(): Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithReversedAchievement',
+			email: 'achievement@mail.com',
+			imageUrl: 'basicImage',
+		});
+		this.users.push(user);
+		for (const c of this.achievements) {
+			if (3 < c.id)
+				continue;
+			await this.userAchievementRepository.save({
+				user: user,
+				achievement: c,
+				selectedOrder: 3 - c.id,
+			})
+		}
+		return user;
+	}
+
+	async createMixedSelectedAchievementUser(): Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithMixedWithNullAchievement',
+			email: 'achievement@mail.com',
+			imageUrl: 'basicImage',
+		});
+		this.users.push(user);
+		await this.userAchievementRepository.save({
+			user: user,
+			achievement: this.achievements[2],
+			selectedOrder: 1,
+		})
+		return user;
+	}
 }

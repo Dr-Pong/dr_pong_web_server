@@ -8,7 +8,7 @@ import { Rank } from 'src/rank/rank.entity';
 import { Season } from 'src/season/season.entity';
 import { Game } from 'src/game/game.entity';
 import { Achievemet } from 'src/achievemet/achievement.entity';
-import { UserAchievement } from 'src/user-achievemet/user-achievement.entity';
+import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
 
