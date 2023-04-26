@@ -6,9 +6,9 @@ export class Title extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({name:'name', type: 'varchar', default: ''})
   name: string;
 
-  @Column()
-  contents: string;
+  @Column({name:'content', type: 'varchar', default: ''})
+  content: string;
 }

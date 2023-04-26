@@ -6,15 +6,15 @@ export class Season extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({name: 'name', type: 'varchar', default: ''})
   name: string;
 
-  @Column()
+  @Column({name: 'start_time' , type: 'date'})
   startTime: Date;
 
-  @Column()
+  @Column({name: 'end_time', type: 'date'})
   endTime: Date;
 
-  @Column()
+  @Column({name: 'image_url', type: 'varchar'})
   imageUrl: string;
 }

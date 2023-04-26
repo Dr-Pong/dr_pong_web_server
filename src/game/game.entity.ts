@@ -17,12 +17,12 @@ export class Game extends BaseTimeEntity {
   @JoinColumn({ name: 'season_id' })
   season: Season;
 
-  @Column()
+  @Column({name: 'start_time' , type: 'date'})
   startTime: Date;
 
-  @Column()
+  @Column({name: 'play_time', type: 'bigint'})
   playTime: number;
 
-  @Column()
+  @Column({name: 'type', type: 'varchar'})
   type: number;
 }

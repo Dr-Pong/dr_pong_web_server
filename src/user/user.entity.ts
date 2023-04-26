@@ -10,21 +10,21 @@ export class User extends BaseTimeEntity {
   @Column({name:'e_mail', nullable: false})
   email: string;
 
-  @Column({name:'nickname', nullable:false, default:''})
+  @Column({name:'nickname', default:''})
   nickname: string;
 
-  @Column({type:'enum', enum: RoleType, nullable: false, default:RoleType.USER})
+  @Column({name: 'role_type', type:'enum', enum: RoleType, nullable: false, default:RoleType.USER})
   roleType: RoleType;
 
-  @Column({name:'image_uri', nullable:true})
+  @Column({name:'image_uri', type: 'varchar',nullable:true})
   imageUrl: string;
 
-  @Column({name:'level', nullable:false, default:1})
+  @Column({name:'level', default:1})
   level: number;
   
-  @Column({name:'status_maessage', nullable:false, default:''})
+  @Column({name:'status_maessage', default:''})
   statusMessage: string;
 
-  @Column({name:'is_second_auth_on', nullable:false, default:false})
+  @Column({name:'is_second_auth_on', default:false})
   isSecondAuthOn: boolean;
 }

@@ -17,12 +17,12 @@ export class Achievemet extends BaseTimeEntity {
   @JoinColumn({ name: 'title_id' })
   title: Title | null;
 
-  @Column()
+  @Column({name: 'name', type: 'varchar', default: ''})
   name: string;
 
-  @Column()
+  @Column({name: 'content', type: 'varchar', default: ''})
   content: string;
 
-  @Column()
+  @Column({name: 'image_url', type: 'varchar'})
   imageUrl: string;
 }

@@ -6,9 +6,9 @@ export class Emoji extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({name: 'name', type: 'varchar', default: ''})
   name: string;
 
-  @Column()
+  @Column({name: 'image_url', type: 'varchar'})
   imageUrl: string;
 }
