@@ -83,9 +83,13 @@ export class UserAchievemetService {
           achievement: In(patchDto.achievementsId),
         },
       });
-    if (to_change_achievement.length !== patchDto.achievementsId.length) {
-      throw new BadRequestException('No such Achievement');
+    const countNumbers = patchDto.achievementsId.filter(
+      (elem) => typeof elem === 'number',
+    ).length;
+    if (countNumbers !== to_change_achievement.length) {
+      throw new BadRequestException('No such achievement');
     }
+
     for (const c of to_change_achievement) {
       c.selectedOrder = null;
     }

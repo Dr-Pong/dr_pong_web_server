@@ -70,17 +70,15 @@ export class UserEmojiService {
         emoji: In(patchDto.emojisId),
       },
     });
-    if (to_change_emojis.length !== patchDto.emojisId.length) {
-      throw new BadRequestException('No such emojis');
+    const countNumbers = patchDto.emojisId.filter(
+      (elem) => typeof elem === 'number',
+    ).length;
+    if (countNumbers !== to_change_emojis.length) {
+      throw new BadRequestException('No such emoji');
     }
     for (const c of old_emojis) {
       c.selectedOrder = null;
     }
-    /*
-      원하는 것
-      - patchDto의 n 번째 인자로 x이라는 id가 들어오면 x 이모지의 order를 n으로 설정한다
-      
-    */
     for (const c of to_change_emojis) {
       let i = 0;
       for (const d of patchDto.emojisId) {
