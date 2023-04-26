@@ -280,10 +280,10 @@ describe('UserEmojiService', () => {
     //validUpdateDto1 에대한 실행
     await expect(
       service.patchUseremojis(oneValidTwoInvalidRequest)
-    ,).rejects.toThrow(new BadRequestException('No such emojis'));
+    ,).rejects.toThrow(new BadRequestException('No such emoji'));
     //validUpdateDto2 에대한 실행
     await expect(
       service.patchUseremojis(allInvalidRequest)
-    ,).rejects.toThrow(new BadRequestException('No such emojis'));
+    ,).rejects.toThrow(new BadRequestException('No such emoji'));
   });
 });
