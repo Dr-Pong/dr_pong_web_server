@@ -8,6 +8,6 @@ import { RankService } from './rank.service';
 @Module({
   imports: [TypeOrmModule.forFeature([User, Season, Rank])],
   providers: [RankService],
-  exports: [TypeOrmModule.forFeature([User, Season, Rank])],
+  exports: [TypeOrmModule.forFeature([User, Season, Rank]), RankService],
 })
 export class RankModule {}
