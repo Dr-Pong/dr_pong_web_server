@@ -1,4 +1,4 @@
 export class PatchUserEmojisDto {
   userId: number;
-  emojisId: number[];
+  emojisId: (number | null) [];
 }
