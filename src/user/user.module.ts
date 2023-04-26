@@ -5,16 +5,16 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User } from './user.entity';
 import { AuthService } from 'src/auth/auth.service';
-import { UserAchievemetService } from 'src/user-achievemet/user-achievemet.service';
+import { UserAchievementService } from 'src/user-achievement/user-achievement.service';
 import { UserEmojiService } from 'src/user-emoji/user-emoji.service';
 import { UserTitleService } from 'src/user-title/user-title.service';
-import { UserAchievemetModule } from 'src/user-achievemet/user-achievemet.module';
+import { UserAchievementModule } from 'src/user-achievement/user-achievement.module';
 import { UserEmojiModule } from 'src/user-emoji/user-emoji.module';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [UsertitleModule, TypeOrmModule.forFeature([User]),
-    UserAchievemetModule,
+    UserAchievementModule,
     UserEmojiModule,
     UsertitleModule,
     AuthModule,
