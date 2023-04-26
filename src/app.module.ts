@@ -11,12 +11,16 @@ import { UserAchievementService } from './user-achievement/user-achievement.serv
 import { UserAchievementModule } from './user-achievement/user-achievement.module';
 import { AuthModule } from './auth/auth.module';
 import { TestModule } from './test/test.module';
+import { RankModule } from './rank/rank.module';
+import { SeasonModule } from './season/season.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeORMConfig),
     UserModule,
     TitleModule,
+    RankModule,
+    SeasonModule,
     UsertitleModule,
     AchievemetModule,
     UserAchievementModule,

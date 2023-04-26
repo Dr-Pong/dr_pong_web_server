@@ -9,7 +9,6 @@ import { UserTitle } from 'src/user-title/user-title.entity';
 import { User } from './user.entity';
 import { UsersDetailDto } from './dto/users.detail.dto';
 import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
-import { UserTitlesDto } from './dto/user.titles.dto';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserSelectedTitleDto } from './dto/user.selected.title.dto';
 import { PatchUserTitleDto } from './dto/patch.user.title.dto';
