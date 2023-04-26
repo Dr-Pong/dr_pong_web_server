@@ -7,8 +7,8 @@ import { TitleModule } from './title/title.module';
 import { UsertitleModule } from './user-title/user-title.module';
 import { typeORMConfig } from './configs/typeorm.config';
 import { AchievemetModule } from './achievemet/achievemet.module';
-import { UserAchievemetService } from './user-achievemet/user-achievemet.service';
-import { UserAchievemetModule } from './user-achievemet/user-achievemet.module';
+import { UserAchievementService } from './user-achievement/user-achievement.service';
+import { UserAchievementModule } from './user-achievement/user-achievement.module';
 import { AuthModule } from './auth/auth.module';
 import { TestModule } from './test/test.module';
 
@@ -19,7 +19,7 @@ import { TestModule } from './test/test.module';
     TitleModule,
     UsertitleModule,
     AchievemetModule,
-    UserAchievemetModule,
+    UserAchievementModule,
     AuthModule,
     TestModule,
   ],
