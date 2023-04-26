@@ -37,135 +37,120 @@ export class TestService {
 		@InjectRepository(Game)
 		private gameRepository: Repository<Game>,
 	){}
-	
-	async createBasicUsers(n: number) : Promise<User[]> {
-		let users : User[] = [];
-		for (let i = 0; i < n; i++) {
-			users.push(await this.userRepository.save({
-				nickname: i.toString(),
-				email: i.toString() + '@mail.com',
-				statusMessage: i.toString(),
-				imageUrl: 'basicImage'+ i.toString(),
-			}));
-		}
-		console.log(users);
-		return users;
+	users: User[] = [];
+	emojis : Emoji[] = [];
+	titles : Title[] = [];
+	achievements : Achievemet[] = [];
+	seasons : Season[] = [];
+	ranks : Rank[] = [];
+
+	async createBasicUser() : Promise<User> {
+		const index : number = this.users.length;
+		const user = await this.userRepository.save({
+			nickname: index.toString(),
+			email: index.toString() + '@mail.com',
+			statusMessage: index.toString(),
+			imageUrl: 'basicImage'+ index.toString(),
+		});
+		return user;
 	}
 
-	async createUserWithUnSelectedEmojis(emojiNum: number) : Promise<User> {
-		let emojis : Emoji[] = [];
+	async createBasicCollectable() : Promise<void> {
+		for (let i = 0; i < 10; i++) {
+			this.emojis.push(await this.emojiRepository.save({
+				name: 'emoji' + i.toString(),
+				imageUrl: 'imageUrl' + i.toString(),
+			}));
+		}
+		for (let i = 0; i < 10; i++) {
+			this.titles.push(await this.titleRepository.save({
+				name: 'emoji' + i.toString(),
+				content: 'content' + i.toString(),
+			}));
+		}
+		for (let i = 0; i < 10; i++) {
+			this.achievements.push(await this.achievementRepository.save({
+				name: 'emoji' + i.toString(),
+				content: 'content' + i.toString(),
+				imageUrl: 'imageUrl' + i.toString(),
+			}));
+		}
+	}
+
+	async createUserWithUnSelectedEmojis() : Promise<User> {
 		const user : User = await this.userRepository.save({
 			nickname: 'userWithUEmoji',
 			email: 'emoji@mail.com',
 			imageUrl: 'basicImage',
-	});
-		for (let i = 0; i < emojiNum; i++) {
-			emojis.push(await this.emojiRepository.save({
-				name: 'image' + i.toString(),
-				imageUrl: 'imageUrl' + i.toString(),
-			}))
-		}
-		for (const c of emojis) {
-			if (c.id % 2 === 0)
+		});
+		this.users.push(user);
+		for (const c of this.emojis) {
+			if (4 < c.id)
 				continue;
 			await this.userEmojiRepository.save({
 				user: user,
 				emoji: c,
-				isSelected: false,
+				selectedOrder: null,
 			})
 		}
 		return user;
 	}
 
-	async createUserWithUnSelectedAchievements(achvNum: number) : Promise<User> {
-		let achvs : Achievemet[] = [];
-		const user : User = await this.userRepository.save({
-			nickname: 'userWithAchievements',
-			email: 'achv@mail.com',
-			imageUrl: 'basicImage',
-	});
-		for (let i = 0; i < achvNum; i++) {
-			achvs.push(await this.achievementRepository.save({
-				name: 'image' + i.toString(),
-				imageUrl: 'imageUrl' + i.toString(),
-			}))
-		}
-		for (const c of achvs) {
-			if (c.id % 2 === 0)
-				continue;
-			await this.userAchievementRepository.save({
-				user: user,
-				achievement: c,
-				isSelected: false,
-			})
-		}
-		return user;
-	}
-
-	async createUserWithUnSelectedTitles(achvNum: number) : Promise<User> {
-		let titles : Title[] = [];
+	async createUserWithUnSelectedAchievements() : Promise<User> {
 		const user : User = await this.userRepository.save({
 			nickname: 'userWithAchievements',
 			email: 'achv@mail.com',
 			imageUrl: 'basicImage',
 		});
-		for (let i = 0; i < achvNum; i++) {
-			titles.push(await this.titleRepository.save({
-				name: 'title' + i.toString(),
-				contents: 'content' + i.toString(),
-			}))
+
+		for (const c of this.achievements) {
+			if (3 < c.id)
+				continue;
+			await this.userAchievementRepository.save({
+				user: user,
+				achievement: c,
+				selectedOrder: null,
+			})
 		}
-		for (const c of titles) {
-			if (c.id % 2 === 0)
+		return user;
+	}
+
+	async createUserWithUnSelectedTitles() : Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithAchievements',
+			email: 'achv@mail.com',
+			imageUrl: 'basicImage',
+		});
+		for (const c of this.titles) {
+			if (this.titles.length / 2 < c.id)
 				continue;
 			await this.userTitleRepository.save({
 				user: user,
 				title: c,
-				isSelected: false,
+				selectedOrder: false,
 			})
 		}
 		return user;
 	}
 
 	async createBasicSeasons(n: number) : Promise<Season[]> {
-		let seasons : Season[] = [];
 		for (let i = 0; i < n; i++) {
-			seasons.push(await this.seasonRepository.save({
+			this.seasons.push(await this.seasonRepository.save({
 				name: i.toString(),
 				startTime: '2021-01-'+ i.toString(),
 				endTime: '2022-01-'+ i.toString(),
 				imageUrl: 'SeasonImage'+ i.toString(),
 			}));
 		}
-		return seasons;
+		return this.seasons;
 	}
 
-	async createBasicRank(n: number): Promise<Rank[]>{
-		let ranks : Rank[] = [];
-		let seasons : Season[] = [];
-		let users : User[] = [];
-		
-		for (let i = 0; i < n; i++) {
-			users.push(await this.userRepository.save({
-				nickname: i.toString(),
-				email: i.toString() + '@mail.com',
-				statusMessage: i.toString(),
-				imageUrl: 'basicImage'+ i.toString(),
-			}));
-		}
-		for (let i = 0; i < n; i++) {
-			seasons.push(await this.seasonRepository.save({
-				name: i.toString(),
-				startTime: '2021-01-'+ i.toString(),
-				endTime: '2022-01-'+ i.toString(),
-				imageUrl: 'SeasonImage'+ i.toString(),
-			}));
-		}
-		for(let i = 0 ; i < n; i++){
-			for (const c of seasons) {
-				ranks.push(await this.rankRepository.save({
+	async createBasicRank(): Promise<Rank[]>{		
+		for(let i = 0 ; i < this.users.length; i++){
+			for (const c of this.seasons) {
+				this.ranks.push(await this.rankRepository.save({
 					season: c,
-					user: users[i],
+					user: this.users[i],
 					ladderRank: i + 1,
 					ladderPoint: 100 - i,
 					highestRanking: i + 1,
@@ -173,6 +158,88 @@ export class TestService {
 				}))
 			}
 		}
-		return ranks;
+		return this.ranks;
+	}
+
+	async createUserWithCollectables() : Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithCollectable',
+			email: 'user@mail.com',
+			imageUrl: 'basicImage',
+		});
+		let emojisId: number[] = [];
+		let titlesId: number[] = [];
+		let achievementsId: number[] = [];
+		this.users.push(user);
+		for (let i = 0; i < this.emojis.length; i++) {
+			if (i % 2 === 0)
+				continue;
+			emojisId.push(this.emojis[i].id);
+			await this.userEmojiRepository.save({
+				user: user,
+				emoji: this.emojis[i],
+				selectedOrder: i < 4 ? i : null,
+			});
+		}
+		for (let i = 0; i < this.titles.length; i++) {
+			if (i % 2 === 0)
+				continue;
+			titlesId.push(this.titles[i].id);
+			await this.userTitleRepository.save({
+				user: user,
+				title: this.titles[i],
+				isSelected: i == 0 ? true : false,
+			});
+			}
+		for (let i = 0; i < this.achievements.length; i++) {
+			if (i % 2 === 0)
+				continue;
+			achievementsId.push(this.achievements[i].id);
+			await this.userAchievementRepository.save({
+				user: user,
+				achievement: this.achievements[i],
+				selectedOrder: i < 3 ? i : null,
+			});
+		}
+		return user;
+	}
+
+	async createReverseSelectedEmojiUser(): Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithMixedEmoji',
+			email: 'emoji@mail.com',
+			imageUrl: 'basicImage',
+		});
+		this.users.push(user);
+		for (const c of this.emojis) {
+			if (4 < c.id)
+				continue;
+			await this.userEmojiRepository.save({
+				user: user,
+				emoji: c,
+				selectedOrder: 4 - c.id,
+			})
+		}
+		return user;
+	}
+
+	async createMixedSelectedEmojiUser(): Promise<User> {
+		const user : User = await this.userRepository.save({
+			nickname: 'userWithMixedWithNullEmoji',
+			email: 'emoji@mail.com',
+			imageUrl: 'basicImage',
+		});
+		this.users.push(user);
+		await this.userEmojiRepository.save({
+			user: user,
+			emoji: this.emojis[2],
+			selectedOrder: 1,
+		})
+		await this.userEmojiRepository.save({
+			user: user,
+			emoji: this.emojis[0],
+			selectedOrder: 3,
+		})
+		return user;
 	}
 }
