@@ -167,34 +167,28 @@ export class TestService {
 			email: 'user@mail.com',
 			imageUrl: 'basicImage',
 		});
-		let emojisId: number[] = [];
-		let titlesId: number[] = [];
-		let achievementsId: number[] = [];
 		this.users.push(user);
-		for (let i = 0; i < this.emojis.length; i++) {
-			if (i % 2 === 0)
+		for (let i : number = 0; i < this.emojis.length; i++) {
+			if (5 < i)
 				continue;
-			emojisId.push(this.emojis[i].id);
 			await this.userEmojiRepository.save({
 				user: user,
 				emoji: this.emojis[i],
 				selectedOrder: i < 4 ? i : null,
-			});
+			})
 		}
 		for (let i = 0; i < this.titles.length; i++) {
 			if (i % 2 === 0)
 				continue;
-			titlesId.push(this.titles[i].id);
 			await this.userTitleRepository.save({
 				user: user,
 				title: this.titles[i],
 				isSelected: i == 0 ? true : false,
 			});
-			}
+		}
 		for (let i = 0; i < this.achievements.length; i++) {
-			if (i % 2 === 0)
+			if (5 < i)
 				continue;
-			achievementsId.push(this.achievements[i].id);
 			await this.userAchievementRepository.save({
 				user: user,
 				achievement: this.achievements[i],
