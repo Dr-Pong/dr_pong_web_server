@@ -63,27 +63,4 @@ export class UserService {
     user.statusMessage = patchDto.message;
     await this.userRepository.save(user);
   }
-
-  //patch user title
-  async patchUserTitle(patchDto: PatchUserTitleDto): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { nickname: patchDto.nickname },
-    });
-    if (!user) throw new NotFoundException('No such User');
-
-    const old_title = await this.userTitleRepository.findOne({
-      where: { user: { id: user.id }, isSelected: true },
-    });
-    const to_change = await this.userTitleRepository.findOne({
-      where: { user: { id: user.id }, title: { id: patchDto.titleId } },
-    });
-    if (!to_change) throw new BadRequestException('No such Title');
-
-    if (old_title) {
-      old_title.isSelected = false;
-      await this.userTitleRepository.save(old_title);
-    }
-    to_change.isSelected = true;
-    await this.userTitleRepository.save(to_change);
-  }
 }
