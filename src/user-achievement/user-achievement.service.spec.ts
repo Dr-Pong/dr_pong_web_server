@@ -53,24 +53,21 @@ describe('UserAchievemetService', () => {
     //user[0]친구가 : selected와 acheieved, unacheieved가 전부 있음
     const mixedRequest: GetUserAchievementsDto = {
       userId: achievementSelectedWithUser.id,
-      isSelected: false,
     };
     //user[1]친구가 : selected가 없는상태
     const unSelectedRequest: GetUserAchievementsDto = {
       userId: noAchievementSelectedWithUser.id,
-      isSelected: false,
     };
     //user[2]친구가: achieved도 없는상태
     const noEmojiRequest: GetUserAchievementsDto = {
       userId: userWithOutAchievement.id,
-      isSelected: false,
     };
     //없는 유저에 대해서 접근하는 테스트 코드가 필요하다 언제? getUserDetail이 로그인이구현되는 그때
 
     //When
-    const selectedCase = await service.getUserAchievements(mixedRequest);
-    const nonSelectedCase = await service.getUserAchievements(unSelectedRequest);
-    const noEmojiCase = await service.getUserAchievements(noEmojiRequest);
+    const selectedCase = await service.getUserAchievementsAll(mixedRequest);
+    const nonSelectedCase = await service.getUserAchievementsAll(unSelectedRequest);
+    const noEmojiCase = await service.getUserAchievementsAll(noEmojiRequest);
 
     //then
     expect(selectedCase.achievements.length).toBe(testData.achievements.length);
@@ -99,32 +96,27 @@ describe('UserAchievemetService', () => {
 
     const selectedRequest: GetUserAchievementsDto = {
       userId: achievementSelectedWithUser.id,
-      isSelected: true,
     };
 
     const unSelectedRequest: GetUserAchievementsDto = {
       userId: nonAchievementSelectedWithUser.id,
-      isSelected: true,
     };
 
     const nonSelectedRequest: GetUserAchievementsDto = {
       userId: userWithOutAchievement.id,
-      isSelected: true,
     };
 
     const reverseSelectedRequest: GetUserAchievementsDto = {
       userId: userWithReversedAchievement.id,
-      isSelected: true,
     }
     const mixedSelectedRequest: GetUserAchievementsDto = {
       userId: userWithMixedAchievement.id,
-      isSelected: true,
     }
-    const selectedCase = await service.getUserAchievements(selectedRequest);
-    const unSelectedCase = await service.getUserAchievements(unSelectedRequest);
-    const noEmojiCase = await service.getUserAchievements(nonSelectedRequest);
-    const reversedCase = await service.getUserAchievements(reverseSelectedRequest);
-    const mixedCase = await service.getUserAchievements(mixedSelectedRequest);
+    const selectedCase = await service.getUserAchievementsSelected(selectedRequest);
+    const unSelectedCase = await service.getUserAchievementsSelected(unSelectedRequest);
+    const noEmojiCase = await service.getUserAchievementsSelected(nonSelectedRequest);
+    const reversedCase = await service.getUserAchievementsSelected(reverseSelectedRequest);
+    const mixedCase = await service.getUserAchievementsSelected(mixedSelectedRequest);
 
     //then
     expect(selectedCase.achievements.length).toBe(3);

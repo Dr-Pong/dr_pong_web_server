@@ -20,12 +20,36 @@ export class UserAchievementService {
     @InjectRepository(Achievemet)
     private achievementRepository: Repository<Achievemet>,
   ) {}
-
-  //get user achievements
-  async getUserAchievements(
+  async getUserAchievementsAll(
     getDto: GetUserAchievementsDto,
   ): Promise<UserAchievementsDto> {
-    if (getDto.isSelected == true) {
+      //achieved이고 selected되지 않은 업적 return
+      const allAchievement = await this.achievementRepository.find();
+      const userAchievement = await this.userAchievementRepository.find({
+        where: { user: { id: getDto.userId } },
+      });
+      const achievements: UserAchievementDto[] = [];
+      const status = new UserCollectablesStatus(allAchievement.length);
+      status.setStatus(userAchievement); // userAchievement 에 있는 status 를 allAchievement 에 변경
+
+      for (const c of allAchievement) {
+        achievements.push({
+          id: c.id,
+          name: c.name,
+          status: status.getStatus(c.id),
+        });
+      }
+
+      const responseDto: UserAchievementsDto = {
+        achievements: achievements,
+      };
+      return responseDto;
+  }
+
+  //get user achievements
+  async getUserAchievementsSelected(
+    getDto: GetUserAchievementsDto,
+  ): Promise<UserAchievementsDto> {
       //achieved이고 selected된 업적 return
       const selectAchievement = await this.userAchievementRepository.find({
         where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
@@ -42,28 +66,6 @@ export class UserAchievementService {
         achievements: achievements,
       };
       return responseDto;
-    }
-    //achieved이고 selected되지 않은 업적 return
-    const allAchievement = await this.achievementRepository.find();
-    const userAchievement = await this.userAchievementRepository.find({
-      where: { user: { id: getDto.userId } },
-    });
-    const achievements: UserAchievementDto[] = [];
-    const status = new UserCollectablesStatus(allAchievement.length);
-    status.setStatus(userAchievement); // userAchievement 에 있는 status 를 allAchievement 에 변경
-
-    for (const c of allAchievement) {
-      achievements.push({
-        id: c.id,
-        name: c.name,
-        status: status.getStatus(c.id),
-      });
-    }
-
-    const responseDto: UserAchievementsDto = {
-      achievements: achievements,
-    };
-    return responseDto;
   }
 
   //patch user achievement Patch 가 old 랑 to_change로 저장하고 return 하는 로직을 구현해야한다

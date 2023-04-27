@@ -17,25 +17,8 @@ export class UserEmojiService {
     @InjectRepository(Emoji)
     private emojiRepository: Repository<Emoji>,
   ) {}
-  //getUseremojis함수
-  async getUseremojis(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
-    if (getDto.isSelected) {
-      const selectedEmoji = await this.userEmojiRepository.find({
-        where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
-      });
-      const emojis: UserEmojiDto[] = [null, null, null, null];
-      for (const userEmoji of selectedEmoji) {
-        emojis[userEmoji.selectedOrder] = {
-          id: userEmoji.emoji.id,
-          name: userEmoji.emoji.name,
-          status: CollectableStatus.SELECTED,
-        };
-      }
-      const responseDto: UseremojisDto = {
-        emojis: emojis,
-      };
-      return responseDto;
-    }
+
+  async getUseremojisAll(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
     const allEmoji = await this.emojiRepository.find();
     const userEmoji = await this.userEmojiRepository.find({
       where: { user: { id: getDto.userId } },
@@ -54,6 +37,25 @@ export class UserEmojiService {
       emojis: emojis,
     };
     return responseDto;
+  }
+
+  //getUseremojis함수
+  async getUseremojisSelected(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
+      const selectedEmoji = await this.userEmojiRepository.find({
+        where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
+      });
+      const emojis: UserEmojiDto[] = [null, null, null, null];
+      for (const userEmoji of selectedEmoji) {
+        emojis[userEmoji.selectedOrder] = {
+          id: userEmoji.emoji.id,
+          name: userEmoji.emoji.name,
+          status: CollectableStatus.SELECTED,
+        };
+      }
+      const responseDto: UseremojisDto = {
+        emojis: emojis,
+      };
+      return responseDto;
   }
 
   //patchUseremojis함수
