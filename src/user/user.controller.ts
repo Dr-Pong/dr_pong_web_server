@@ -4,14 +4,14 @@ import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserDetailResponseDto } from './dto/user.detail.response.dto';
 import { PatchUsersDetailRequestDto } from './dto/patch.users.detail.request.dto';
 import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
-import { PatchUserTitleDto } from './dto/patch.user.title.dto';
+import { PatchUserTitleDto } from '../user-title/dto/patch.user.title.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 import { GetUserAchievementsDto } from 'src/user-achievement/dto/get.user.achievements.dto';
 import { UserAchievementService } from 'src/user-achievement/user-achievement.service';
 import { AuthService } from 'src/auth/auth.service';
 import { AuthDto } from 'src/auth/dto/auth.dto';
 import { UserAchievementsDto } from 'src/user-achievement/dto/user.achievements.dto';
-import { UsersDetailDto } from './dto/users.detail.dto';
+import { UserDetailDto } from './dto/user.detail.dto';
 import { UserAchievementsResponseDto } from 'src/user-achievement/dto/user-achievements.response.dto';
 import { GetUserEmojisDto } from 'src/user-emoji/dto/get.user.emojis.dto';
 import { UseremojisDto } from 'src/user-emoji/dto/user.emojis.dto';
@@ -25,6 +25,7 @@ import { PatchUserEmojisDto } from 'src/user-emoji/dto/patch.user.emojis.dto';
 import { PatchUserEmojisRequestDto } from 'src/user-emoji/dto/patch.user.emojis.request.dto';
 import { UserTitlesDto } from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from 'src/user-title/dto/get.user.titles.dto';
+import { UserInfoDto } from './dto/user.info.dto';
 
 @Controller('users')
 export class UserController {
@@ -34,7 +35,7 @@ export class UserController {
     private userEmojiService: UserEmojiService,
     private userTitleService: UserTitleService,
     private authService: AuthService,
-    ) {}
+  ) {}
 
   @Get('/:nickname/detail')
   async userDetailByNicknameGet(@Param('nickname') nickname: string) {
@@ -56,54 +57,83 @@ export class UserController {
   }
 
   @Get('/:nickname/achievements')
-   async userAchievementByNicknameGet(
+  async userAchievementByNicknameGet(
     @Param('nickname') nickname: string,
     @Query('selected') selected: boolean,
-  ) : Promise<UserAchievementsResponseDto> {
-    const authDto : AuthDto = await this.authService.getUserByNickname(nickname);
-    const getUserAchievementDto: GetUserAchievementsDto = { userId:authDto.id, isSelected:selected }
+  ): Promise<UserAchievementsResponseDto> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const user = await this.userService.getUserInfo(userInfoDto);
+    const getUserAchievementDto: GetUserAchievementsDto = {
+      userId: user.id,
+    };
 
-    const achievements : UserAchievementsDto = await this.userAchievementService.getUserAchievements(getUserAchievementDto);
+    const achievements = selected
+      ? await this.userAchievementService.getUserAchievementsSelected(
+          getUserAchievementDto,
+        )
+      : await this.userAchievementService.getUserAchievementsAll(
+          getUserAchievementDto,
+        );
 
     const responseDto: UserAchievementsResponseDto = {
       achievements: achievements,
-    }
+    };
     return responseDto;
   }
 
   @Get('/:nickname/emojis')
   async userEmojisByNicknameGet(
-   @Param('nickname') nickname: string,
-   @Query('selected') selected: boolean,
- ): Promise<UserEmojisResponseDto>{
-   const authDto : AuthDto = await this.authService.getUserByNickname(nickname);
-   const getUserEmojisDto: GetUserEmojisDto = { userId:authDto.id, isSelected:selected }
- 
-   const emojis : UseremojisDto = await this.userEmojiService.getUseremojis(getUserEmojisDto);
-   const responseDto: UserEmojisResponseDto = {
-    emojis: emojis,
+    @Param('nickname') nickname: string,
+    @Query('selected') selected: boolean,
+  ): Promise<UserEmojisResponseDto> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const user = await this.userService.getUserInfo(userInfoDto);
+
+    const getUserEmojisDto: GetUserEmojisDto = {
+      userId: user.id,
+    };
+
+    const emojis = selected
+      ? await this.userEmojiService.getUseremojisSelected(getUserEmojisDto)
+      : await this.userEmojiService.getUseremojisAll(getUserEmojisDto);
+
+    const responseDto: UserEmojisResponseDto = {
+      emojis: emojis,
+    };
+    return responseDto;
   }
-   return responseDto;
- }
 
- @Get('/:nickname/titles')
- async getUsersTitlesByNickname(@Param('nickname') nickname: string): Promise<UserTitlesResponseDto> {
-  console.log(nickname);
-   const authDto : AuthDto = await this.authService.getUserByNickname(nickname);
-   const getUsersTitlesDto: GetUserTitlesDto = { userId: authDto.id };
-   const titles : UserTitlesDto = await this.userTitleService.getUserTitles(getUsersTitlesDto);
-   const responseDto: UserTitlesResponseDto = {
-     titles: titles,
-   }
-   return responseDto;
- }
+  @Get('/:nickname/titles')
+  async getUsersTitlesByNickname(
+    @Param('nickname') nickname: string,
+  ): Promise<UserTitlesResponseDto> {
+    console.log(nickname);
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const getUsersTitlesDto: GetUserTitlesDto = { userId: userInfoDto.id };
+    const titles: UserTitlesDto = await this.userTitleService.getUserTitles(
+      getUsersTitlesDto,
+    );
+    const responseDto: UserTitlesResponseDto = {
+      titles: titles,
+    };
+    return responseDto;
+  }
 
- @Patch('/:nickname/detail')
+  @Patch('/:nickname/detail')
   async usersDetailByNicknamePatch(
     @Param('nickname') nickname: string,
     @Body('body')
     patchRequestDto: PatchUsersDetailRequestDto,
-  ) : Promise<void> {
+  ): Promise<void> {
     const patchUserDetailDto: PatchUserDetailDto = {
       nickname,
       imgUrl: patchRequestDto.imgUrl,
@@ -113,6 +143,8 @@ export class UserController {
       nickname,
       titleId: patchRequestDto.titleId,
     };
+    await this.userService.patchUserDetail(patchUserDetailDto);
+    await this.userTitleService.patchUserTitle(patchUserTitleDto);
   }
 
   @Patch('/:nickname/achievements')
@@ -120,13 +152,20 @@ export class UserController {
     @Param('nickmane') nickname: string,
     @Body('body')
     patchRequestDto: PatchUserAchievementsRequestDto,
-  ): Promise <void> {
-    const authDto : AuthDto = await this.authService.getUserByNickname(nickname);
+  ): Promise<void> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
 
-    const patchUserAchievementsDto: PatchUserAchievementsDto ={
-      userId: authDto.id,
+    const patchUserAchievementsDto: PatchUserAchievementsDto = {
+      userId: userInfoDto.id,
       achievementsId: patchRequestDto.achievements,
-    }
+    };
+
+    await this.userAchievementService.patchUserAchievements(
+      patchUserAchievementsDto,
+    );
   }
 
   @Patch('/:nickname/emojis')
@@ -134,13 +173,18 @@ export class UserController {
     @Param('nickmane') nickname: string,
     @Body('body')
     patchRequestDto: PatchUserEmojisRequestDto,
-  ): Promise <void> {
-    const authDto : AuthDto = await this.authService.getUserByNickname(nickname);
+  ): Promise<void> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
 
-    const patchUserAchievementsDto: PatchUserEmojisDto ={
-      userId: authDto.id,
+    const patchUserAchievementsDto: PatchUserEmojisDto = {
+      userId: userInfoDto.id,
       emojisId: patchRequestDto.emojis,
-    }
+    };
+
+    await this.userEmojiService.patchUseremojis(patchUserAchievementsDto);
   }
 
 }

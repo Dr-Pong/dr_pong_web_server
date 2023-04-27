@@ -7,9 +7,9 @@ import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
 import { AppModule } from 'src/app.module';
 import { TestService } from 'src/test/test.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
-import { UsersDetailDto } from './dto/users.detail.dto';
 import { TestModule } from 'src/test/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
+import { UserDetailDto } from './dto/user.detail.dto';
 
 describe('UserService', () => {
   let service: UserService;
@@ -49,9 +49,11 @@ describe('UserService', () => {
 
     const getUserDetailRequest: GetUserDetailDto = {
       nickname: basicUser.nickname,
-    }
+    };
 
-    const result: UsersDetailDto = await service.getUsersDetail(getUserDetailRequest);
+    const result: UserDetailDto = await service.getUsersDetail(
+      getUserDetailRequest,
+    );
 
     expect(result.nickname).toBe(basicUser.nickname);
     expect(result.imgUrl).toBe(basicUser.imageUrl);
