@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { UserAchievement } from './user-achievement.entity';
 import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
 import {
@@ -13,7 +13,7 @@ import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
 
 @Injectable()
-export class UserAchievemetService {
+export class UserAchievementService {
   constructor(
     @InjectRepository(UserAchievement)
     private userAchievementRepository: Repository<UserAchievement>,
@@ -28,7 +28,7 @@ export class UserAchievemetService {
     if (getDto.isSelected == true) {
       //achieved이고 selected된 업적 return
       const selectAchievement = await this.userAchievementRepository.find({
-        where: { user: { id: getDto.userId }, isSelected: true },
+        where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
       });
       const achievements = selectAchievement.map((userAchievement) => {
         return {
@@ -71,25 +71,39 @@ export class UserAchievemetService {
   ): Promise<void> {
     const old_achievements: UserAchievement[] =
       await this.userAchievementRepository.find({
-        where: { user: { id: patchDto.userId }, isSelected: true },
+        where: {
+          user: { id: patchDto.userId },
+          selectedOrder: Not(IsNull()),
+        },
       });
-    const to_change_achievements: UserAchievement[] =
+    const to_change_achievement: UserAchievement[] =
       await this.userAchievementRepository.find({
         where: {
           user: { id: patchDto.userId },
           achievement: In(patchDto.achievementsId),
         },
       });
-    if (to_change_achievements.length !== patchDto.achievementsId.length) {
-      throw await new BadRequestException('No such Achievements');
+    const countNumbers = patchDto.achievementsId.filter(
+      (elem) => typeof elem === 'number',
+    ).length;
+    if (countNumbers !== to_change_achievement.length) {
+      throw new BadRequestException('No such achievement');
     }
-    for (const c of old_achievements) {
-      c.isSelected = false;
+
+    for (const c of to_change_achievement) {
+      c.selectedOrder = null;
+    }
+    for (const c of to_change_achievement) {
+      let i = 0;
+      for (const d of patchDto.achievementsId) {
+        if (c.achievement.id === d) {
+          c.selectedOrder = i;
+          break;
+        }
+        i++;
+      }
     }
     await this.userAchievementRepository.save(old_achievements);
-    for (const c of to_change_achievements) {
-      c.isSelected = true;
-    }
-    await this.userAchievementRepository.save(to_change_achievements);
+    await this.userAchievementRepository.save(to_change_achievement);
   }
 }

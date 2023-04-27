@@ -22,15 +22,15 @@ export class Rank extends BaseTimeEntity {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column()
+  @Column({ name: 'ladder_rank' })
   ladderRank: number;
 
-  @Column()
+  @Column({ name: 'ladder_point' })
   ladderPoint: number;
 
-  @Column()
+  @Column({ name: 'highest_ranking' })
   highestRanking: number;
 
-  @Column()
+  @Column({ name: 'highest_point' })
   highestPoint: number;
 }
