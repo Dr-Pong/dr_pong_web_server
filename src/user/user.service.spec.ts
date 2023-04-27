@@ -1,21 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
-import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
-import { typeORMConfig } from 'src/configs/typeorm.config';
-import { UserTitle } from 'src/user-title/user-title.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { UserService } from './user.service';
-import { UserModule } from './user.module';
-import { UsertitleModule } from 'src/user-title/user-title.module';
 import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
-import { Title } from 'src/title/title.entity';
-import { TitleModule } from 'src/title/title.module';
-import { PatchUserTitleDto } from './dto/patch.user.title.dto';
-import { PatchUsersDetailRequestDto } from './dto/patch.users.detail.request.dto';
-import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
-import exp from 'constants';
-import { async } from 'rxjs';
-import { GetUserTitlesDto } from 'src/user-title/dto/get.user.titles.dto';
 import { AppModule } from 'src/app.module';
 import { TestService } from 'src/test/test.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
@@ -68,5 +56,20 @@ describe('UserService', () => {
   });
 
   it('User Detail Patch 테스트', async () => {
+    const basicUser: User = await testData.createBasicUser();
+
+    const patchUserDetailRequest: PatchUserDetailDto = {
+      nickname: basicUser.nickname,
+      imgUrl: 'changedImageUrl',
+      statusMessage: 'change message',
+    }
+
+    await service.patchUserDetail(patchUserDetailRequest);
+
+    const result: User = await userRepository.findOne({where:{id:basicUser.id}});
+
+    expect(result.nickname).toBe(patchUserDetailRequest.nickname);
+    expect(result.imageUrl).toBe(patchUserDetailRequest.imgUrl);
+    expect(result.statusMessage).toBe(patchUserDetailRequest.statusMessage);
   });
 });
