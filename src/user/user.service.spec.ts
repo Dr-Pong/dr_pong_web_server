@@ -20,6 +20,7 @@ import { AppModule } from 'src/app.module';
 import { TestService } from 'src/test/test.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UsersDetailDto } from './dto/users.detail.dto';
+import { TestModule } from 'src/test/test.module';
 
 describe('UserService', () => {
   let service: UserService;
@@ -30,9 +31,11 @@ describe('UserService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        AppModule
+        TypeOrmModule.forRoot(typeORMConfig),
+        TestModule,
       ],
       providers: [
+        UserService,
         {
           provide: getRepositoryToken(User),
           useClass: Repository,
