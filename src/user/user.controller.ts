@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserDetailResponseDto } from './dto/user.detail.response.dto';
@@ -26,6 +26,7 @@ import { PatchUserEmojisRequestDto } from 'src/user-emoji/dto/patch.user.emojis.
 import { UserTitlesDto } from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from 'src/user-title/dto/get.user.titles.dto';
 import { UserInfoDto } from './dto/user.info.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UserController {
@@ -34,7 +35,6 @@ export class UserController {
     private userAchievementService: UserAchievementService,
     private userEmojiService: UserEmojiService,
     private userTitleService: UserTitleService,
-    private authService: AuthService,
   ) {}
 
   @Get('/:nickname/detail')
@@ -128,6 +128,7 @@ export class UserController {
     return responseDto;
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/detail')
   async usersDetailByNicknamePatch(
     @Param('nickname') nickname: string,
@@ -148,6 +149,7 @@ export class UserController {
     await this.userTitleService.patchUserTitle(patchUserTitleDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/achievements')
   async userAchievementsByNicknamePatch(
     @Param('nickname') nickname: string,
@@ -170,6 +172,7 @@ export class UserController {
     );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/emojis')
   async userEmojisByNicknamePatch(
     @Param('nickname') nickname: string,
