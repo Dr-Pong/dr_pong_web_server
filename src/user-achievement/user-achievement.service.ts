@@ -30,13 +30,14 @@ export class UserAchievementService {
       const selectAchievement = await this.userAchievementRepository.find({
         where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
       });
-      const achievements = selectAchievement.map((userAchievement) => {
-        return {
+      const achievements : UserAchievementDto[] = [null, null, null];
+      for (const userAchievement of selectAchievement) {
+        achievements[userAchievement.selectedOrder] = {
           id: userAchievement.achievement.id,
           name: userAchievement.achievement.name,
           status: CollectableStatus.SELECTED,
         };
-      });
+      }
       const responseDto: UserAchievementsDto = {
         achievements: achievements,
       };
@@ -80,7 +81,7 @@ export class UserAchievementService {
       await this.userAchievementRepository.find({
         where: {
           user: { id: patchDto.userId },
-          achievement: In(patchDto.achievementsId),
+          achievement: {id:In(patchDto.achievementsId)}
         },
       });
     const countNumbers = patchDto.achievementsId.filter(

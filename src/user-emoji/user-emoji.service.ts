@@ -23,13 +23,13 @@ export class UserEmojiService {
       const selectedEmoji = await this.userEmojiRepository.find({
         where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
       });
-      const emojis: UserEmojiDto[] = [];
+      const emojis: UserEmojiDto[] = [null, null, null, null];
       for (const userEmoji of selectedEmoji) {
-        emojis.push({
+        emojis[userEmoji.selectedOrder] = {
           id: userEmoji.emoji.id,
           name: userEmoji.emoji.name,
           status: CollectableStatus.SELECTED,
-        });
+        };
       }
       const responseDto: UseremojisDto = {
         emojis: emojis,
