@@ -43,15 +43,15 @@ export class UserController {
     const getUsersTitlesDto: GetUserSelectedTitleDto = { nickname };
 
     const user = await this.userService.getUsersDetail(getUsersDetailDto);
-    const title = await this.userService.getUserSelectedTitle(
-      getUsersTitlesDto,
-    );
+    // const title = await this.userTitleService.getUserTitles(
+    //   getUsersTitlesDto,
+    // );
     const responseDto: UserDetailResponseDto = {
       nickname: user.nickname,
       imgUrl: user.imgUrl,
       level: user.level,
       statusMessage: user.statusMessage,
-      title: title.title,
+      title: 'title',
     };
     return responseDto;
   }
@@ -131,9 +131,10 @@ export class UserController {
   @Patch('/:nickname/detail')
   async usersDetailByNicknamePatch(
     @Param('nickname') nickname: string,
-    @Body('body')
+    @Body()
     patchRequestDto: PatchUsersDetailRequestDto,
   ): Promise<void> {
+    console.log('patchDto', patchRequestDto);
     const patchUserDetailDto: PatchUserDetailDto = {
       nickname,
       imgUrl: patchRequestDto.imgUrl,
@@ -149,10 +150,11 @@ export class UserController {
 
   @Patch('/:nickname/achievements')
   async userAchievementsByNicknamePatch(
-    @Param('nickmane') nickname: string,
-    @Body('body')
+    @Param('nickname') nickname: string,
+    @Body()
     patchRequestDto: PatchUserAchievementsRequestDto,
   ): Promise<void> {
+    console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -170,10 +172,11 @@ export class UserController {
 
   @Patch('/:nickname/emojis')
   async userEmojisByNicknamePatch(
-    @Param('nickmane') nickname: string,
-    @Body('body')
+    @Param('nickname') nickname: string,
+    @Body()
     patchRequestDto: PatchUserEmojisRequestDto,
   ): Promise<void> {
+    console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
