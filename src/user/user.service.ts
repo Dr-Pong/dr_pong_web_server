@@ -19,8 +19,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(UserTitle)
-    private userTitleRepository: Repository<UserTitle>,
   ) {}
 
   //get detail service
@@ -39,28 +37,14 @@ export class UserService {
     return responseDto;
   }
 
-  //get user title
-  async getUserSelectedTitle(
-    getDto: GetUserSelectedTitleDto,
-  ): Promise<UserSelectedTitleDto> {
-    const userTitle = await this.userTitleRepository.findOne({
-      where: { user: { nickname: getDto.nickname }, isSelected: true },
-    });
-    const responseDto: UserSelectedTitleDto = {
-      title: userTitle != null ? userTitle.title.name : null,
-    };
-    return responseDto;
-  }
-
   //patch detail service
   async patchUserDetail(patchDto: PatchUserDetailDto): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { nickname: patchDto.nickname },
     });
     if (!user) throw new NotFoundException('No such User');
-    user.nickname = patchDto.nickname;
     user.imageUrl = patchDto.imgUrl;
-    user.statusMessage = patchDto.message;
+    user.statusMessage = patchDto.statusMessage;
     await this.userRepository.save(user);
   }
 }
