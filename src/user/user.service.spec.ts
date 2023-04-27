@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
@@ -9,6 +9,7 @@ import { TestService } from 'src/test/test.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UsersDetailDto } from './dto/users.detail.dto';
 import { TestModule } from 'src/test/test.module';
+import { typeORMConfig } from 'src/configs/typeorm.config';
 
 describe('UserService', () => {
   let service: UserService;

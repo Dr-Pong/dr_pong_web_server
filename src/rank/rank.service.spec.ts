@@ -5,11 +5,14 @@ import { User } from 'src/user/user.entity';
 import { Rank } from './rank.entity';
 import { Season } from 'src/season/season.entity';
 import { AppModule } from 'src/app.module';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { GetUserRankStatDto } from './dto/get.user.rank.stat.dto';
 import { GetUserBestRankStatDto } from './dto/get.user.best.rnak.stat.dto';
 import { TestService } from 'src/test/test.service';
+import { TestModule } from 'src/test/test.module';
+import { typeORMConfig } from 'src/configs/typeorm.config';
+import { RankModule } from './rank.module';
 
 describe('RankService', () => {
   let service: RankService;
@@ -21,7 +24,11 @@ describe('RankService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        TypeOrmModule.forRoot(typeORMConfig),
+        RankModule,
+        TestModule,
+      ],
       providers: [
         {
           provide: getRepositoryToken(Rank),

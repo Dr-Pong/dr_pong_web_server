@@ -12,6 +12,7 @@ import { UserTitleService } from './user-title.service';
 import { GetUserTitlesDto } from './dto/get.user.titles.dto';
 import { TestService } from 'src/test/test.service';
 import { AppModule } from 'src/app.module';
+import { TestModule } from 'src/test/test.module';
 
 describe('UserTitleService', () => {
   let service: UserTitleService;
@@ -21,7 +22,11 @@ describe('UserTitleService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        TypeOrmModule.forRoot(typeORMConfig),
+        UsertitleModule,
+        TestModule,
+      ],
       providers: [
         {
           provide: getRepositoryToken(UserTitle),
@@ -72,12 +77,12 @@ describe('UserTitleService', () => {
 
     //resul1의 타이틀이름
 
-    expect(result1.titles[0].title).toBe('emoji1');
-    expect(result1.titles[1].title).toBe('emoji3');
-    expect(result1.titles[2].title).toBe('emoji5');
+    expect(result1.titles[0].title).toBe(testData.titles[0].name);
+    expect(result1.titles[1].title).toBe(testData.titles[1].name);
+    expect(result1.titles[2].title).toBe(testData.titles[2].name);
 
-    expect(result2.titles[0].title).toBe('emoji0');
-    expect(result2.titles[1].title).toBe('emoji1');
-    expect(result2.titles[2].title).toBe('emoji2');
+    expect(result2.titles[0].title).toBe(testData.titles[0].name);
+    expect(result2.titles[1].title).toBe(testData.titles[1].name);
+    expect(result2.titles[2].title).toBe(testData.titles[2].name);
   });
 });
