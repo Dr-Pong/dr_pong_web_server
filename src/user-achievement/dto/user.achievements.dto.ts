@@ -5,6 +5,10 @@ export class UserAchievementDto {
 
   name: string;
 
+  imgUrl: string;
+
+  content: string;
+
   status: CollectableStatus;
 }
 
