@@ -30,6 +30,7 @@ export class UserEmojiService {
       emojis.push({
         id: c.id,
         name: c.name,
+        imgUrl: c.imageUrl,
         status: status.getStatus(c.id),
       });
     }
@@ -51,6 +52,7 @@ export class UserEmojiService {
       emojis[userEmoji.selectedOrder] = {
         id: userEmoji.emoji.id,
         name: userEmoji.emoji.name,
+        imgUrl: userEmoji.emoji.imageUrl,
         status: CollectableStatus.SELECTED,
       };
     }

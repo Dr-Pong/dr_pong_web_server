@@ -1,5 +1,5 @@
-import { UseremojisDto } from "./user.emojis.dto";
+import { UserEmojiDto } from './user.emojis.dto';
 
 export class UserEmojisResponseDto {
-	emojis: UseremojisDto;
+  emojis: UserEmojiDto[];
 }
