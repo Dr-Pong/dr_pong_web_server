@@ -7,7 +7,7 @@ import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
 import { AppModule } from 'src/app.module';
 import { TestService } from 'src/test/test.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
-import { UsersDetailDto } from './dto/users.detail.dto';
+import { UserDetailDto } from './dto/user.detail.dto';
 
 describe('UserService', () => {
   let service: UserService;
@@ -17,9 +17,7 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        AppModule
-      ],
+      imports: [AppModule],
       providers: [
         {
           provide: getRepositoryToken(User),
@@ -45,9 +43,11 @@ describe('UserService', () => {
 
     const getUserDetailRequest: GetUserDetailDto = {
       nickname: basicUser.nickname,
-    }
+    };
 
-    const result: UsersDetailDto = await service.getUsersDetail(getUserDetailRequest);
+    const result: UserDetailDto = await service.getUsersDetail(
+      getUserDetailRequest,
+    );
 
     expect(result.nickname).toBe(basicUser.nickname);
     expect(result.imgUrl).toBe(basicUser.imageUrl);

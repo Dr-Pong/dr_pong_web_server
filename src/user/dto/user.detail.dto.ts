@@ -1,4 +1,4 @@
-export class UsersDetailDto {
+export class UserDetailDto {
   nickname: string;
 
   imgUrl: string;

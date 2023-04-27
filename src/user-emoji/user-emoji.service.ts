@@ -40,33 +40,35 @@ export class UserEmojiService {
   }
 
   //getUseremojis함수
-  async getUseremojisSelected(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
-      const selectedEmoji = await this.userEmojiRepository.find({
-        where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
-      });
-      const emojis: UserEmojiDto[] = [null, null, null, null];
-      for (const userEmoji of selectedEmoji) {
-        emojis[userEmoji.selectedOrder] = {
-          id: userEmoji.emoji.id,
-          name: userEmoji.emoji.name,
-          status: CollectableStatus.SELECTED,
-        };
-      }
-      const responseDto: UseremojisDto = {
-        emojis: emojis,
+  async getUseremojisSelected(
+    getDto: GetUserEmojisDto,
+  ): Promise<UseremojisDto> {
+    const selectedEmoji = await this.userEmojiRepository.find({
+      where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
+    });
+    const emojis: UserEmojiDto[] = [null, null, null, null];
+    for (const userEmoji of selectedEmoji) {
+      emojis[userEmoji.selectedOrder] = {
+        id: userEmoji.emoji.id,
+        name: userEmoji.emoji.name,
+        status: CollectableStatus.SELECTED,
       };
-      return responseDto;
+    }
+    const responseDto: UseremojisDto = {
+      emojis: emojis,
+    };
+    return responseDto;
   }
 
   //patchUseremojis함수
   async patchUseremojis(patchDto: PatchUserEmojisDto): Promise<void> {
-    const old_emojis: UserEmoji[] = await this.userEmojiRepository.find({
+    const oldEmojis: UserEmoji[] = await this.userEmojiRepository.find({
       where: {
         user: { id: patchDto.userId },
         selectedOrder: Not(IsNull()),
       },
     });
-    const to_change_emojis: UserEmoji[] = await this.userEmojiRepository.find({
+    const toChangeEmojis: UserEmoji[] = await this.userEmojiRepository.find({
       where: {
         user: { id: patchDto.userId },
         emoji: In(patchDto.emojisId),
@@ -75,14 +77,14 @@ export class UserEmojiService {
     const countNumbers = patchDto.emojisId.filter(
       (elem) => typeof elem === 'number',
     ).length;
-    if (countNumbers !== to_change_emojis.length) {
+    if (countNumbers !== toChangeEmojis.length) {
       throw new BadRequestException('No such emoji');
     }
-    for (const c of old_emojis) {
+    for (const c of oldEmojis) {
       c.selectedOrder = null;
     }
-    
-    for (const c of to_change_emojis) {
+
+    for (const c of toChangeEmojis) {
       let i = 0;
       for (const d of patchDto.emojisId) {
         if (c.emoji.id === d) {
@@ -92,7 +94,7 @@ export class UserEmojiService {
         i++;
       }
     }
-    await this.userEmojiRepository.save(old_emojis);
-    await this.userEmojiRepository.save(to_change_emojis);
+    await this.userEmojiRepository.save(oldEmojis);
+    await this.userEmojiRepository.save(toChangeEmojis);
   }
 }
