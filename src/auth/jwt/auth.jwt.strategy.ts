@@ -23,12 +23,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	users : Map<string, AuthDto> = new Map();
 
 	async validate(payload) : Promise<AuthDto> {
-		const token : TokenInterface = this.jwtService.verify(payload);
+		console.log(payload);
 
-		if (token.nickname === '')
-			throw new UnauthorizedException('nickname required');
-		const user = await this.findUser(token);
-		this.validateUser(token, user);
+		const user = await this.findUser(payload);
+		this.validateUser(payload, user);
 		return user;
 	}
 
