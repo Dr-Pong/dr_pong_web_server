@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserDetailResponseDto } from './dto/user.detail.response.dto';
@@ -104,7 +112,7 @@ export class UserController {
       : await this.userEmojiService.getUseremojisAll(getUserEmojisDto);
 
     const responseDto: UserEmojisResponseDto = {
-      emojis: emojis,
+      emojis: emojis.emojis,
     };
     return responseDto;
   }
