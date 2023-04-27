@@ -10,7 +10,7 @@ import { UsertitleModule } from 'src/user-title/user-title.module';
 import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
 import { Title } from 'src/title/title.entity';
 import { TitleModule } from 'src/title/title.module';
-import { PatchUserTitleDto } from './dto/patch.user.title.dto';
+import { PatchUserTitleDto } from '../user-title/dto/patch.user.title.dto';
 import { PatchUsersDetailRequestDto } from './dto/patch.users.detail.request.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 import exp from 'constants';
@@ -19,7 +19,7 @@ import { GetUserTitlesDto } from 'src/user-title/dto/get.user.titles.dto';
 import { AppModule } from 'src/app.module';
 import { TestService } from 'src/test/test.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
-import { UsersDetailDto } from './dto/users.detail.dto';
+import { UserDetailDto } from './dto/user.detail.dto';
 
 describe('UserService', () => {
   let service: UserService;
@@ -29,9 +29,7 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        AppModule
-      ],
+      imports: [AppModule],
       providers: [
         {
           provide: getRepositoryToken(User),
@@ -57,9 +55,11 @@ describe('UserService', () => {
 
     const getUserDetailRequest: GetUserDetailDto = {
       nickname: basicUser.nickname,
-    }
+    };
 
-    const result: UsersDetailDto = await service.getUsersDetail(getUserDetailRequest);
+    const result: UserDetailDto = await service.getUsersDetail(
+      getUserDetailRequest,
+    );
 
     expect(result.nickname).toBe(basicUser.nickname);
     expect(result.imgUrl).toBe(basicUser.imageUrl);
@@ -67,6 +67,5 @@ describe('UserService', () => {
     expect(result.level).toBe(basicUser.level);
   });
 
-  it('User Detail Patch 테스트', async () => {
-  });
+  it('User Detail Patch 테스트', async () => {});
 });

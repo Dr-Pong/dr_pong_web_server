@@ -1,18 +1,14 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserTitle } from 'src/user-title/user-title.entity';
 import { User } from './user.entity';
-import { UsersDetailDto } from './dto/users.detail.dto';
+import { UserDetailDto } from './dto/user.detail.dto';
 import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserSelectedTitleDto } from './dto/user.selected.title.dto';
-import { PatchUserTitleDto } from './dto/patch.user.title.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
+import { UserInfoDto } from './dto/user.info.dto';
 
 @Injectable()
 export class UserService {
@@ -24,17 +20,32 @@ export class UserService {
   ) {}
 
   //get detail service
-  async getUsersDetail(getDto: GetUserDetailDto): Promise<UsersDetailDto> {
+  async getUsersDetail(getDto: GetUserDetailDto): Promise<UserDetailDto> {
     const user = await this.userRepository.findOne({
       where: { nickname: getDto.nickname },
     });
     if (!user) throw new NotFoundException('No such User');
 
-    const responseDto: UsersDetailDto = {
+    const responseDto: UserDetailDto = {
       nickname: user.nickname,
       imgUrl: user.imageUrl,
       level: user.level,
       statusMessage: user.statusMessage,
+    };
+    return responseDto;
+  }
+
+  //get user info
+  async getUserInfo(getDto: GetUserDetailDto): Promise<UserInfoDto> {
+    const userInfo = await this.userRepository.findOne({
+      where: { nickname: getDto.nickname },
+    });
+    if (!userInfo) throw new NotFoundException('No such User');
+
+    const responseDto: UserInfoDto = {
+      id: userInfo.id,
+      nickname: userInfo.nickname,
+      roleType: userInfo.roleType,
     };
     return responseDto;
   }
