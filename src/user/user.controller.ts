@@ -34,7 +34,6 @@ export class UserController {
     private userAchievementService: UserAchievementService,
     private userEmojiService: UserEmojiService,
     private userTitleService: UserTitleService,
-    private authService: AuthService,
   ) {}
 
   @Get('/:nickname/detail')
@@ -79,7 +78,7 @@ export class UserController {
         );
 
     const responseDto: UserAchievementsResponseDto = {
-      achievements: achievements,
+      achievements: achievements.achievements,
     };
     return responseDto;
   }
@@ -113,7 +112,7 @@ export class UserController {
   async getUsersTitlesByNickname(
     @Param('nickname') nickname: string,
   ): Promise<UserTitlesResponseDto> {
-    console.log(nickname);
+    // console.log(nickname);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -134,7 +133,7 @@ export class UserController {
     @Body()
     patchRequestDto: PatchUsersDetailRequestDto,
   ): Promise<void> {
-    console.log('patchDto', patchRequestDto);
+    // console.log('patchDto', patchRequestDto);
     const patchUserDetailDto: PatchUserDetailDto = {
       nickname,
       imgUrl: patchRequestDto.imgUrl,
@@ -154,7 +153,7 @@ export class UserController {
     @Body()
     patchRequestDto: PatchUserAchievementsRequestDto,
   ): Promise<void> {
-    console.log('patchDto', patchRequestDto);
+    // console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -176,7 +175,7 @@ export class UserController {
     @Body()
     patchRequestDto: PatchUserEmojisRequestDto,
   ): Promise<void> {
-    console.log('patchDto', patchRequestDto);
+    // console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -189,5 +188,4 @@ export class UserController {
 
     await this.userEmojiService.patchUseremojis(patchUserAchievementsDto);
   }
-
 }
