@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserDetailResponseDto } from './dto/user.detail.response.dto';
@@ -26,6 +26,7 @@ import { PatchUserEmojisRequestDto } from 'src/user-emoji/dto/patch.user.emojis.
 import { UserTitlesDto } from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from 'src/user-title/dto/get.user.titles.dto';
 import { UserInfoDto } from './dto/user.info.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UserController {
@@ -34,7 +35,6 @@ export class UserController {
     private userAchievementService: UserAchievementService,
     private userEmojiService: UserEmojiService,
     private userTitleService: UserTitleService,
-    private authService: AuthService,
   ) {}
 
   @Get('/:nickname/detail')
@@ -43,15 +43,15 @@ export class UserController {
     const getUsersTitlesDto: GetUserSelectedTitleDto = { nickname };
 
     const user = await this.userService.getUsersDetail(getUsersDetailDto);
-    const title = await this.userService.getUserSelectedTitle(
-      getUsersTitlesDto,
-    );
+    // const title = await this.userTitleService.getUserTitles(
+    //   getUsersTitlesDto,
+    // );
     const responseDto: UserDetailResponseDto = {
       nickname: user.nickname,
       imgUrl: user.imgUrl,
       level: user.level,
       statusMessage: user.statusMessage,
-      title: title.title,
+      title: 'title',
     };
     return responseDto;
   }
@@ -128,12 +128,14 @@ export class UserController {
     return responseDto;
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/detail')
   async usersDetailByNicknamePatch(
     @Param('nickname') nickname: string,
-    @Body('body')
+    @Body()
     patchRequestDto: PatchUsersDetailRequestDto,
   ): Promise<void> {
+    console.log('patchDto', patchRequestDto);
     const patchUserDetailDto: PatchUserDetailDto = {
       nickname,
       imgUrl: patchRequestDto.imgUrl,
@@ -147,12 +149,14 @@ export class UserController {
     await this.userTitleService.patchUserTitle(patchUserTitleDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/achievements')
   async userAchievementsByNicknamePatch(
-    @Param('nickmane') nickname: string,
-    @Body('body')
+    @Param('nickname') nickname: string,
+    @Body()
     patchRequestDto: PatchUserAchievementsRequestDto,
   ): Promise<void> {
+    console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -168,12 +172,14 @@ export class UserController {
     );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/emojis')
   async userEmojisByNicknamePatch(
-    @Param('nickmane') nickname: string,
-    @Body('body')
+    @Param('nickname') nickname: string,
+    @Body()
     patchRequestDto: PatchUserEmojisRequestDto,
   ): Promise<void> {
+    console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,

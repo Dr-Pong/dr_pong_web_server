@@ -48,19 +48,6 @@ export class UserService {
     return responseDto;
   }
 
-  //get user title
-  async getUserSelectedTitle(
-    getDto: GetUserSelectedTitleDto,
-  ): Promise<UserSelectedTitleDto> {
-    const userTitle = await this.userTitleRepository.findOne({
-      where: { user: { nickname: getDto.nickname }, isSelected: true },
-    });
-    const responseDto: UserSelectedTitleDto = {
-      title: userTitle != null ? userTitle.title.name : null,
-    };
-    return responseDto;
-  }
-
   //patch detail service
   async patchUserDetail(patchDto: PatchUserDetailDto): Promise<void> {
     const user = await this.userRepository.findOne({
