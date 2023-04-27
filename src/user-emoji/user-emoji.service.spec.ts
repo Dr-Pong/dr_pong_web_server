@@ -52,24 +52,21 @@ describe('UserEmojiService', () => {
     //user[0]친구가 : selected와 acheieved, unacheieved가 전부 있음
     const mixedRequest: GetUserEmojisDto = {
       userId: emojiSelectedWithUser.id,
-      isSelected: false,
     };
     //user[1]친구가 : selected가 없는상태
     const unSelectedRequest: GetUserEmojisDto = {
       userId: nonEmojiSelectedWithUser.id,
-      isSelected: false,
     };
     //user[2]친구가: achieved도 없는상태
     const noEmojiRequest: GetUserEmojisDto = {
       userId: userWithOutEmoji.id,
-      isSelected: false,
     };
     //없는 유저에 대해서 접근하는 테스트 코드가 필요하다 언제? getUserDetail이 로그인이구현되는 그때
 
     //When
-    const selectedCase = await service.getUseremojis(mixedRequest);
-    const nonSelectedCase = await service.getUseremojis(unSelectedRequest);
-    const noEmojiCase = await service.getUseremojis(noEmojiRequest);
+    const selectedCase = await service.getUseremojisAll(mixedRequest);
+    const nonSelectedCase = await service.getUseremojisAll(unSelectedRequest);
+    const noEmojiCase = await service.getUseremojisAll(noEmojiRequest);
 
     //then
     expect(selectedCase.emojis.length).toBe(testData.emojis.length);
@@ -98,32 +95,27 @@ describe('UserEmojiService', () => {
 
     const selectedRequest: GetUserEmojisDto = {
       userId: emojiSelectedWithUser.id,
-      isSelected: true,
     };
 
     const unSelectedRequest: GetUserEmojisDto = {
       userId: nonEmojiSelectedWithUser.id,
-      isSelected: true,
     };
 
     const nonSelectedRequest: GetUserEmojisDto = {
       userId: userWithOutEmoji.id,
-      isSelected: true,
     };
 
     const reverseSelectedRequest: GetUserEmojisDto = {
       userId: userWithReversedEmoji.id,
-      isSelected: true,
     }
     const mixedSelectedRequest: GetUserEmojisDto = {
       userId: userWithMixedEmoji.id,
-      isSelected: true,
     }
-    const selectedCase = await service.getUseremojis(selectedRequest);
-    const unSelectedCase = await service.getUseremojis(unSelectedRequest);
-    const noEmojiCase = await service.getUseremojis(nonSelectedRequest);
-    const reversedCase = await service.getUseremojis(reverseSelectedRequest);
-    const mixedCase = await service.getUseremojis(mixedSelectedRequest);
+    const selectedCase = await service.getUseremojisSelected(selectedRequest);
+    const unSelectedCase = await service.getUseremojisSelected(unSelectedRequest);
+    const noEmojiCase = await service.getUseremojisSelected(nonSelectedRequest);
+    const reversedCase = await service.getUseremojisSelected(reverseSelectedRequest);
+    const mixedCase = await service.getUseremojisSelected(mixedSelectedRequest);
 
     //then
     expect(selectedCase.emojis.length).toBe(4);
