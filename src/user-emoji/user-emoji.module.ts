@@ -8,6 +8,6 @@ import { UserEmoji } from './user-emoji.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([User, UserEmoji, Emoji])],
   providers: [UserEmojiService],
-  exports: [TypeOrmModule.forFeature([UserEmoji]), UserEmojiService],
+  exports: [TypeOrmModule.forFeature([User, UserEmoji, Emoji]), UserEmojiService],
 })
 export class UserEmojiModule {}

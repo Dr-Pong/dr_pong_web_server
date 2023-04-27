@@ -92,7 +92,7 @@ export class TestService {
     });
     this.users.push(user);
     for (const c of this.emojis) {
-      if (4 < c.id) continue;
+      if (this.emojis[4].id < c.id) continue;
       await this.userEmojiRepository.save({
         user: user,
         emoji: c,
@@ -109,7 +109,7 @@ export class TestService {
       imageUrl: 'basicImage',
     });
     for (const c of this.achievements) {
-      if (3 < c.id) continue;
+      if (this.achievements[3].id < c.id) continue;
       await this.userAchievementRepository.save({
         user: user,
         achievement: c,
@@ -125,12 +125,12 @@ export class TestService {
       email: 'achv@mail.com',
       imageUrl: 'basicImage',
     });
-    for (const c of this.titles) {
-      if (this.titles.length / 2 < c.id) continue;
+    for (let i = 0; i < this.titles.length; i++) {
+      if (4 < i) continue;
       await this.userTitleRepository.save({
         user: user,
-        title: c,
-        selectedOrder: false,
+        title: this.titles[i],
+        isSelected: false,
       });
     }
     this.users.push(user);
@@ -186,7 +186,7 @@ export class TestService {
 			})
 		}
 		for (let i = 0; i < this.titles.length; i++) {
-			if (i % 2 === 0)
+			if (4 < i)
 				continue;
 			await this.userTitleRepository.save({
 				user: user,
@@ -213,13 +213,13 @@ export class TestService {
 			imageUrl: 'basicImage',
 		});
 		this.users.push(user);
-		for (const c of this.emojis) {
-			if (4 < c.id)
+		for (let i = 0; i < this.emojis.length; i++) {
+			if (3 < i)
 				continue;
 			await this.userEmojiRepository.save({
 				user: user,
-				emoji: c,
-				selectedOrder: 4 - c.id,
+				emoji: this.emojis[i],
+				selectedOrder: 3 - i % 4,
 			})
 		}
 		return user;
@@ -252,13 +252,13 @@ export class TestService {
 			imageUrl: 'basicImage',
 		});
 		this.users.push(user);
-		for (const c of this.achievements) {
-			if (3 < c.id)
+		for (let i = 0; i < this.achievements.length; i++) {
+			if (2 < i)
 				continue;
 			await this.userAchievementRepository.save({
 				user: user,
-				achievement: c,
-				selectedOrder: 3 - c.id,
+				achievement: this.achievements[i],
+				selectedOrder: 2 - i % 3,
 			})
 		}
 		return user;

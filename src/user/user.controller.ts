@@ -26,7 +26,6 @@ import { PatchUserEmojisRequestDto } from 'src/user-emoji/dto/patch.user.emojis.
 import { UserTitlesDto } from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from 'src/user-title/dto/get.user.titles.dto';
 import { UserInfoDto } from './dto/user.info.dto';
-import { userInfo } from 'os';
 
 @Controller('users')
 export class UserController {
@@ -138,7 +137,7 @@ export class UserController {
     const patchUserDetailDto: PatchUserDetailDto = {
       nickname,
       imgUrl: patchRequestDto.imgUrl,
-      message: patchRequestDto.message,
+      statusMessage: patchRequestDto.message,
     };
     const patchUserTitleDto: PatchUserTitleDto = {
       nickname,
@@ -187,4 +186,5 @@ export class UserController {
 
     await this.userEmojiService.patchUseremojis(patchUserAchievementsDto);
   }
+
 }

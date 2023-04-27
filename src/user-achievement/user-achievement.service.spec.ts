@@ -1,13 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserAchievementService } from './user-achievement.service';
 import { AppModule } from 'src/app.module';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
 import { UserAchievement } from './user-achievement.entity';
 import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
 import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
 import { BadRequestException } from '@nestjs/common';
 import { TestService } from 'src/test/test.service';
+import { typeORMConfig } from 'src/configs/typeorm.config';
+import { UserEmojiModule } from 'src/user-emoji/user-emoji.module';
+import { TestModule } from 'src/test/test.module';
+import { UserAchievementModule } from './user-achievement.module';
 
 describe('UserAchievemetService', () => {
   let service: UserAchievementService;
@@ -17,7 +21,11 @@ describe('UserAchievemetService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        TypeOrmModule.forRoot(typeORMConfig),
+        UserAchievementModule,
+        TestModule,
+      ],
       providers: [
         {
           provide: getRepositoryToken(UserAchievement),
@@ -123,10 +131,10 @@ describe('UserAchievemetService', () => {
     expect(selectedCase.achievements[0].status).toBe('selected');
     expect(selectedCase.achievements[1].status).toBe('selected');
     expect(selectedCase.achievements[2].status).toBe('selected');
-    expect(selectedCase.achievements[0].id).toBe(1);
-    expect(selectedCase.achievements[1].id).toBe(2);
-    expect(selectedCase.achievements[2].id).toBe(3);
-  
+    expect(selectedCase.achievements[0].id).toBe(testData.achievements[0].id);
+    expect(selectedCase.achievements[1].id).toBe(testData.achievements[1].id);
+    expect(selectedCase.achievements[2].id).toBe(testData.achievements[2].id);
+
     expect(unSelectedCase.achievements.length).toBe(3);
     expect(unSelectedCase.achievements[0]).toBe(null);
     expect(unSelectedCase.achievements[1]).toBe(null);
@@ -140,12 +148,12 @@ describe('UserAchievemetService', () => {
     expect(reversedCase.achievements[0].status).toBe('selected');
     expect(reversedCase.achievements[1].status).toBe('selected');
     expect(reversedCase.achievements[2].status).toBe('selected');
-    expect(reversedCase.achievements[0].id).toBe(3);
-    expect(reversedCase.achievements[1].id).toBe(2);
-    expect(reversedCase.achievements[2].id).toBe(1);
+    expect(reversedCase.achievements[0].id).toBe(testData.achievements[2].id);
+    expect(reversedCase.achievements[1].id).toBe(testData.achievements[1].id);
+    expect(reversedCase.achievements[2].id).toBe(testData.achievements[0].id);
     
     expect(mixedCase.achievements[0]).toBe(null);
-    expect(mixedCase.achievements[1].id).toBe(3);
+    expect(mixedCase.achievements[1].id).toBe(testData.achievements[2].id);
     expect(mixedCase.achievements[2]).toBe(null);
   });
 
@@ -207,17 +215,17 @@ describe('UserAchievemetService', () => {
     expect(orderedCase[0].selectedOrder).toBe(0);
     expect(orderedCase[1].selectedOrder).toBe(1);
     expect(orderedCase[2].selectedOrder).toBe(2);
-    expect(orderedCase[0].achievement.id).toBe(1);
-    expect(orderedCase[1].achievement.id).toBe(2);
-    expect(orderedCase[2].achievement.id).toBe(3);
+    expect(orderedCase[0].achievement.id).toBe(testData.achievements[0].id);
+    expect(orderedCase[1].achievement.id).toBe(testData.achievements[1].id);
+    expect(orderedCase[2].achievement.id).toBe(testData.achievements[2].id);
 
     expect(mixedCase.length).toBe(3);
     expect(mixedCase[0].selectedOrder).toBe(0);
     expect(mixedCase[1].selectedOrder).toBe(1);
     expect(mixedCase[2].selectedOrder).toBe(2);
-    expect(mixedCase[0].achievement.id).toBe(3);
-    expect(mixedCase[1].achievement.id).toBe(2);
-    expect(mixedCase[2].achievement.id).toBe(1);
+    expect(mixedCase[0].achievement.id).toBe(testData.achievements[2].id);
+    expect(mixedCase[1].achievement.id).toBe(testData.achievements[1].id);
+    expect(mixedCase[2].achievement.id).toBe(testData.achievements[0].id);
 
     expect(mixeWithNullCase.length).toBe(1);
     expect(mixeWithNullCase[0].selectedOrder).toBe(1);

@@ -1,12 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
 import { AppModule } from 'src/app.module';
 import { TestService } from 'src/test/test.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
+import { TestModule } from 'src/test/test.module';
+import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserDetailDto } from './dto/user.detail.dto';
 
 describe('UserService', () => {
@@ -17,8 +19,12 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        TypeOrmModule.forRoot(typeORMConfig),
+        TestModule,
+      ],
       providers: [
+        UserService,
         {
           provide: getRepositoryToken(User),
           useClass: Repository,

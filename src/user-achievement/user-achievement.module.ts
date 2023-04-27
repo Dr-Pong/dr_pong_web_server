@@ -9,6 +9,6 @@ import { UserAchievementService } from './user-achievement.service';
 @Module({
   imports: [TypeOrmModule.forFeature([User, UserAchievement, Achievemet])],
   providers: [UserAchievementService],
-  exports: [TypeOrmModule.forFeature([UserAchievement]), UserAchievementService],
+  exports: [TypeOrmModule.forFeature([User, UserAchievement, Achievemet]), UserAchievementService],
 })
 export class UserAchievementModule {}
