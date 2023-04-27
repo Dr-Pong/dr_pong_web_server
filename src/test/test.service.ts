@@ -47,7 +47,7 @@ export class TestService {
   async createBasicUser(): Promise<User> {
     const index: number = this.users.length;
     const user = await this.userRepository.save({
-      nickname: index.toString(),
+      nickname: 'user' + index.toString(),
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
       imageUrl: 'basicImage' + index.toString(),
