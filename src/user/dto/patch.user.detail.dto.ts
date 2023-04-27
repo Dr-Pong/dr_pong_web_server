@@ -3,5 +3,5 @@ export class PatchUserDetailDto {
 
   imgUrl: string;
 
-  message: string;
+  statusMessage: string;
 }
