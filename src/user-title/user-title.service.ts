@@ -43,10 +43,7 @@ export class UserTitleService {
       where: { user: { id: getDto.userId }, isSelected: true },
     });
     if (!userTitles) {
-      const responseDto = {
-        id: null,
-        title: null,
-      };
+      const responseDto = null;
       return responseDto;
     }
 
