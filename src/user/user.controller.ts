@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseBoolPipe,
   Patch,
   Query,
   UseGuards,
@@ -75,7 +76,7 @@ export class UserController {
   @Get('/:nickname/achievements')
   async userAchievementByNicknameGet(
     @Param('nickname') nickname: string,
-    @Query('selected') selected: boolean,
+    @Query('selected', ParseBoolPipe) selected: boolean,
   ): Promise<UserAchievementsResponseDto> {
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
@@ -85,7 +86,6 @@ export class UserController {
     const getUserAchievementDto: GetUserAchievementsDto = {
       userId: user.id,
     };
-
     const achievements = selected
       ? await this.userAchievementService.getUserAchievementsSelected(
           getUserAchievementDto,
@@ -93,7 +93,6 @@ export class UserController {
       : await this.userAchievementService.getUserAchievementsAll(
           getUserAchievementDto,
         );
-
     const responseDto: UserAchievementsResponseDto = {
       achievements: achievements.achievements,
     };
