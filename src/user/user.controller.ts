@@ -35,6 +35,7 @@ import { UserTitlesDto } from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from 'src/user-title/dto/get.user.titles.dto';
 import { UserInfoDto } from './dto/user.info.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { userInfo } from 'os';
 
 @Controller('users')
 export class UserController {
@@ -48,18 +49,25 @@ export class UserController {
   @Get('/:nickname/detail')
   async userDetailByNicknameGet(@Param('nickname') nickname: string) {
     const getUsersDetailDto: GetUserDetailDto = { nickname };
-    const getUsersTitlesDto: GetUserSelectedTitleDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    // console.log(userInfoDto);
+    const getUserTitleDto: GetUserTitlesDto = { userId: userInfoDto.id };
 
     const user = await this.userService.getUsersDetail(getUsersDetailDto);
-    // const title = await this.userTitleService.getUserTitles(
-    //   getUsersTitlesDto,
-    // );
+    // console.log(user);
+    const title = await this.userTitleService.getUserTitleSelected(
+      getUserTitleDto,
+    );
+    // console.log(user);
+
     const responseDto: UserDetailResponseDto = {
       nickname: user.nickname,
       imgUrl: user.imgUrl,
       level: user.level,
       statusMessage: user.statusMessage,
-      title: 'title',
+      title: title.title,
     };
     return responseDto;
   }
