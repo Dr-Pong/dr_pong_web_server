@@ -42,7 +42,7 @@ export class UserAchievementService {
         status: status.getStatus(c.id),
       });
     }
-
+    // console.log(achievements);
     const responseDto: UserAchievementsDto = {
       achievements: achievements,
     };
@@ -98,7 +98,7 @@ export class UserAchievementService {
       throw new BadRequestException('No such achievement');
     }
 
-    for (const c of toChangeAchievement) {
+    for (const c of oldAchievements) {
       c.selectedOrder = null;
     }
     for (const c of toChangeAchievement) {
