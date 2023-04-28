@@ -113,6 +113,14 @@ export class TestService {
     }
     return user;
   }
+  async createUserWithUnAchievedEmoji(): Promise<User> {
+    const user: User = await this.userRepository.save({
+      nickname: 'userWithoutAchievements',
+      email: '@mail.com',
+      imageUrl: 'basicImage',
+    });
+    return user;
+  }
 
   async createUserWithUnSelectedAchievements(): Promise<User> {
     const user: User = await this.userRepository.save({
