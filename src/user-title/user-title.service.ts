@@ -44,12 +44,14 @@ export class UserTitleService {
     });
     if (!userTitles) {
       const responseDto = {
+        id: null,
         title: null,
       };
       return responseDto;
     }
 
     const responseDto: UserTitleSelectedDto = {
+      id: userTitles.title.id,
       title: userTitles.title.name,
     };
     return responseDto;

@@ -1,5 +1,5 @@
-import { UserTitlesDto } from "./user.titles.dto";
+import { UserTitleDto, UserTitlesDto } from './user.titles.dto';
 
 export class UserTitlesResponseDto {
-	titles: UserTitlesDto;
+  titles: UserTitleDto[];
 }

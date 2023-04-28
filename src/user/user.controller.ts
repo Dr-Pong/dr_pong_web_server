@@ -36,6 +36,7 @@ import { GetUserTitlesDto } from 'src/user-title/dto/get.user.titles.dto';
 import { UserInfoDto } from './dto/user.info.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { userInfo } from 'os';
+import { UserTitleSelectedDto } from 'src/user-title/dto/user.title.selected.dto';
 
 @Controller('users')
 export class UserController {
@@ -57,9 +58,8 @@ export class UserController {
 
     const user = await this.userService.getUsersDetail(getUsersDetailDto);
     // console.log(user);
-    const title = await this.userTitleService.getUserTitleSelected(
-      getUserTitleDto,
-    );
+    const title: UserTitleSelectedDto =
+      await this.userTitleService.getUserTitleSelected(getUserTitleDto);
     // console.log(user);
 
     const responseDto: UserDetailResponseDto = {
@@ -67,7 +67,7 @@ export class UserController {
       imgUrl: user.imgUrl,
       level: user.level,
       statusMessage: user.statusMessage,
-      title: title.title,
+      title: title,
     };
     return responseDto;
   }
@@ -139,7 +139,7 @@ export class UserController {
       getUsersTitlesDto,
     );
     const responseDto: UserTitlesResponseDto = {
-      titles: titles,
+      titles: titles.titles,
     };
     return responseDto;
   }
