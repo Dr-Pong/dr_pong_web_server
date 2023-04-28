@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   Param,
   ParseBoolPipe,
@@ -76,7 +77,8 @@ export class UserController {
   @Get('/:nickname/achievements')
   async userAchievementByNicknameGet(
     @Param('nickname') nickname: string,
-    @Query('selected', ParseBoolPipe) selected: boolean,
+    @Query('selected', new DefaultValuePipe(false), ParseBoolPipe)
+    selected: boolean,
   ): Promise<UserAchievementsResponseDto> {
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
@@ -102,7 +104,8 @@ export class UserController {
   @Get('/:nickname/emojis')
   async userEmojisByNicknameGet(
     @Param('nickname') nickname: string,
-    @Query('selected') selected: boolean,
+    @Query('selected', new DefaultValuePipe(false), ParseBoolPipe)
+    selected: boolean,
   ): Promise<UserEmojisResponseDto> {
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(

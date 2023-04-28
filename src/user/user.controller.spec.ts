@@ -311,22 +311,56 @@ describe('UserController', () => {
       });
     });
 
-    // it('GET /users/{nickname}/emojis?selected=true', async () => {
-    //   await testService.createBasicCollectable();
-    //   const user: User = await testService.createUserWithCollectables();
-    //   const response = await request(app.getHttpServer()).get(
-    //     '/users/' + user.nickname + '/emojis?selected=true',
-    //   );
-    //   // console.log(response.body);
-    //   // console.log(response.statusCode);
-    //   expect(response.statusCode).toBe(200);
-    //   expect(response.body).toHaveProperty('emojis'); //원하는 데이터 넣기
-    //   expect(response.body.emojis.length).toBe(4); //원하는 데이터 넣기
-    //   expect(response.body.emojis[0]).toHaveProperty('id'); //원하는 데이터 넣기
-    //   expect(response.body.emojis[0]).toHaveProperty('name'); //원하는 데이터 넣기
-    //   expect(response.body.emojis[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
-    //   expect(response.body.emojis[0]).toHaveProperty('status'); //원하는 데이터 넣기
-    // });
+    describe('/users/{nickname}/emojis?selected=false', () => {
+      it('achieve, selected 둘다 없는경우', async () => {
+        const user: User = await testService.createUserWithUnAchievedEmoji();
+        const user2: User = await testService.createUserWithUnSelectedEmojis();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/emojis?selected=false',
+        );
+        const response2 = await request(app.getHttpServer()).get(
+          '/users/' + user2.nickname + '/emojis?selected=false',
+        );
+
+        // console.log(response.body);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('emojis');
+        expect(response.body.emojis[0].status).toBe('unachieved');
+        expect(response.body.emojis[1].status).toBe('unachieved');
+        expect(response.body.emojis[2].status).toBe('unachieved');
+        expect(response2.statusCode).toBe(200);
+        expect(response2.body).toHaveProperty('emojis');
+        expect(response2.body.emojis[0].status).toBe('achieved');
+        expect(response2.body.emojis[1].status).toBe('achieved');
+        expect(response2.body.emojis[2].status).toBe('achieved');
+      });
+      it('achieved 만있고 selected 없는경우', async () => {
+        const user: User = await testService.createUserWithUnSelectedEmojis();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/emojis?selected=false',
+        );
+
+        // console.log(response.body);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('emojis');
+        expect(response.body.emojis[0].status).toBe('achieved');
+        expect(response.body.emojis[1].status).toBe('achieved');
+        expect(response.body.emojis[2].status).toBe('achieved');
+      });
+      it('achieve, selected 둘다 있는경우', async () => {
+        const user: User = await testService.createUserWithCollectables();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/emojis?selected=false',
+        );
+
+        // console.log(response.body);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('emojis');
+        expect(response.body.emojis[0].status).toBe('selected');
+        expect(response.body.emojis[1].status).toBe('selected');
+        expect(response.body.emojis[2].status).toBe('selected');
+      });
+    });
 
     // it('GET /users/{nickname}/emojis?selected=false', async () => {
     //   await testService.createBasicCollectable();
