@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Achievemet } from 'src/achievemet/achievement.entity';
+import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { Game } from 'src/game/game.entity';
 import { Rank } from 'src/rank/rank.entity';
@@ -26,10 +26,10 @@ export class TestService {
     private emojiRepository: Repository<Emoji>,
     @InjectRepository(UserEmoji)
     private userEmojiRepository: Repository<UserEmoji>,
-    @InjectRepository(Achievemet)
-    private achievementRepository: Repository<Achievemet>,
+    @InjectRepository(Achievement)
+    private achievementRepository: Repository<Achievement>,
     @InjectRepository(UserAchievement)
-    private userAchievementRepository: Repository<UserEmoji>,
+    private userAchievementRepository: Repository<UserAchievement>,
     @InjectRepository(Rank)
     private rankRepository: Repository<Rank>,
     @InjectRepository(Season)
@@ -40,7 +40,7 @@ export class TestService {
   users: User[] = [];
   emojis: Emoji[] = [];
   titles: Title[] = [];
-  achievements: Achievemet[] = [];
+  achievements: Achievement[] = [];
   seasons: Season[] = [];
   ranks: Rank[] = [];
 
@@ -128,6 +128,15 @@ export class TestService {
         selectedOrder: null,
       });
     }
+    return user;
+  }
+
+  async createUserWithUnAchievedAchievements(): Promise<User> {
+    const user: User = await this.userRepository.save({
+      nickname: 'userWithoutAchievements',
+      email: '@mail.com',
+      imageUrl: 'basicImage',
+    });
     return user;
   }
 

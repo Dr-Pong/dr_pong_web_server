@@ -1,4 +1,4 @@
-import { Achievemet } from 'src/achievemet/achievement.entity';
+import { Achievement } from 'src/achievement/achievement.entity';
 import { BaseTimeEntity } from 'src/base-entity/base-time.entity';
 import { User } from 'src/user/user.entity';
 import {
@@ -22,9 +22,9 @@ export class UserAchievement extends BaseTimeEntity {
   })
   selectedOrder: number;
 
-  @ManyToOne(() => Achievemet, { eager: true })
+  @ManyToOne(() => Achievement, { eager: true })
   @JoinColumn({ name: 'achive_id' })
-  achievement: Achievemet;
+  achievement: Achievement;
 
   @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'user_id' })

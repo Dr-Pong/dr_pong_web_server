@@ -8,7 +8,7 @@ import {
   UserAchievementsDto,
 } from './dto/user.achievements.dto';
 import { CollectableStatus } from '../global/type/enum.collectable.status';
-import { Achievemet } from 'src/achievemet/achievement.entity';
+import { Achievement } from 'src/achievement/achievement.entity';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
 
@@ -17,8 +17,8 @@ export class UserAchievementService {
   constructor(
     @InjectRepository(UserAchievement)
     private userAchievementRepository: Repository<UserAchievement>,
-    @InjectRepository(Achievemet)
-    private achievementRepository: Repository<Achievemet>,
+    @InjectRepository(Achievement)
+    private achievementRepository: Repository<Achievement>,
   ) {}
 
   async getUserAchievementsAll(
