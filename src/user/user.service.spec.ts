@@ -10,8 +10,10 @@ import { TestModule } from 'src/test/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserDetailDto } from './dto/user.detail.dto';
 import { UserModule } from './user.module';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ROLETYPE_GUEST, ROLETYPE_MEMBER, ROLETYPE_NONAME } from 'src/global/type/type.user.roletype';
+import { GetUserMeDto } from './dto/get.user.me.dto';
+import { AuthModule } from 'src/auth/auth.module';
 
 describe('UserService', () => {
   let service: UserService;
@@ -28,8 +30,8 @@ describe('UserService', () => {
         TestModule,
       ],
       providers: [
-        UserService,
         JwtService,
+        UserService,
         {
           provide: getRepositoryToken(User),
           useClass: Repository,
@@ -41,6 +43,7 @@ describe('UserService', () => {
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     dataSources = module.get<DataSource>(DataSource);
     testData = module.get<TestService>(TestService);
+    jwtService = module.get<JwtService>(JwtService);
   });
 
   afterEach(async () => {
@@ -87,13 +90,13 @@ describe('UserService', () => {
   it('User Me Get Service 테스트', async () => {
     const basicUser: User = await testData.createBasicUser();
 
-    const validToken = jwtService.sign({
+    const validToken: string = jwtService.sign({
       id:basicUser.id,
       nickname:basicUser.nickname,
       roleType:basicUser.roleType,
     });
 
-    const nonameToken = jwtService.sign({
+    const nonameToken: string = jwtService.sign({
       id: null,
       nickname: '',
       roleType: ROLETYPE_NONAME,
@@ -104,7 +107,7 @@ describe('UserService', () => {
     };
 
     const nonameDto: GetUserMeDto = {
-      token: validToken,
+      token: nonameToken,
     };
 
     const guestDto: GetUserMeDto = {
