@@ -7,7 +7,6 @@ import {
   UserAchievementDto,
   UserAchievementsDto,
 } from './dto/user.achievements.dto';
-import { CollectableStatus } from '../global/type/enum.collectable.status';
 import { Achievement } from 'src/achievement/achievement.entity';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
@@ -64,7 +63,7 @@ export class UserAchievementService {
         name: userAchievement.achievement.name,
         imgUrl: userAchievement.achievement.imageUrl,
         content: userAchievement.achievement.content,
-        status: CollectableStatus.SELECTED,
+        status: 'selected',
       };
     }
     const responseDto: UserAchievementsDto = {
