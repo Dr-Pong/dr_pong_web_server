@@ -319,12 +319,12 @@ export class TestService {
     await this.userAchievementRepository.save({
       user: user,
       achievement: this.achievements[2],
-      selectedOrder: 1,
+      selectedOrder: 0,
     });
     await this.userAchievementRepository.save({
       user: user,
       achievement: this.achievements[3],
-      selectedOrder: 3,
+      selectedOrder: 2,
     });
     return user;
   }
