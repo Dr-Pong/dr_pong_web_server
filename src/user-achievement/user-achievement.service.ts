@@ -10,7 +10,6 @@ import {
 import { Achievement } from 'src/achievement/achievement.entity';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
-import { null3Array } from 'src/global/type/null.array';
 import { COLLECTABLE_SELECTED } from 'src/global/type/type.collectable.status';
 
 @Injectable()
@@ -58,8 +57,10 @@ export class UserAchievementService {
     const selectAchievement = await this.userAchievementRepository.find({
       where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
     });
-    const achievements: UserAchievementDto[] = null3Array;
+    const achievements: UserAchievementDto[] = [null, null, null];
+    console.log(achievements);
     for (const userAchievement of selectAchievement) {
+      console.log(userAchievement.selectedOrder);
       achievements[userAchievement.selectedOrder] = {
         id: userAchievement.achievement.id,
         name: userAchievement.achievement.name,
