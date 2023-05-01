@@ -54,7 +54,7 @@ describe('UserController', () => {
       await app.init();
       testService = moduleFixture.get<TestService>(TestService);
       dataSources = moduleFixture.get<DataSource>(DataSource);
-      //   jwtService = moduleFixture.get<JwtService>(JwtService);
+      jwtService = moduleFixture.get<JwtService>(JwtService);
 
       await testService.createBasicCollectable();
     });
