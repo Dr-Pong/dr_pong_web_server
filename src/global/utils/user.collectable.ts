@@ -1,6 +1,6 @@
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
-import { CollectableStatus } from '../type/type.collectable.status';
+import { CollectableStatus, COLLECTABLE_ACHIEVED, COLLECTABLE_SELECTED, COLLECTABLE_UNACHIEVED } from '../type/type.collectable.status';
 
 export class UserCollectablesStatus {
   private collectables: CollectableStatus[];
@@ -8,7 +8,7 @@ export class UserCollectablesStatus {
   constructor(length: number) {
     this.collectables = Array.from(
       { length: length },
-      () => 'unachieved',
+      () => COLLECTABLE_UNACHIEVED,
     );
   }
 
@@ -21,8 +21,8 @@ export class UserCollectablesStatus {
       const id = c instanceof UserAchievement ? c.achievement.id : c.emoji.id;
       this.collectables[id - 1] =
         c.selectedOrder !== null
-          ? 'selected'
-          : 'achieved';
+          ? COLLECTABLE_SELECTED
+          : COLLECTABLE_ACHIEVED;
     }
   }
 }

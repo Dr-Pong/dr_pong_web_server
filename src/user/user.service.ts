@@ -16,6 +16,7 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
+  users: Map<string, User> = new Map();
 
   //get detail service
   async getUsersDetail(getDto: GetUserDetailDto): Promise<UserDetailDto> {
@@ -35,15 +36,26 @@ export class UserService {
 
   //get user info
   async getUserInfo(getDto: GetUserDetailDto): Promise<UserInfoDto> {
-    const userInfo = await this.userRepository.findOne({
+    const userFromMemory = this.users.get(getDto.nickname);
+    if (userFromMemory) {
+      const responseDto: UserInfoDto = {
+        id: userFromMemory.id,
+        nickname: userFromMemory.nickname,
+        roleType: userFromMemory.roleType,
+      }
+      return responseDto;
+    }
+
+    const userFromDatabase = await this.userRepository.findOne({
       where: { nickname: getDto.nickname },
     });
-    if (!userInfo) throw new NotFoundException('No such User');
+    if (!userFromDatabase) throw new NotFoundException('No such User');
 
+    this.users.set(userFromDatabase.nickname, userFromDatabase);
     const responseDto: UserInfoDto = {
-      id: userInfo.id,
-      nickname: userInfo.nickname,
-      roleType: userInfo.roleType,
+      id: userFromDatabase.id,
+      nickname: userFromDatabase.nickname,
+      roleType: userFromDatabase.roleType,
     };
     return responseDto;
   }

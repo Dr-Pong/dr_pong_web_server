@@ -161,7 +161,7 @@ export class UserController {
     };
     const patchUserTitleDto: PatchUserTitleDto = {
       nickname,
-      titleId: patchRequestDto.titleId,
+      titleId: patchRequestDto.title,
     };
     await this.userService.patchUserDetail(patchUserDetailDto);
     await this.userTitleService.patchUserTitle(patchUserTitleDto);

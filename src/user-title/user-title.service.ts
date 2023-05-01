@@ -4,7 +4,6 @@ import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import { UserTitle } from './user-title.entity';
 import {
-  UserTitleDto,
   UserTitlesDto,
 } from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from './dto/get.user.titles.dto';
@@ -61,7 +60,6 @@ export class UserTitleService {
     });
     if (oldTitle) {
       oldTitle.isSelected = false;
-      await this.userTitleRepository.save(oldTitle);
     }
 
     const newTitle = await this.userTitleRepository.findOne({
@@ -70,13 +68,14 @@ export class UserTitleService {
         title: { id: patchDto.titleId },
       },
     });
-    if (newTitle === null) {
+    if (patchDto.titleId === null) {
       return;
     }
     if (!newTitle) {
       throw new BadRequestException('No such title');
     }
     newTitle.isSelected = true;
+    await this.userTitleRepository.save(oldTitle);
     await this.userTitleRepository.save(newTitle);
   }
 }
