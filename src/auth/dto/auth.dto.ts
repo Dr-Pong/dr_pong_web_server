@@ -1,4 +1,4 @@
-import { RoleType } from "../../global/utils/enum.user.roletype";
+import { RoleType } from "../../global/type/type.user.roletype";
 
 export class AuthDto {
 	id:number;

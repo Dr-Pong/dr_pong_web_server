@@ -1,4 +1,4 @@
-import { RoleType } from "src/global/utils/enum.user.roletype";
+import { RoleType } from "src/global/type/type.user.roletype";
 
 export class TokenInterface {
 	id:number;
