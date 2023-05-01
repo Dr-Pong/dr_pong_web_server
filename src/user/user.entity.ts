@@ -1,5 +1,5 @@
 import { BaseTimeEntity } from 'src/base-entity/base-time.entity';
-import { RoleType } from 'src/global/utils/enum.user.roletype';
+import { RoleType } from 'src/global/type/type.user.roletype';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -13,7 +13,7 @@ export class User extends BaseTimeEntity {
   @Column({name:'nickname', default:''})
   nickname: string;
 
-  @Column({name: 'role_type', type:'enum', enum: RoleType, nullable: false, default:RoleType.USER})
+  @Column({name: 'role_type', type: 'varchar', nullable: false, default:'member'})
   roleType: RoleType;
 
   @Column({name:'image_uri', type: 'varchar',nullable:true})
