@@ -8,7 +8,7 @@ export class UserCollectablesStatus {
   constructor(length: number) {
     this.collectables = Array.from(
       { length: length },
-      () => 'achieved',
+      () => 'unachieved',
     );
   }
 
