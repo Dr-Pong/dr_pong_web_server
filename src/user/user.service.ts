@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserTitle } from 'src/user-title/user-title.entity';
@@ -9,12 +9,18 @@ import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserSelectedTitleDto } from './dto/user.selected.title.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 import { UserInfoDto } from './dto/user.info.dto';
+import { JwtService } from '@nestjs/jwt';
+import { GetUserMeDto } from './dto/get.user.me.dto';
+import { TokenInterface } from 'src/auth/jwt/jwt.token.interface';
+import { ROLETYPE_GUEST, ROLETYPE_NONAME } from 'src/global/type/type.user.roletype';
+import { UserMeDto } from './dto/user.me.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
   users: Map<string, User> = new Map();
 
@@ -69,5 +75,43 @@ export class UserService {
     user.imageUrl = patchDto.imgUrl;
     user.statusMessage = patchDto.statusMessage;
     await this.userRepository.save(user);
+  }
+
+  async getUserMe(getDto: GetUserMeDto): Promise<UserMeDto> {
+    const guestUserMeDto: UserMeDto = {
+      nickname: '',
+      imgUrl: '',
+      isSecondAuthOn: false,
+      roleType: ROLETYPE_GUEST,
+    };
+  
+    const nonameUserMeDto: UserMeDto = {
+      nickname: '',
+      imgUrl: '',
+      isSecondAuthOn: false,
+      roleType: ROLETYPE_NONAME,
+    };
+  
+    if (!getDto.token) {
+      return guestUserMeDto;
+    }
+  
+    const jwt: TokenInterface = this.jwtService.verify(getDto.token);
+    if (jwt.roleType === ROLETYPE_NONAME) {
+      return nonameUserMeDto;
+    }
+  
+    const user = await this.userRepository.findOne({ where: { id: jwt.id } });
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+  
+    const responseDto: UserMeDto = {
+      nickname: user.nickname,
+      imgUrl: user.imageUrl,
+      isSecondAuthOn: user.isSecondAuthOn,
+      roleType: user.roleType,
+    };
+    return responseDto;
   }
 }
