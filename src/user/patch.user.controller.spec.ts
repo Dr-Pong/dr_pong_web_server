@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserTitle } from 'src/user-title/user-title.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
+import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -19,6 +20,7 @@ describe('UserController', () => {
   let titleRepository: Repository<Title>;
   let userTitleRepository: Repository<UserTitle>;
   let userAchievementRepository: Repository<UserAchievement>;
+  let userEmojiRepository: Repository<UserEmoji>;
   let dataSources: DataSource;
   let testService: TestService;
   let jwtService: JwtService;
@@ -66,6 +68,9 @@ describe('UserController', () => {
       userAchievementRepository = moduleFixture.get<
         Repository<UserAchievement>
       >(getRepositoryToken(UserAchievement));
+      userEmojiRepository = moduleFixture.get<Repository<UserEmoji>>(
+        getRepositoryToken(UserEmoji),
+      );
 
       await testService.createBasicCollectable();
     });
@@ -214,53 +219,91 @@ describe('UserController', () => {
           expect(result.length).toBe(0);
         });
       });
-    });
+      describe('/users/{nickname}/emojis', () => {
+        it('emoji를 순서대로 선택한 경우', async () => {
+          const user: User = await testService.createUserWithCollectables();
+          const token = jwtService.sign({
+            id: user.id,
+            nickname: user.nickname,
+            roleType: user.roleType,
+          });
 
-    // it('PATCH /users/{nickname}/achievements', async () => {
-    //   await testService.createBasicCollectable();
-    //   const user: User =
-    //     await testService.createUserWithUnSelectedAchievements();
-    //   const token = jwtService.sign({
-    //     id: user.id,
-    //     nickname: user.nickname,
-    //     roleType: user.roleType,
-    //   });
-    //   const response = await request(app.getHttpServer())
-    //     .patch('/users/' + user.nickname + '/achievements')
-    //     .set({ Authorization: 'Bearer ' + token })
-    //     .send({
-    //       achievements: [
-    //         testService.achievements[0].id,
-    //         testService.achievements[1].id,
-    //         testService.achievements[2].id,
-    //       ],
-    //     });
-    //   // console.log(response.statusCode);
-    //   expect(response.statusCode).toBe(200);
-    // });
-    // it('PATCH /users/{nickname}/emojis', async () => {
-    //   await testService.createBasicCollectable();
-    //   const user: User = await testService.createUserWithUnSelectedEmojis();
-    //   const token = jwtService.sign({
-    //     id: user.id,
-    //     nickname: user.nickname,
-    //     roleType: user.roleType,
-    //   });
-    //   const response = await request(app.getHttpServer())
-    //     .patch('/users/' + user.nickname + '/emojis')
-    //     .set({ Authorization: 'Bearer ' + token })
-    //     .send({
-    //       emojis: [
-    //         testService.emojis[0].id,
-    //         testService.emojis[1].id,
-    //         testService.emojis[2].id,
-    //         testService.emojis[3].id,
-    //       ],
-    //     });
-    //   expect(response.statusCode).toBe(200);
-    // });
-    // describe('error cases', () => {
-    //   it('GET /users/', async () => {});
-    // });
+          const response = await request(app.getHttpServer())
+            .patch('/users/' + user.nickname + '/emojis')
+            .set({ Authorization: 'Bearer ' + token })
+            .send({
+              emojis: [
+                testService.emojis[0].id,
+                testService.emojis[1].id,
+                testService.emojis[2].id,
+              ],
+            });
+
+          // console.log(response.statusCode);
+          expect(response.statusCode).toBe(200);
+          const result = await userEmojiRepository.find({
+            where: { user: { id: user.id } },
+          });
+          // console.log(result);
+          expect(result[0].emoji.id).toBe(testService.emojis[0].id);
+          expect(result[1].emoji.id).toBe(testService.emojis[1].id);
+          expect(result[2].emoji.id).toBe(testService.emojis[2].id);
+
+          expect(result[0].selectedOrder).toBe(0);
+          expect(result[1].selectedOrder).toBe(1);
+          expect(result[2].selectedOrder).toBe(2);
+        });
+
+        it('emoji를 임의의 순서대로 선택한경우', async () => {
+          const user: User = await testService.createMixedSelectedEmojiUser();
+          const token = jwtService.sign({
+            id: user.id,
+            nickname: user.nickname,
+            roleType: user.roleType,
+          });
+          const response = await request(app.getHttpServer())
+            .patch('/users/' + user.nickname + '/emojis')
+            .set({ Authorization: 'Bearer ' + token })
+            .send({
+              emojis: [
+                testService.emojis[2].id,
+                null,
+                testService.emojis[3].id,
+              ],
+            });
+
+          const result = await userEmojiRepository.find({
+            where: { user: { id: user.id }, selectedOrder: Not(IsNull()) },
+          });
+          expect(response.statusCode).toBe(200);
+          expect(result[0].emoji.id).toBe(testService.emojis[2].id);
+          expect(result[1].emoji.id).toBe(testService.emojis[3].id);
+
+          expect(result[0].selectedOrder).toBe(0);
+          expect(result[1].selectedOrder).toBe(2);
+        });
+
+        it('emoji를 선택하지 않은 경우 (전부 null)', async () => {
+          const user: User = await testService.createUserWithUnSelectedEmojis();
+          const token = jwtService.sign({
+            id: user.id,
+            nickname: user.nickname,
+            roleType: user.roleType,
+          });
+          const response = await request(app.getHttpServer())
+            .patch('/users/' + user.nickname + '/emojis')
+            .set({ Authorization: 'Bearer ' + token })
+            .send({
+              emojis: [null, null, null],
+            });
+
+          const result = await userEmojiRepository.find({
+            where: { user: { id: user.id }, selectedOrder: Not(IsNull()) },
+          });
+          expect(response.statusCode).toBe(200);
+          expect(result.length).toBe(0);
+        });
+      });
+    });
   });
 });
