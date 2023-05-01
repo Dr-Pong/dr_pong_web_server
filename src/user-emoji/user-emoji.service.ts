@@ -6,8 +6,9 @@ import { Emoji } from 'src/emoji/emoji.entity';
 import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { UserEmojiDto, UseremojisDto } from './dto/user.emojis.dto';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
-import { CollectableStatus } from 'src/global/type/type.collectable.status';
 import { PatchUserEmojisDto } from './dto/patch.user.emojis.dto';
+import { null4Array } from 'src/global/type/null.array';
+import { COLLECTABLE_SELECTED } from 'src/global/type/type.collectable.status';
 
 @Injectable()
 export class UserEmojiService {
@@ -47,13 +48,13 @@ export class UserEmojiService {
     const selectedEmoji = await this.userEmojiRepository.find({
       where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
     });
-    const emojis: UserEmojiDto[] = [null, null, null, null];
+    const emojis: UserEmojiDto[] = null4Array;
     for (const userEmoji of selectedEmoji) {
       emojis[userEmoji.selectedOrder] = {
         id: userEmoji.emoji.id,
         name: userEmoji.emoji.name,
         imgUrl: userEmoji.emoji.imageUrl,
-        status: 'selected',
+        status: COLLECTABLE_SELECTED,
       };
     }
     const responseDto: UseremojisDto = {

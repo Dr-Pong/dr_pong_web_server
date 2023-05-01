@@ -8,6 +8,7 @@ import { User } from './user.entity';
 import { Title } from 'src/title/title.entity';
 import { TestService } from 'src/test/test.service';
 import { JwtService } from '@nestjs/jwt';
+import { COLLECTABLE_ACHIEVED, COLLECTABLE_SELECTED, COLLECTABLE_UNACHIEVED } from 'src/global/type/type.collectable.status';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -211,12 +212,12 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('achievements');
-        expect(response.body.achievements[0].status).toBe('unachieved');
-        expect(response.body.achievements[1].status).toBe('unachieved');
-        expect(response.body.achievements[2].status).toBe('unachieved');
-        expect(response2.body.achievements[0].status).toBe('achieved');
-        expect(response2.body.achievements[1].status).toBe('achieved');
-        expect(response2.body.achievements[2].status).toBe('achieved');
+        expect(response.body.achievements[0].status).toBe(COLLECTABLE_UNACHIEVED);
+        expect(response.body.achievements[1].status).toBe(COLLECTABLE_UNACHIEVED);
+        expect(response.body.achievements[2].status).toBe(COLLECTABLE_UNACHIEVED);
+        expect(response2.body.achievements[0].status).toBe(COLLECTABLE_ACHIEVED);
+        expect(response2.body.achievements[1].status).toBe(COLLECTABLE_ACHIEVED);
+        expect(response2.body.achievements[2].status).toBe(COLLECTABLE_ACHIEVED);
       });
 
       it('achieve 만 있고 selected 없는경우', async () => {
@@ -228,9 +229,9 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('achievements');
-        expect(response.body.achievements[0].status).toBe('achieved');
-        expect(response.body.achievements[1].status).toBe('achieved');
-        expect(response.body.achievements[2].status).toBe('achieved');
+        expect(response.body.achievements[0].status).toBe(COLLECTABLE_ACHIEVED);
+        expect(response.body.achievements[1].status).toBe(COLLECTABLE_ACHIEVED);
+        expect(response.body.achievements[2].status).toBe(COLLECTABLE_ACHIEVED);
       });
 
       it('achieve, selected 둘다 있는경우', async () => {
@@ -241,9 +242,9 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('achievements');
-        expect(response.body.achievements[0].status).toBe('selected');
-        expect(response.body.achievements[1].status).toBe('selected');
-        expect(response.body.achievements[2].status).toBe('selected');
+        expect(response.body.achievements[0].status).toBe(COLLECTABLE_SELECTED);
+        expect(response.body.achievements[1].status).toBe(COLLECTABLE_SELECTED);
+        expect(response.body.achievements[2].status).toBe(COLLECTABLE_SELECTED);
       });
     });
 
@@ -327,14 +328,14 @@ describe('UserController', () => {
         // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
-        expect(response.body.emojis[0].status).toBe('unachieved');
-        expect(response.body.emojis[1].status).toBe('unachieved');
-        expect(response.body.emojis[2].status).toBe('unachieved');
+        expect(response.body.emojis[0].status).toBe(COLLECTABLE_UNACHIEVED);
+        expect(response.body.emojis[1].status).toBe(COLLECTABLE_UNACHIEVED);
+        expect(response.body.emojis[2].status).toBe(COLLECTABLE_UNACHIEVED);
         expect(response2.statusCode).toBe(200);
         expect(response2.body).toHaveProperty('emojis');
-        expect(response2.body.emojis[0].status).toBe('achieved');
-        expect(response2.body.emojis[1].status).toBe('achieved');
-        expect(response2.body.emojis[2].status).toBe('achieved');
+        expect(response2.body.emojis[0].status).toBe(COLLECTABLE_ACHIEVED);
+        expect(response2.body.emojis[1].status).toBe(COLLECTABLE_ACHIEVED);
+        expect(response2.body.emojis[2].status).toBe(COLLECTABLE_ACHIEVED);
       });
 
       it('achieved 만있고 selected 없는경우', async () => {
@@ -346,9 +347,9 @@ describe('UserController', () => {
         // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
-        expect(response.body.emojis[0].status).toBe('achieved');
-        expect(response.body.emojis[1].status).toBe('achieved');
-        expect(response.body.emojis[2].status).toBe('achieved');
+        expect(response.body.emojis[0].status).toBe(COLLECTABLE_ACHIEVED);
+        expect(response.body.emojis[1].status).toBe(COLLECTABLE_ACHIEVED);
+        expect(response.body.emojis[2].status).toBe(COLLECTABLE_ACHIEVED);
       });
 
       it('achieve, selected 둘다 있는경우', async () => {
@@ -360,9 +361,9 @@ describe('UserController', () => {
         // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
-        expect(response.body.emojis[0].status).toBe('selected');
-        expect(response.body.emojis[1].status).toBe('selected');
-        expect(response.body.emojis[2].status).toBe('selected');
+        expect(response.body.emojis[0].status).toBe(COLLECTABLE_SELECTED);
+        expect(response.body.emojis[1].status).toBe(COLLECTABLE_SELECTED);
+        expect(response.body.emojis[2].status).toBe(COLLECTABLE_SELECTED);
       });
     });
 
