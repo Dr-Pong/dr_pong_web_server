@@ -367,7 +367,7 @@ describe('UserController', () => {
             title: testService.titles[9].id,
           });
 
-        console.log(response.body);
+        // console.log(response.body);
         expect(response.statusCode).toBe(400);
       });
     });
