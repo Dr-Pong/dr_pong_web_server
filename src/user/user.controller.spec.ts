@@ -8,7 +8,6 @@ import { User } from './user.entity';
 import { Title } from 'src/title/title.entity';
 import { TestService } from 'src/test/test.service';
 import { JwtService } from '@nestjs/jwt';
-import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -141,6 +140,7 @@ describe('UserController', () => {
         expect(response.body.achievements[1]).toBe(null);
         expect(response.body.achievements[2]).toBe(null);
       });
+
       it('업적이 순서대로 선택된 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
         const response = await request(app.getHttpServer()).get(
@@ -159,6 +159,7 @@ describe('UserController', () => {
           response.body.achievements[1].id,
         );
       });
+
       it('업적이 임의의 순서대로 선택된 경우', async () => {
         const user: User =
           await testService.createReverseSelectedAchievementUser();
@@ -176,6 +177,7 @@ describe('UserController', () => {
           response.body.achievements[1].id,
         );
       });
+
       it('업적이 중간에 빈체로 선택된 경우 (뻥꾸난 경우)', async () => {
         const user: User =
           await testService.createMixedSelectedAchievementUser();
@@ -334,6 +336,7 @@ describe('UserController', () => {
         expect(response2.body.emojis[1].status).toBe('achieved');
         expect(response2.body.emojis[2].status).toBe('achieved');
       });
+
       it('achieved 만있고 selected 없는경우', async () => {
         const user: User = await testService.createUserWithUnSelectedEmojis();
         const response = await request(app.getHttpServer()).get(
@@ -347,6 +350,7 @@ describe('UserController', () => {
         expect(response.body.emojis[1].status).toBe('achieved');
         expect(response.body.emojis[2].status).toBe('achieved');
       });
+
       it('achieve, selected 둘다 있는경우', async () => {
         const user: User = await testService.createUserWithCollectables();
         const response = await request(app.getHttpServer()).get(
@@ -380,7 +384,7 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/titles',
         );
 
-        console.log(response.body);
+        // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('titles');
         expect(response.body.titles.length).toBe(5);
@@ -391,14 +395,62 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/titles',
         );
 
-        console.log(response.body);
+        // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('titles');
         expect(response.body.titles.length).toBe(5);
       });
     });
 
-    describe('error cases', () => {});
+    describe('Error Cases Test', () => {
+      it('GET /users/{nickname}/detail', async () => {
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + 'notExistNickname' + '/detail',
+        );
+        expect(response.statusCode).toBe(404);
+      });
+      it('GET /users/{nickname}/stat', async () => {
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + 'notExistNickname' + '/stat',
+        );
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('GET /users/{nickname}/achievement?selected=true', async () => {
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + 'notExistNickname' + '/achievement?selected=true',
+        );
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('GET /users/{nickname}/achievement?selected=false', async () => {
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + 'notExistNickname' + '/achievement?selected=false',
+        );
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('GET /users/{nickname}/emojis?selected=true', async () => {
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + 'notExistNickname' + '/emojis?selected=true',
+        );
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('GET /users/{nickname}/emojis?selected=false', async () => {
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + 'notExistNickname' + '/emojis?selected=false',
+        );
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('GET /users/{nickname}/titles', async () => {
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + 'notExistNickname' + '/titles',
+        );
+        expect(response.statusCode).toBe(404);
+      });
+    });
   });
 
   // describe('patch cases', () => {
