@@ -15,20 +15,21 @@ export class AuthService {
 	) {}
 
 	async getFTAccessToken(authCode: string) : Promise<string> {
-		const response = (await axios.post('https://api.intra.42.fr/oauth/token', {
+		const response = (await axios.post(process.env.FT_TOKEN_URI, {
 			grant_type:'authorization_code',
 			code:authCode,
-			client_id:'u-s4t2ud-9178ebee1b15304ba011ca8b7e3b17306c8c6b8c5e6d2bf5bfda8c6c57b5a24b',
-			client_secret: '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',
-			redirect_uri:'http://localhost:3000/auth/42/login',
+			client_id:process.env.FT_CLIENT_ID,
+			client_secret: process.env.FT_CLIENT_SECRET,
+			redirect_uri:process.env.FT_REDIRECT_URI,
 		},))
+		console.log(response);
 		if (response.status !== 200)
 			throw new UnauthorizedException();
 		return response.data.access_token
 	}
 
 	async getFTUserInfo(accessToken: string) : Promise<AuthDto> {
-		const response = (await axios.get('https://api.intra.42.fr/v2/me', {headers: {'Authorization':'Bearer ' + accessToken}}));
+		const response = (await axios.get(process.env.FT_USER_INFO, {headers: {'Authorization':'Bearer ' + accessToken}}));
 		if (response.status !== 200)
 			throw new UnauthorizedException();
 		const email = response.data.email;
