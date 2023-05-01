@@ -61,14 +61,13 @@ export class UserTitleService {
     if (oldTitle) {
       oldTitle.isSelected = false;
     }
-    console.log(patchDto);
+
     const newTitle = await this.userTitleRepository.findOne({
       where: {
         user: { nickname: patchDto.nickname },
         title: { id: patchDto.titleId },
       },
     });
-    console.log('old',oldTitle.title, 'new', newTitle.title);
     if (patchDto.titleId === null) {
       return;
     }
