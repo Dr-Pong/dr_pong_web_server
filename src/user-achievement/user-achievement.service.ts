@@ -37,6 +37,8 @@ export class UserAchievementService {
       achievements.push({
         id: c.id,
         name: c.name,
+        imgUrl: c.imageUrl,
+        content: c.content,
         status: status.getStatus(c.id),
       });
     }
@@ -60,6 +62,8 @@ export class UserAchievementService {
       achievements[userAchievement.selectedOrder] = {
         id: userAchievement.achievement.id,
         name: userAchievement.achievement.name,
+        imgUrl: userAchievement.achievement.imageUrl,
+        content: userAchievement.achievement.content,
         status: CollectableStatus.SELECTED,
       };
     }

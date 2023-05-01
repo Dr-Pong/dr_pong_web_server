@@ -5,6 +5,8 @@ export class UserEmojiDto {
 
   name: string;
 
+  imgUrl: string;
+
   status: CollectableStatus;
 }
 

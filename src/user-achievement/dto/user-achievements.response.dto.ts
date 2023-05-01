@@ -1,5 +1,5 @@
-import { UserAchievementsDto } from "./user.achievements.dto";
+import { UserAchievementDto } from './user.achievements.dto';
 
 export class UserAchievementsResponseDto {
-	achievements: UserAchievementsDto;
+  achievements: UserAchievementDto[];
 }

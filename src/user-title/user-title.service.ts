@@ -3,9 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import { UserTitle } from './user-title.entity';
-import { UserTitlesDto } from 'src/user-title/dto/user.titles.dto';
+import {
+  UserTitleDto,
+  UserTitlesDto,
+} from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from './dto/get.user.titles.dto';
 import { PatchUserTitleDto } from 'src/user-title/dto/patch.user.title.dto';
+import { UserTitleSelectedDto } from './dto/user.title.selected.dto';
 
 @Injectable()
 export class UserTitleService {
@@ -31,6 +35,25 @@ export class UserTitleService {
     return responseDto;
   }
 
+  //get selected title service
+  async getUserTitleSelected(
+    getDto: GetUserTitlesDto,
+  ): Promise<UserTitleSelectedDto> {
+    const userTitles = await this.userTitleRepository.findOne({
+      where: { user: { id: getDto.userId }, isSelected: true },
+    });
+    if (!userTitles) {
+      const responseDto = null;
+      return responseDto;
+    }
+
+    const responseDto: UserTitleSelectedDto = {
+      id: userTitles.title.id,
+      title: userTitles.title.name,
+    };
+    return responseDto;
+  }
+
   //patch user title
   async patchUserTitle(patchDto: PatchUserTitleDto): Promise<void> {
     const oldTitle = await this.userTitleRepository.findOne({
@@ -47,6 +70,9 @@ export class UserTitleService {
         title: { id: patchDto.titleId },
       },
     });
+    if (newTitle === null) {
+      return;
+    }
     if (!newTitle) {
       throw new BadRequestException('No such title');
     }

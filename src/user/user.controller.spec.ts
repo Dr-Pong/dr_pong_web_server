@@ -20,7 +20,7 @@ describe('UserController', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports:[AppModule],
+      imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -49,11 +49,12 @@ describe('UserController', () => {
 
     it('GET /users/{nickname}/detail', async () => {
       const user: User = await testService.createBasicUser();
-      console.log('user', user);
-      const response = await request(app.getHttpServer()).get('/users/' + user.nickname + '/detail');
+      const response = await request(app.getHttpServer()).get(
+        '/users/' + user.nickname + '/detail',
+      );
 
-      console.log('body', response.body);
-      console.log(response.statusCode);
+      // console.log('body', response.body);
+      // console.log(response.statusCode);
       expect(response.statusCode).toBe(200);
       expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
       expect(response.body.imgUrl).toBe(user.imageUrl); //원하는 데이터 넣기
@@ -64,8 +65,9 @@ describe('UserController', () => {
       // const user: User = await testService.createBasicUser();
       // await testService.createBasicSeasons(3);
       // await testService.createBasicRank();
-      // const response = await request(app.getHttpServer()).get('/users/' + user.nickname + '/stat');
-
+      // const response = await request(app.getHttpServer()).get(
+      //   '/users/' + user.nickname + '/stat',
+      // );
       // console.log(response.body);
       // console.log(response.statusCode);
       // expect(response.statusCode).toBe(200);
@@ -75,86 +77,91 @@ describe('UserController', () => {
     });
 
     it('GET /users/{nickname}/achievements?selected={true}', async () => {
-      // await testService.createBasicCollectable();
-      // const user: User = await testService.createUserWithCollectables();
-      // const response = await request(app.getHttpServer()).get('/users/' + user.nickname + '/achievements?selected={true}');
-
+      await testService.createBasicCollectable();
+      const user: User = await testService.createUserWithCollectables();
+      const response = await request(app.getHttpServer()).get(
+        '/users/' + user.nickname + '/achievements?selected={true}',
+      );
       // console.log(response.body);
       // console.log(response.statusCode);
-      // expect(response.statusCode).toBe(200);
-      // expect(response.body).toHaveProperty('achievements'); //원하는 데이터 넣기
-      // expect(response.body.achievements.length).toBe(3); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('id'); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('name'); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('content'); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('status'); //원하는 데이터 넣기
+      // console.log(response.body.achievements.length);
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toHaveProperty('achievements'); //원하는 데이터 넣기
+      expect(response.body.achievements.length).toBe(3); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('id'); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('name'); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('content'); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('status'); //원하는 데이터 넣기
     });
 
     it('GET /users/{nickname}/achievements?selected={false}', async () => {
-      // await testService.createBasicCollectable();
-      // const user: User = await testService.createUserWithCollectables();
-      // const response = await request(app.getHttpServer()).get('/users/' + user.nickname + '/achievements?selected={false}');
-
+      await testService.createBasicCollectable();
+      const user: User = await testService.createUserWithCollectables();
+      const response = await request(app.getHttpServer()).get(
+        '/users/' + user.nickname + '/achievements?selected={false}',
+      );
       // console.log(response.body);
       // console.log(response.statusCode);
-      // expect(response.statusCode).toBe(200);
-      // expect(response.body).toHaveProperty('achievements'); //원하는 데이터 넣기
-      // expect(response.body.achievements.length).toBe(testService.achievements.length); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('id'); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('name'); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('content'); //원하는 데이터 넣기
-      // expect(response.body.achievements[0]).toHaveProperty('status'); //원하는 데이터 넣기
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toHaveProperty('achievements'); //원하는 데이터 넣기
+      expect(response.body.achievements.length).toBe(3); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('id'); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('name'); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('content'); //원하는 데이터 넣기
+      expect(response.body.achievements[0]).toHaveProperty('status'); //원하는 데이터 넣기
     });
 
     it('GET /users/{nickname}/emojis?selected={true}', async () => {
-      // await testService.createBasicCollectable();
-      // const user: User = await testService.createUserWithCollectables();
-      // const response = await request(app.getHttpServer()).get('/users/' + user.nickname + '/emojis?selected={true}');
-
+      await testService.createBasicCollectable();
+      const user: User = await testService.createUserWithCollectables();
+      const response = await request(app.getHttpServer()).get(
+        '/users/' + user.nickname + '/emojis?selected={true}',
+      );
       // console.log(response.body);
       // console.log(response.statusCode);
-      // expect(response.statusCode).toBe(200);
-      // expect(response.body).toHaveProperty('emojis'); //원하는 데이터 넣기
-      // expect(response.body.emojis.length).toBe(4); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('id'); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('name'); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('content'); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('status'); //원하는 데이터 넣기
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toHaveProperty('emojis'); //원하는 데이터 넣기
+      expect(response.body.emojis.length).toBe(4); //원하는 데이터 넣기
+      expect(response.body.emojis[0]).toHaveProperty('id'); //원하는 데이터 넣기
+      expect(response.body.emojis[0]).toHaveProperty('name'); //원하는 데이터 넣기
+      expect(response.body.emojis[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
+      expect(response.body.emojis[0]).toHaveProperty('status'); //원하는 데이터 넣기
     });
 
     it('GET /users/{nickname}/emojis?selected={false}', async () => {
-      // await testService.createBasicCollectable();
-      // const user: User = await testService.createUserWithCollectables();
-      // const response = await request(app.getHttpServer()).get('/users/' + user.nickname + '/emojis?selected={false}');
-
+      await testService.createBasicCollectable();
+      const user: User = await testService.createUserWithCollectables();
+      const response = await request(app.getHttpServer()).get(
+        '/users/' + user.nickname + '/emojis?selected={false}',
+      );
       // console.log(response.body);
       // console.log(response.statusCode);
-      // expect(response.statusCode).toBe(200);
-      // expect(response.body).toHaveProperty('emojis'); //원하는 데이터 넣기
-      // expect(response.body.emojis.length).toBe(testService.emojis.length); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('id'); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('name'); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('content'); //원하는 데이터 넣기
-      // expect(response.body.emojis[0]).toHaveProperty('status'); //원하는 데이터 넣기
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toHaveProperty('emojis'); //원하는 데이터 넣기
+      expect(response.body.emojis.length).toBe(4); //원하는 데이터 넣기
+      expect(response.body.emojis[0]).toHaveProperty('id'); //원하는 데이터 넣기
+      expect(response.body.emojis[0]).toHaveProperty('name'); //원하는 데이터 넣기
+      expect(response.body.emojis[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
+      expect(response.body.emojis[0]).toHaveProperty('status'); //원하는 데이터 넣기
     });
 
     it('GET /users/{nickname}/titles', async () => {
       await testService.createBasicCollectable();
       const user: User = await testService.createUserWithCollectables();
-      const response = await request(app.getHttpServer()).get('/users/' + user.nickname + '/titles');
+      const response = await request(app.getHttpServer()).get(
+        '/users/' + user.nickname + '/titles',
+      );
 
-      console.log(response.body);
-      console.log(response.statusCode);
+      // console.log(response.body);
+      // console.log(response.statusCode);
       expect(response.statusCode).toBe(200);
       expect(response.body).toHaveProperty('titles'); //원하는 데이터 넣기
       expect(response.body.titles).toHaveProperty('titles[]'); //원하는 데이터 넣기
     });
   });
-  
+
   describe('patch cases', () => {
     it('PATCH /users/{nickname}/detail', async () => {
       const user: User = await testService.createBasicUser();
@@ -164,35 +171,38 @@ describe('UserController', () => {
         roleType: user.roleType,
       });
       const response = await request(app.getHttpServer())
-        .patch('/users/'+ user.nickname +'/detail')
-        .send({imgUrl:'changed', titleId:null, message:'change message'})
-        .set({Authorization: 'Bearer ' + token});
+        .patch('/users/' + user.nickname + '/detail')
+        .send({ imgUrl: 'changed', titleId: null, message: 'change message' })
+        .set({ Authorization: 'Bearer ' + token });
 
-      console.log(response.statusCode);
+      // console.log(response.statusCode);
       expect(response.statusCode).toBe(200);
     });
 
     it('PATCH /users/{nickname}/achievements', async () => {
       await testService.createBasicCollectable();
-      const user: User = await testService.createUserWithUnSelectedAchievements();
+      const user: User =
+        await testService.createUserWithUnSelectedAchievements();
       const token = jwtService.sign({
         id: user.id,
         nickname: user.nickname,
         roleType: user.roleType,
-      })
+      });
       const response = await request(app.getHttpServer())
-        .patch('/users/'+ user.nickname +'/achievements')
-        .set({Authorization: 'Bearer ' + token})
-        .send({achievements: [
-          testService.achievements[0].id,
-          testService.achievements[1].id,
-          testService.achievements[2].id
-        ]});
-      
-      console.log(response.statusCode);
+        .patch('/users/' + user.nickname + '/achievements')
+        .set({ Authorization: 'Bearer ' + token })
+        .send({
+          achievements: [
+            testService.achievements[0].id,
+            testService.achievements[1].id,
+            testService.achievements[2].id,
+          ],
+        });
+
+      // console.log(response.statusCode);
       expect(response.statusCode).toBe(200);
     });
-    
+
     it('PATCH /users/{nickname}/emojis', async () => {
       await testService.createBasicCollectable();
       const user: User = await testService.createUserWithUnSelectedEmojis();
@@ -200,24 +210,23 @@ describe('UserController', () => {
         id: user.id,
         nickname: user.nickname,
         roleType: user.roleType,
-      })
+      });
       const response = await request(app.getHttpServer())
-        .patch('/users/'+ user.nickname +'/emojis')
-        .set({Authorization: 'Bearer ' + token})
-        .send({emojis:[
-          testService.emojis[0].id,
-          testService.emojis[1].id,
-          testService.emojis[2].id,
-          testService.emojis[3].id
-        ]});
-
-      console.log(response.statusCode);
+        .patch('/users/' + user.nickname + '/emojis')
+        .set({ Authorization: 'Bearer ' + token })
+        .send({
+          emojis: [
+            testService.emojis[0].id,
+            testService.emojis[1].id,
+            testService.emojis[2].id,
+            testService.emojis[3].id,
+          ],
+        });
       expect(response.statusCode).toBe(200);
     });
   });
 
   describe('error cases', () => {
-    it('GET /users/', async () => {
-    });
+    it('GET /users/', async () => {});
   });
 });

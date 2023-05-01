@@ -14,7 +14,12 @@ export class UserAchievement extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable:true, name: 'selected_order', type: 'int', default: null})
+  @Column({
+    nullable: true,
+    name: 'selected_order',
+    type: 'int',
+    default: null,
+  })
   selectedOrder: number;
 
   @ManyToOne(() => Achievemet, { eager: true })
@@ -24,5 +29,4 @@ export class UserAchievement extends BaseTimeEntity {
   @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
-r;
 }

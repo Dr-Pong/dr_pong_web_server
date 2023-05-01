@@ -1,0 +1,1 @@
+export type RoleType = 'guest' | 'noname' | 'member' | 'admin';
