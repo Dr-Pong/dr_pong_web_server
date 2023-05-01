@@ -6,7 +6,7 @@ import { Emoji } from 'src/emoji/emoji.entity';
 import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { UserEmojiDto, UseremojisDto } from './dto/user.emojis.dto';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
-import { CollectableStatus } from 'src/global/type/enum.collectable.status';
+import { CollectableStatus } from 'src/global/type/type.collectable.status';
 import { PatchUserEmojisDto } from './dto/patch.user.emojis.dto';
 
 @Injectable()
@@ -53,7 +53,7 @@ export class UserEmojiService {
         id: userEmoji.emoji.id,
         name: userEmoji.emoji.name,
         imgUrl: userEmoji.emoji.imageUrl,
-        status: CollectableStatus.SELECTED,
+        status: 'selected',
       };
     }
     const responseDto: UseremojisDto = {
