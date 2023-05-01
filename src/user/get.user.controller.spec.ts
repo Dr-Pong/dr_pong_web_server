@@ -8,7 +8,11 @@ import { User } from './user.entity';
 import { Title } from 'src/title/title.entity';
 import { TestService } from 'src/test/test.service';
 import { JwtService } from '@nestjs/jwt';
-import { COLLECTABLE_ACHIEVED, COLLECTABLE_SELECTED, COLLECTABLE_UNACHIEVED } from 'src/global/type/type.collectable.status';
+import {
+  COLLECTABLE_ACHIEVED,
+  COLLECTABLE_SELECTED,
+  COLLECTABLE_UNACHIEVED,
+} from 'src/global/type/type.collectable.status';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -212,12 +216,24 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('achievements');
-        expect(response.body.achievements[0].status).toBe(COLLECTABLE_UNACHIEVED);
-        expect(response.body.achievements[1].status).toBe(COLLECTABLE_UNACHIEVED);
-        expect(response.body.achievements[2].status).toBe(COLLECTABLE_UNACHIEVED);
-        expect(response2.body.achievements[0].status).toBe(COLLECTABLE_ACHIEVED);
-        expect(response2.body.achievements[1].status).toBe(COLLECTABLE_ACHIEVED);
-        expect(response2.body.achievements[2].status).toBe(COLLECTABLE_ACHIEVED);
+        expect(response.body.achievements[0].status).toBe(
+          COLLECTABLE_UNACHIEVED,
+        );
+        expect(response.body.achievements[1].status).toBe(
+          COLLECTABLE_UNACHIEVED,
+        );
+        expect(response.body.achievements[2].status).toBe(
+          COLLECTABLE_UNACHIEVED,
+        );
+        expect(response2.body.achievements[0].status).toBe(
+          COLLECTABLE_ACHIEVED,
+        );
+        expect(response2.body.achievements[1].status).toBe(
+          COLLECTABLE_ACHIEVED,
+        );
+        expect(response2.body.achievements[2].status).toBe(
+          COLLECTABLE_ACHIEVED,
+        );
       });
 
       it('achieve 만 있고 selected 없는경우', async () => {

@@ -153,14 +153,13 @@ export class UserController {
     @Body()
     patchRequestDto: PatchUsersDetailRequestDto,
   ): Promise<void> {
-    // console.log('patchDto', patchRequestDto);
     const patchUserDetailDto: PatchUserDetailDto = {
-      nickname,
+      nickname: nickname,
       imgUrl: patchRequestDto.imgUrl,
       statusMessage: patchRequestDto.message,
     };
     const patchUserTitleDto: PatchUserTitleDto = {
-      nickname,
+      nickname: nickname,
       titleId: patchRequestDto.title,
     };
     await this.userService.patchUserDetail(patchUserDetailDto);
@@ -179,12 +178,10 @@ export class UserController {
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
     );
-
     const patchUserAchievementsDto: PatchUserAchievementsDto = {
       userId: userInfoDto.id,
       achievementsId: patchRequestDto.achievements,
     };
-
     await this.userAchievementService.patchUserAchievements(
       patchUserAchievementsDto,
     );
