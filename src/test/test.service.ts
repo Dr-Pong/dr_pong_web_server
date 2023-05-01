@@ -113,6 +113,7 @@ export class TestService {
     }
     return user;
   }
+
   async createUserWithUnAchievedEmoji(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithoutAchievements',
@@ -148,6 +149,26 @@ export class TestService {
     return user;
   }
 
+  //selected 한 칭호가 있는경우
+  async createUserWithSelectedTitles(): Promise<User> {
+    const user: User = await this.userRepository.save({
+      nickname: 'userWithAchievements',
+      email: 'achv@mail.com',
+      imageUrl: 'basicImage',
+    });
+    for (let i = 0; i < this.titles.length; i++) {
+      if (4 < i) continue;
+      await this.userTitleRepository.save({
+        user: user,
+        title: this.titles[i],
+        isSelected: i == 0 ? true : false,
+      });
+    }
+    this.users.push(user);
+    return user;
+  }
+
+  //selected 한 칭호가 없는경우
   async createUserWithUnSelectedTitles(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithAchievements',

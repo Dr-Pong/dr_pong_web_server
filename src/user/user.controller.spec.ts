@@ -362,36 +362,43 @@ describe('UserController', () => {
       });
     });
 
-    // it('GET /users/{nickname}/emojis?selected=false', async () => {
-    //   await testService.createBasicCollectable();
-    //   const user: User = await testService.createUserWithCollectables();
-    //   const response = await request(app.getHttpServer()).get(
-    //     '/users/' + user.nickname + '/emojis?selected=false',
-    //   );
-    //   // console.log(response.body);
-    //   // console.log(response.statusCode);
-    //   expect(response.statusCode).toBe(200);
-    //   expect(response.body).toHaveProperty('emojis'); //원하는 데이터 넣기
-    //   expect(response.body.emojis.length).toBe(4); //원하는 데이터 넣기
-    //   expect(response.body.emojis[0]).toHaveProperty('id'); //원하는 데이터 넣기
-    //   expect(response.body.emojis[0]).toHaveProperty('name'); //원하는 데이터 넣기
-    //   expect(response.body.emojis[0]).toHaveProperty('imgUrl'); //원하는 데이터 넣기
-    //   expect(response.body.emojis[0]).toHaveProperty('status'); //원하는 데이터 넣기
-    // });
+    describe('/users/{nickname}/titles', () => {
+      it('얻은 칭호가 없는경우', async () => {
+        const user: User = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/titles',
+        );
 
-    // it('GET /users/{nickname}/titles', async () => {
-    //   await testService.createBasicCollectable();
-    //   const user: User = await testService.createUserWithCollectables();
-    //   const response = await request(app.getHttpServer()).get(
-    //     '/users/' + user.nickname + '/titles',
-    //   );
+        // console.log(response.body);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('titles');
+        expect(response.body.titles.length).toBe(0);
+      });
+      it('select한 칭호가 있는 경우', async () => {
+        const user: User = await testService.createUserWithSelectedTitles();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/titles',
+        );
 
-    //   // console.log(response.body);
-    //   // console.log(response.statusCode);
-    //   expect(response.statusCode).toBe(200);
-    //   expect(response.body).toHaveProperty('titles'); //원하는 데이터 넣기
-    //   expect(response.body.titles).toHaveProperty('titles[]'); //원하는 데이터 넣기
-    // });
+        console.log(response.body);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('titles');
+        expect(response.body.titles.length).toBe(5);
+      });
+      it('select한 칭호가 없는 경우', async () => {
+        const user: User = await testService.createUserWithUnSelectedTitles();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/titles',
+        );
+
+        console.log(response.body);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('titles');
+        expect(response.body.titles.length).toBe(5);
+      });
+    });
+
+    describe('error cases', () => {});
   });
 
   // describe('patch cases', () => {
