@@ -130,4 +130,15 @@ describe('UserService', () => {
     expect(guestCase.isSecondAuthOn).toBe(false);
     expect(guestCase.roleType).toBe(ROLETYPE_GUEST);
   });
+
+  it('User Image Get Service 테스트', async () => {
+    await testData.createImages();
+    const basicUser: User = await testData.createBasicUser();
+
+    const basicCase = await service.getUserImages(basicDto);
+
+    expect(basicCase.length).toBe(testData.images.length);
+    expect(basicCase.images[0].id).toBe(testData.images[0].id);
+    expect(basicCase.images[0].url).toBe(testData.images[0].imageUrl);
+  });
 });
