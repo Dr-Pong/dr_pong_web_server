@@ -7,7 +7,6 @@ import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { UserEmojiDto, UseremojisDto } from './dto/user.emojis.dto';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserEmojisDto } from './dto/patch.user.emojis.dto';
-import { null4Array } from 'src/global/type/null.array';
 import { COLLECTABLE_SELECTED } from 'src/global/type/type.collectable.status';
 
 @Injectable()
@@ -48,7 +47,7 @@ export class UserEmojiService {
     const selectedEmoji = await this.userEmojiRepository.find({
       where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
     });
-    const emojis: UserEmojiDto[] = null4Array;
+    const emojis: UserEmojiDto[] = [null, null, null, null];
     for (const userEmoji of selectedEmoji) {
       emojis[userEmoji.selectedOrder] = {
         id: userEmoji.emoji.id,
