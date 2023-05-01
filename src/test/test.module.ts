@@ -7,14 +7,41 @@ import { UserTitle } from 'src/user-title/user-title.entity';
 import { Rank } from 'src/rank/rank.entity';
 import { Season } from 'src/season/season.entity';
 import { Game } from 'src/game/game.entity';
-import { Achievemet } from 'src/achievemet/achievement.entity';
+import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Title, UserTitle, Rank, Season, Game, Achievemet, UserAchievement, Emoji, UserEmoji])],
+  imports: [
+    TypeOrmModule.forFeature([
+      User,
+      Title,
+      UserTitle,
+      Rank,
+      Season,
+      Game,
+      Achievement,
+      UserAchievement,
+      Emoji,
+      UserEmoji,
+    ]),
+  ],
   providers: [TestService],
-  exports: [TestService, TypeOrmModule.forFeature([User, Title, UserTitle, Rank, Season, Game, Achievemet, UserAchievement, Emoji, UserEmoji])],
+  exports: [
+    TestService,
+    TypeOrmModule.forFeature([
+      User,
+      Title,
+      UserTitle,
+      Rank,
+      Season,
+      Game,
+      Achievement,
+      UserAchievement,
+      Emoji,
+      UserEmoji,
+    ]),
+  ],
 })
 export class TestModule {}
