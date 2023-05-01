@@ -58,9 +58,9 @@ export class UserAchievementService {
       where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
     });
     const achievements: UserAchievementDto[] = [null, null, null];
-    console.log(achievements);
+    // console.log(achievements);
     for (const userAchievement of selectAchievement) {
-      console.log(userAchievement.selectedOrder);
+      // console.log(userAchievement.selectedOrder);
       achievements[userAchievement.selectedOrder] = {
         id: userAchievement.achievement.id,
         name: userAchievement.achievement.name,

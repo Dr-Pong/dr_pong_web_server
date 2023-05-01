@@ -281,12 +281,12 @@ export class TestService {
     await this.userEmojiRepository.save({
       user: user,
       emoji: this.emojis[2],
-      selectedOrder: 1,
+      selectedOrder: 0,
     });
     await this.userEmojiRepository.save({
       user: user,
-      emoji: this.emojis[0],
-      selectedOrder: 3,
+      emoji: this.emojis[3],
+      selectedOrder: 2,
     });
     return user;
   }
@@ -319,12 +319,12 @@ export class TestService {
     await this.userAchievementRepository.save({
       user: user,
       achievement: this.achievements[2],
-      selectedOrder: 1,
+      selectedOrder: 0,
     });
     await this.userAchievementRepository.save({
       user: user,
       achievement: this.achievements[3],
-      selectedOrder: 3,
+      selectedOrder: 2,
     });
     return user;
   }

@@ -3,9 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import { UserTitle } from './user-title.entity';
-import {
-  UserTitlesDto,
-} from 'src/user-title/dto/user.titles.dto';
+import { UserTitlesDto } from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from './dto/get.user.titles.dto';
 import { PatchUserTitleDto } from 'src/user-title/dto/patch.user.title.dto';
 import { UserTitleSelectedDto } from './dto/user.title.selected.dto';
