@@ -56,6 +56,9 @@ export class UserTitleService {
       await this.userTitleRepository.updateIsSelectedFalse(oldTitle);
     if (patchDto.titleId) {
       const newTitle: UserTitle = await this.userTitleRepository.findByUserIdAndTitleId(patchDto.userId, patchDto.titleId);    
+      if (!userTitle) {
+        throw new BadRequestException('No such title');
+      }
       await this.userTitleRepository.updateIsSelectedTrue(newTitle);
     }
   }

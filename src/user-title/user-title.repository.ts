@@ -20,9 +20,6 @@ export class UserTitleRepository extends Repository<UserTitle> {
 
 	async findByUserIdAndTitleId(userId:number, titleId:number): Promise<UserTitle> {
 		const userTitle: UserTitle = await this.findOne({where:{user:{id:userId}, title:{id:titleId}}});
-		if (!userTitle) {
-			throw new BadRequestException('No such title');
-		}
 		return userTitle;
 	}
 

@@ -71,6 +71,14 @@ export class UserEmojiService {
     }
 
     const toChangeEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndEmojiIds(patchDto.userId, patchDto.emojisId);
+
+    const countNumbers = patchDto.emojisId.filter(
+			(elem) => typeof elem === 'number',
+		).length;
+		if (countNumbers !== toChangeEmojis.length) {
+			throw new BadRequestException('No such emoji');
+    }
+
     for (const c of toChangeEmojis) {
       let i = 0;
       for (const d of patchDto.emojisId) {

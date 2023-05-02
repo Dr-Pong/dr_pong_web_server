@@ -12,14 +12,7 @@ export class UserEmojiRepository extends Repository<UserEmoji> {
 	}
 
 	async findAllByUserIdAndEmojiIds(userId: number, emojiIds:number[]): Promise<UserEmoji[]> {
-		const emojis = await this.find({where: {user: { id: userId },emoji: { id: In(emojiIds) },},});
-		const countNumbers = emojiIds.filter(
-			(elem) => typeof elem === 'number',
-		).length;
-		if (countNumbers !== emojis.length) {
-			throw new BadRequestException('No such emoji');
-	  	}
-		return emojis
+		return await this.find({where: {user: { id: userId },emoji: { id: In(emojiIds) },},});
 	}
 
 	async updateSelectedOrderNull(userEmoji: UserEmoji): Promise<void> {
