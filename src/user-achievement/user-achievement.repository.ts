@@ -12,14 +12,7 @@ export class UserAchievementRepository extends Repository<UserAchievement> {
 	}
 
 	async findAllByUserIdAndAchievementIds(userId: number, achievementIds:number[]): Promise<UserAchievement[]> {
-		const achievements =  await this.find({where: {user: { id: userId },achievement: { id: In(achievementIds) },},});
-		const countNumbers = achievementIds.filter(
-			(elem) => typeof elem === 'number',
-		  ).length;
-		  if (countNumbers !== achievements.length) {
-			throw new BadRequestException('No such achievement');
-		}
-		return achievements;
+		return await this.find({where: {user: { id: userId },achievement: { id: In(achievementIds) },},});
 	}
 
 	async updateSelectedOrderNull(userAchievement: UserAchievement): Promise<void> {
