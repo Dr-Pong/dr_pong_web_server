@@ -59,6 +59,7 @@ export class UserAchievementService {
 
     const achievements: UserAchievementDto[] = [null, null, null];
 
+for (const userAchievement of selectAchievement) {
     for (const userAchievement of selectAchievement) {
       achievements[userAchievement.selectedOrder] = {
         id: userAchievement.achievement.id,
