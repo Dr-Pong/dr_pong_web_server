@@ -152,7 +152,7 @@ describe('RankService', () => {
     const getDto1: GetRanksTopCountDto = {
       count: countNum,
     };
-    result1 = await service.getRanksCount(getDto1); //top[rank, nickname, ladderPoint] 반환
+   const result1 = await service.getRanksCount(getDto1); //top[rank, nickname, ladderPoint] 반환
 
     expect(result1).toEqual(top);
   });
@@ -164,7 +164,7 @@ describe('RankService', () => {
     const getDto1: GetRanksTopImageDto = {
       count: countNum,
     };
-    result1 = await service.getRanksTopImage(getDto1); //top[rank, nickname, ladderPoint] 반환
+    const result1 = await service.getRanksTopImage(getDto1); //top[rank, nickname, ladderPoint] 반환
 
     expect(result1).toEqual(topImg);
   });
@@ -180,7 +180,7 @@ describe('RankService', () => {
     offset: offsetNum,
   };
 
-  result1 = await service.getRanksCount(getDto1); //top[rank, nickname, ladderPoint] 반환
+  const result1 = await service.getRanksCount(getDto1); //top[rank, nickname, ladderPoint] 반환
 
   expect(resul1).toEqul(bottom);
 });
