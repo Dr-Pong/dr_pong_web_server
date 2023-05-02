@@ -11,24 +11,25 @@ import { Achievement } from 'src/achievement/achievement.entity';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
 import { COLLECTABLE_SELECTED } from 'src/global/type/type.collectable.status';
+import { AchievementRepository } from 'src/achievement/achievement.repository';
+import { UserAchievementRepository } from './user-achievement.repository';
 
 @Injectable()
 export class UserAchievementService {
   constructor(
     @InjectRepository(UserAchievement)
-    private userAchievementRepository: Repository<UserAchievement>,
+    private userAchievementRepository: UserAchievementRepository,
     @InjectRepository(Achievement)
-    private achievementRepository: Repository<Achievement>,
+    private achievementRepository: AchievementRepository,
   ) {}
 
   async getUserAchievementsAll(
     getDto: GetUserAchievementsDto,
   ): Promise<UserAchievementsDto> {
     //achieved이고 selected되지 않은 업적 return
-    const allAchievement = await this.achievementRepository.find();
-    const userAchievement = await this.userAchievementRepository.find({
-      where: { user: { id: getDto.userId } },
-    });
+    const allAchievement = await this.achievementRepository.findAll();
+    const userAchievement = await this.userAchievementRepository.findAllByUserId(getDto.userId);
+
     const achievements: UserAchievementDto[] = [];
     const status = new UserCollectablesStatus(allAchievement.length);
     status.setStatus(userAchievement); // userAchievement 에 있는 status 를 allAchievement 에 변경
@@ -54,13 +55,12 @@ export class UserAchievementService {
     getDto: GetUserAchievementsDto,
   ): Promise<UserAchievementsDto> {
     //achieved이고 selected된 업적 return
-    const selectAchievement = await this.userAchievementRepository.find({
-      where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
-    });
+    const selectAchievement = await this.userAchievementRepository.findAllByUserIdAndSelected(getDto.userId);
+
     const achievements: UserAchievementDto[] = [null, null, null];
-    // console.log(achievements);
+
+for (const userAchievement of selectAchievement) {
     for (const userAchievement of selectAchievement) {
-      // console.log(userAchievement.selectedOrder);
       achievements[userAchievement.selectedOrder] = {
         id: userAchievement.achievement.id,
         name: userAchievement.achievement.name,
@@ -79,41 +79,28 @@ export class UserAchievementService {
   async patchUserAchievements(
     patchDto: PatchUserAchievementsDto,
   ): Promise<void> {
-    const oldAchievements: UserAchievement[] =
-      await this.userAchievementRepository.find({
-        where: {
-          user: { id: patchDto.userId },
-          selectedOrder: Not(IsNull()),
-        },
-      });
-    const toChangeAchievement: UserAchievement[] =
-      await this.userAchievementRepository.find({
-        where: {
-          user: { id: patchDto.userId },
-          achievement: { id: In(patchDto.achievementsId) },
-        },
-      });
-    const countNumbers = patchDto.achievementsId.filter(
-      (elem) => typeof elem === 'number',
-    ).length;
-    if (countNumbers !== toChangeAchievement.length) {
-      throw new BadRequestException('No such achievement');
-    }
-
+    const oldAchievements: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndSelected(patchDto.userId);
     for (const c of oldAchievements) {
-      c.selectedOrder = null;
+      await this.userAchievementRepository.updateSelectedOrderNull(c);
     }
+    
+    const toChangeAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndAchievementIds(patchDto.userId, patchDto.achievementsId);
+		const countNumbers = patchDto.achievementsId.filter(
+			(elem) => typeof elem === 'number',
+		  ).length;
+		  if (countNumbers !== toChangeAchievement.length) {
+			throw new BadRequestException('No such achievement');
+		}
+    
     for (const c of toChangeAchievement) {
       let i = 0;
       for (const d of patchDto.achievementsId) {
         if (c.achievement.id === d) {
-          c.selectedOrder = i;
+          await this.userAchievementRepository.updateSelectedOrder(c, i);
           break;
         }
         i++;
       }
     }
-    await this.userAchievementRepository.save(oldAchievements);
-    await this.userAchievementRepository.save(toChangeAchievement);
   }
 }

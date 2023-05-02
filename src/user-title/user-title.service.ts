@@ -7,21 +7,18 @@ import { UserTitlesDto } from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from './dto/get.user.titles.dto';
 import { PatchUserTitleDto } from 'src/user-title/dto/patch.user.title.dto';
 import { UserTitleSelectedDto } from './dto/user.title.selected.dto';
+import { UserTitleRepository } from './user-title.repository';
 
 @Injectable()
 export class UserTitleService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
     @InjectRepository(UserTitle)
-    private userTitleRepository: Repository<UserTitle>,
+    private userTitleRepository: UserTitleRepository,
   ) {}
 
   //get title service
   async getUserTitles(getDto: GetUserTitlesDto): Promise<UserTitlesDto> {
-    const userTitles = await this.userTitleRepository.find({
-      where: { user: { id: getDto.userId } },
-    });
+    const userTitles = await this.userTitleRepository.findAllByUserId(getDto.userId);
 
     const titles = userTitles.map((userTitle) => {
       return { id: userTitle.title.id, title: userTitle.title.name };
@@ -36,44 +33,31 @@ export class UserTitleService {
   async getUserTitleSelected(
     getDto: GetUserTitlesDto,
   ): Promise<UserTitleSelectedDto> {
-    const userTitles = await this.userTitleRepository.findOne({
-      where: { user: { id: getDto.userId }, isSelected: true },
-    });
-    if (!userTitles) {
+
+    const userTitle = await this.userTitleRepository.findByUserIdAndSelected(getDto.userId, true);
+    if (!userTitle) {
       const responseDto = null;
       return responseDto;
     }
 
     const responseDto: UserTitleSelectedDto = {
-      id: userTitles.title.id,
-      title: userTitles.title.name,
+      id: userTitle.title.id,
+      title: userTitle.title.name,
     };
     return responseDto;
   }
 
   //patch user title
   async patchUserTitle(patchDto: PatchUserTitleDto): Promise<void> {
-    const oldTitle = await this.userTitleRepository.findOne({
-      where: { user: { nickname: patchDto.nickname }, isSelected: true },
-    });
-    if (oldTitle) {
-      oldTitle.isSelected = false;
+    const oldTitle: UserTitle = await this.userTitleRepository.findByUserIdAndSelected(patchDto.userId, true);
+    if (oldTitle)
+      await this.userTitleRepository.updateIsSelectedFalse(oldTitle);
+    if (patchDto.titleId) {
+      const newTitle: UserTitle = await this.userTitleRepository.findByUserIdAndTitleId(patchDto.userId, patchDto.titleId);    
+      if (!userTitle) {
+        throw new BadRequestException('No such title');
+      }
+      await this.userTitleRepository.updateIsSelectedTrue(newTitle);
     }
-
-    const newTitle = await this.userTitleRepository.findOne({
-      where: {
-        user: { nickname: patchDto.nickname },
-        title: { id: patchDto.titleId },
-      },
-    });
-    if (patchDto.titleId === null) {
-      return;
-    }
-    if (!newTitle) {
-      throw new BadRequestException('No such title');
-    }
-    newTitle.isSelected = true;
-    await this.userTitleRepository.save(oldTitle);
-    await this.userTitleRepository.save(newTitle);
   }
 }

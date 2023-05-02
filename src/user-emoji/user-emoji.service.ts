@@ -8,24 +8,26 @@ import { UserEmojiDto, UseremojisDto } from './dto/user.emojis.dto';
 import { UserCollectablesStatus } from 'src/global/utils/user.collectable';
 import { PatchUserEmojisDto } from './dto/patch.user.emojis.dto';
 import { COLLECTABLE_SELECTED } from 'src/global/type/type.collectable.status';
+import { UserEmojiRepository } from './user-emoji.repository';
+import { EmojiRepository } from 'src/emoji/emoji.repository';
 
 @Injectable()
 export class UserEmojiService {
   constructor(
     @InjectRepository(UserEmoji)
-    private userEmojiRepository: Repository<UserEmoji>,
+    private userEmojiRepository: UserEmojiRepository,
     @InjectRepository(Emoji)
-    private emojiRepository: Repository<Emoji>,
+    private emojiRepository: EmojiRepository,
   ) {}
 
   async getUseremojisAll(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
-    const allEmoji = await this.emojiRepository.find();
-    const userEmoji = await this.userEmojiRepository.find({
-      where: { user: { id: getDto.userId } },
-    });
+    const allEmoji: Emoji[] = await this.emojiRepository.findAll();
+    const userEmoji: UserEmoji[] = await this.userEmojiRepository.findAllByUserId(getDto.userId);
+
     const emojis: UserEmojiDto[] = [];
     const status = new UserCollectablesStatus(allEmoji.length);
     status.setStatus(userEmoji);
+
     for (const c of allEmoji) {
       emojis.push({
         id: c.id,
@@ -44,9 +46,8 @@ export class UserEmojiService {
   async getUseremojisSelected(
     getDto: GetUserEmojisDto,
   ): Promise<UseremojisDto> {
-    const selectedEmoji = await this.userEmojiRepository.find({
-      where: { user: { id: getDto.userId }, selectedOrder: Not(IsNull()) },
-    });
+    const selectedEmoji = await this.userEmojiRepository.findAllByUserIdAndSelected(getDto.userId);
+
     const emojis: UserEmojiDto[] = [null, null, null, null];
     for (const userEmoji of selectedEmoji) {
       emojis[userEmoji.selectedOrder] = {
@@ -64,39 +65,29 @@ export class UserEmojiService {
 
   //patchUseremojis함수
   async patchUseremojis(patchDto: PatchUserEmojisDto): Promise<void> {
-    const oldEmojis: UserEmoji[] = await this.userEmojiRepository.find({
-      where: {
-        user: { id: patchDto.userId },
-        selectedOrder: Not(IsNull()),
-      },
-    });
-    const toChangeEmojis: UserEmoji[] = await this.userEmojiRepository.find({
-      where: {
-        user: { id: patchDto.userId },
-        emoji: In(patchDto.emojisId),
-      },
-    });
-    const countNumbers = patchDto.emojisId.filter(
-      (elem) => typeof elem === 'number',
-    ).length;
-    if (countNumbers !== toChangeEmojis.length) {
-      throw new BadRequestException('No such emoji');
-    }
+    const oldEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndSelected(patchDto.userId);
     for (const c of oldEmojis) {
-      c.selectedOrder = null;
+      await this.userEmojiRepository.updateSelectedOrderNull(c);
+    }
+
+    const toChangeEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndEmojiIds(patchDto.userId, patchDto.emojisId);
+
+    const countNumbers = patchDto.emojisId.filter(
+			(elem) => typeof elem === 'number',
+		).length;
+		if (countNumbers !== toChangeEmojis.length) {
+			throw new BadRequestException('No such emoji');
     }
 
     for (const c of toChangeEmojis) {
       let i = 0;
       for (const d of patchDto.emojisId) {
         if (c.emoji.id === d) {
-          c.selectedOrder = i;
+          await this.userEmojiRepository.updateSelectedOrder(c, i);
           break;
         }
         i++;
       }
     }
-    await this.userEmojiRepository.save(oldEmojis);
-    await this.userEmojiRepository.save(toChangeEmojis);
   }
 }

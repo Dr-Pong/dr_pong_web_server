@@ -6,36 +6,33 @@ import { Season } from 'src/season/season.entity';
 import { GetUserRankStatDto } from './dto/get.user.rank.stat.dto';
 import { UserRankStatDto } from './dto/user.rank.stat.dto';
 import { GetUserBestRankStatDto } from './dto/get.user.best.rnak.stat.dto';
+import { RankRepository } from './rank.repository';
+import { SeasonRepository } from 'src/season/season.repository';
 
 @Injectable()
 export class RankService {
   constructor(
     @InjectRepository(Season)
-    private seasonRepository: Repository<Season>,
+    private seasonRepository: SeasonRepository,
     @InjectRepository(Rank)
-    private rankRepository: Repository<Rank>,
+    private rankRepository: RankRepository,
   ) {}
 
   //get 유저 현시즌 랭크 데이터
   async getUserRankBySeason(
     getDto: GetUserRankStatDto,
   ): Promise<UserRankStatDto> {
-    const userRanks = await this.rankRepository.findOne({
-      where: { user: { id: getDto.userId }, season: { id: getDto.seasonId } },
-    });
+    const currentSeason = await this.seasonRepository.findCurrentSeason();
+    const userRanks = await this.rankRepository.findByUserIdAndSeasonId(getDto.userId, currentSeason.id);
 
     if (!userRanks) {
       const responseDto: UserRankStatDto = {
-        rank: null,
         record: null,
       };
       return responseDto;
     }
-    const userRank = userRanks.ladderRank;
-    const userRecord = userRanks.ladderPoint;
     const responseDto: UserRankStatDto = {
-      rank: userRank,
-      record: userRecord,
+      record: userRanks.ladderPoint,
     };
     return responseDto;
   }
@@ -44,27 +41,18 @@ export class RankService {
   async getUserBestRank(
     getDto: GetUserBestRankStatDto,
   ): Promise<UserRankStatDto> {
-    const userRanks = await this.rankRepository.findOne({
-      where: { user: { id: getDto.userId } },
-      order: { highestRanking: 'ASC' },
-    });
+    const userRanks = await this.rankRepository.findHighestRankByUserId(getDto.userId);
 
     if (!userRanks) {
       const responseDto: UserRankStatDto = {
-        rank: null,
         record: null,
       };
       return responseDto;
     }
 
-    const bestRank = userRanks.highestRanking;
-    const bestRecord = userRanks.highestPoint;
-
     const responseDto: UserRankStatDto = {
-      rank: bestRank,
-      record: bestRecord,
+      record: userRanks.highestPoint,
     };
-
     return responseDto;
   }
 }
