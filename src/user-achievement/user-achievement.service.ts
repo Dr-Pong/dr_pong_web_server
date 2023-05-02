@@ -84,12 +84,6 @@ export class UserAchievementService {
     }
     
     const toChangeAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndAchievementIds(patchDto.userId, patchDto.achievementsId);
-		const countNumbers = patchDto.achievementsId.filter(
-			(elem) => typeof elem === 'number',
-		  ).length;
-		  if (countNumbers !== toChangeAchievement.length) {
-			throw new BadRequestException('No such achievement');
-		}
     for (const c of toChangeAchievement) {
       let i = 0;
       for (const d of patchDto.achievementsId) {
