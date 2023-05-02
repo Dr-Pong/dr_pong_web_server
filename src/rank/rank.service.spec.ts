@@ -13,6 +13,12 @@ import { TestService } from 'src/test/test.service';
 import { TestModule } from 'src/test/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { RankModule } from './rank.module';
+import { RanksTopDto } from './dto/ranks.top.dto';
+import { GetRanksTopCountDto } from './dto/get.ranks.top.count.dto';
+import { RanksBottomDto } from './dto/ranks.bottom.dto';
+import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
+import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
+import { RanksTopImageDto } from './dto/ranks.top.image.dto';
 
 describe('RankService', () => {
   let service: RankService;
@@ -24,11 +30,7 @@ describe('RankService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(typeORMConfig),
-        RankModule,
-        TestModule,
-      ],
+      imports: [TypeOrmModule.forRoot(typeORMConfig), RankModule, TestModule],
       providers: [
         {
           provide: getRepositoryToken(Rank),
@@ -142,4 +144,43 @@ describe('RankService', () => {
     //없는시즌 데이터는 null로 반환
     expect(result5).toEqual({ rank: null, record: null });
   });
+
+  it('count에 따른 랭크데이터 반환 Top', async () => {
+    const countNum = await testData.createCountNum(); //랭크데이터 반환할 개수
+    const top: RanksTopDto = await testData.createTopRankData(countNum); //랭크데이터 반환할 개수만큼 랭크데이터 생성
+
+    const getDto1: GetRanksTopCountDto = {
+      count: countNum,
+    };
+    result1 = await service.getRanksCount(getDto1); //top[rank, nickname, ladderPoint] 반환
+
+    expect(result1).toEqual(top);
+  });
+
+  it('Top 랭커 이미지 데이터 반환', async () => {
+    const countNum = await testData.createCountNum(); //랭크데이터 반환할 개수
+    const topImg: RanksTopImageDto = await testData.createTopRankImgData(countNum); //랭크데이터 반환할 개수만큼 랭크데이터 생성
+
+    const getDto1: GetRanksTopImageDto = {
+      count: countNum,
+    };
+    result1 = await service.getRanksTopImage(getDto1); //top[rank, nickname, ladderPoint] 반환
+
+    expect(result1).toEqual(topImg);
+  });
+
+  it('count에 따른 랭크데이터 반환 Bottom', async () => {
+    const countNum = await testData.createCountNum(); //랭크데이터 반환할 개수
+    const offsetNum = await testData.createOffset();
+
+    const bottom: RanksBottomDto = await testData.createBottomRankData(countNum, offsetNum); 
+
+  const getDto1: GetRanksBottomDto = {
+    count: countNum,
+    offset: offsetNum,
+  };
+
+  result1 = await service.getRanksCount(getDto1); //top[rank, nickname, ladderPoint] 반환
+
+  expect(resul1).toEqul(bottom);
 });
