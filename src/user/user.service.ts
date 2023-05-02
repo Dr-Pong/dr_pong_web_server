@@ -14,21 +14,20 @@ import { GetUserMeDto } from './dto/get.user.me.dto';
 import { TokenInterface } from 'src/auth/jwt/jwt.token.interface';
 import { ROLETYPE_GUEST, ROLETYPE_NONAME } from 'src/global/type/type.user.roletype';
 import { UserMeDto } from './dto/user.me.dto';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepository: UserRepository,
     private jwtService: JwtService,
   ) {}
   users: Map<string, User> = new Map();
 
   //get detail service
   async getUsersDetail(getDto: GetUserDetailDto): Promise<UserDetailDto> {
-    const user = await this.userRepository.findOne({
-      where: { nickname: getDto.nickname },
-    });
+    const user = await this.userRepository.findById(getDto.userId);
     if (!user) throw new NotFoundException('No such User');
 
     const responseDto: UserDetailDto = {
@@ -52,9 +51,7 @@ export class UserService {
       return responseDto;
     }
 
-    const userFromDatabase = await this.userRepository.findOne({
-      where: { nickname: getDto.nickname },
-    });
+    const userFromDatabase = await this.userRepository.findByNickname(getDto.nickname);
     if (!userFromDatabase) throw new NotFoundException('No such User');
 
     this.users.set(userFromDatabase.nickname, userFromDatabase);
@@ -68,13 +65,10 @@ export class UserService {
 
   //patch detail service
   async patchUserDetail(patchDto: PatchUserDetailDto): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { nickname: patchDto.nickname },
-    });
+    const user = await this.userRepository.findById(patchDto.userId);
     if (!user) throw new NotFoundException('No such User');
-    user.imageUrl = patchDto.imgUrl;
-    user.statusMessage = patchDto.statusMessage;
-    await this.userRepository.save(user);
+
+    await this.userRepository.updateUser(user, patchDto);
   }
 
   async getUserMe(getDto: GetUserMeDto): Promise<UserMeDto> {
@@ -101,7 +95,7 @@ export class UserService {
       return nonameUserMeDto;
     }
   
-    const user = await this.userRepository.findOne({ where: { id: jwt.id } });
+    const user = await this.userRepository.findById(jwt.id);
     if (!user) {
       throw new UnauthorizedException();
     }
