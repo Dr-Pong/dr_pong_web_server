@@ -6,13 +6,13 @@ import { UserModule } from './user/user.module';
 import { TitleModule } from './title/title.module';
 import { UsertitleModule } from './user-title/user-title.module';
 import { typeORMConfig } from './configs/typeorm.config';
-import { AchievemetModule } from './achievemet/achievemet.module';
 import { UserAchievementService } from './user-achievement/user-achievement.service';
 import { UserAchievementModule } from './user-achievement/user-achievement.module';
 import { AuthModule } from './auth/auth.module';
 import { TestModule } from './test/test.module';
 import { RankModule } from './rank/rank.module';
 import { SeasonModule } from './season/season.module';
+import { AchievementModule } from './achievement/achievement.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { SeasonModule } from './season/season.module';
     RankModule,
     SeasonModule,
     UsertitleModule,
-    AchievemetModule,
+    AchievementModule,
     UserAchievementModule,
     AuthModule,
     TestModule,
