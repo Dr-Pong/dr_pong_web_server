@@ -6,5 +6,5 @@ export class RankBottomDataDto {
 }
 
 export class RanksBottomDto {
-  top: RankBottomDataDto[];
+  bottom: RankBottomDataDto[];
 }
