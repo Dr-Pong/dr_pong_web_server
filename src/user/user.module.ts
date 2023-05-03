@@ -10,16 +10,19 @@ import { UserTitleService } from 'src/user-title/user-title.service';
 import { UserEmojiModule } from 'src/user-emoji/user-emoji.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { UserAchievementModule } from 'src/user-achievement/user-achievement.module';
+import { UserRepository } from './user.repository';
 
 @Module({
-  imports: [UsertitleModule, TypeOrmModule.forFeature([User]),
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    UsertitleModule,
     UserAchievementModule,
     UserEmojiModule,
     UsertitleModule,
     AuthModule,
   ],
   controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService, TypeOrmModule.forFeature([User]),],
+  providers: [UserService, UserRepository],
+  exports: [UserService],
 })
 export class UserModule {}

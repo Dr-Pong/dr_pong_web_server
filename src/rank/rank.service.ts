@@ -15,9 +15,6 @@ import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
 @Injectable()
 export class RankService {
   constructor(
-    @InjectRepository(Season)
-    private seasonRepository: SeasonRepository,
-    @InjectRepository(Rank)
     private rankRepository: RankRepository,
   ) {}
 
@@ -25,11 +22,7 @@ export class RankService {
   async getUserRankBySeason(
     getDto: GetUserRankStatDto,
   ): Promise<UserRankStatDto> {
-    const currentSeason = await this.seasonRepository.findCurrentSeason();
-    const userRanks = await this.rankRepository.findByUserIdAndSeasonId(
-      getDto.userId,
-      currentSeason.id,
-    );
+    const userRanks = await this.rankRepository.findByUserIdAndSeasonId(getDto.userId, getDto.seasonId);
 
     if (!userRanks) {
       const responseDto: UserRankStatDto = {

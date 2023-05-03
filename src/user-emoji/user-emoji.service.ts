@@ -14,10 +14,8 @@ import { EmojiRepository } from 'src/emoji/emoji.repository';
 @Injectable()
 export class UserEmojiService {
   constructor(
-    @InjectRepository(UserEmoji)
-    private userEmojiRepository: UserEmojiRepository,
-    @InjectRepository(Emoji)
-    private emojiRepository: EmojiRepository,
+    private readonly userEmojiRepository: UserEmojiRepository,
+    private readonly emojiRepository: EmojiRepository,
   ) {}
 
   async getUseremojisAll(getDto: GetUserEmojisDto): Promise<UseremojisDto> {

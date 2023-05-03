@@ -1,5 +1,5 @@
 export class PatchUserTitleDto {
-  nickname: string;
+  userId: number;
 
   titleId: number;
 }

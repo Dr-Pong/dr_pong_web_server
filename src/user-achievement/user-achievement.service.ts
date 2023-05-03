@@ -17,9 +17,7 @@ import { UserAchievementRepository } from './user-achievement.repository';
 @Injectable()
 export class UserAchievementService {
   constructor(
-    @InjectRepository(UserAchievement)
     private userAchievementRepository: UserAchievementRepository,
-    @InjectRepository(Achievement)
     private achievementRepository: AchievementRepository,
   ) {}
 
@@ -59,7 +57,6 @@ export class UserAchievementService {
 
     const achievements: UserAchievementDto[] = [null, null, null];
 
-for (const userAchievement of selectAchievement) {
     for (const userAchievement of selectAchievement) {
       achievements[userAchievement.selectedOrder] = {
         id: userAchievement.achievement.id,

@@ -1,5 +1,5 @@
 export class PatchUserDetailDto {
-  nickname: string;
+  userId: number;
 
   imgUrl: string;
 
