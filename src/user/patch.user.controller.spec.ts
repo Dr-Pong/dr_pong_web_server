@@ -467,7 +467,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgeUrl: testService.images[9].id,
+            imgeUrl: testService.images[9].id, // testdptj images[] 선언후  testservice에 있는 이미지 아이디가 아니라서 400이 나와야함
           });
 
         // console.log(response.body);
