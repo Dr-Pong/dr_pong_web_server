@@ -8,21 +8,24 @@ import { UserRankStatDto } from './dto/user.rank.stat.dto';
 import { GetUserBestRankStatDto } from './dto/get.user.best.rnak.stat.dto';
 import { RankRepository } from './rank.repository';
 import { SeasonRepository } from 'src/season/season.repository';
-import { GetRanksTopCountDto } from './dto/get.ranks.top.count.dto';
+import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { RanksTopDto } from './dto/ranks.top.dto';
 import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
+import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
+import { RanksBottomDto } from './dto/ranks.bottom.dto';
 
 @Injectable()
 export class RankService {
-  constructor(
-    private rankRepository: RankRepository,
-  ) {}
+  constructor(private rankRepository: RankRepository) {}
 
   //get 유저 현시즌 랭크 데이터
   async getUserRankBySeason(
     getDto: GetUserRankStatDto,
   ): Promise<UserRankStatDto> {
-    const userRanks = await this.rankRepository.findByUserIdAndSeasonId(getDto.userId, getDto.seasonId);
+    const userRanks = await this.rankRepository.findByUserIdAndSeasonId(
+      getDto.userId,
+      getDto.seasonId,
+    );
 
     if (!userRanks) {
       const responseDto: UserRankStatDto = {
@@ -57,19 +60,19 @@ export class RankService {
     return responseDto;
   }
 
-  async getTopRanksByCount(getDto: GetRanksTopCountDto): Promise<Rank[]> {
+  async getTopRanksByCount(getDto: GetRanksTopDto): Promise<RanksTopDto> {
     // repository 에서 findTopRanksByCount 를 만들어줘야함
     const ranks = await this.rankRepository.findTopRanksByCount(getDto.count);
     return ranks;
   }
 
-  async getTopRanksImageByCount(
-    getDto: GetRanksTopImageDto,
-  ): Promise<string[]> {
-    // repository 에서 findTopRanksImageByCount 를 만들어줘야함
-    const images = await this.rankRepository.findTopRanksImageByCount(
+  async getBottomRanksByCount(
+    getDto: GetRanksBottomDto,
+  ): Promise<RanksBottomDto> {
+    // repository 에서 findBottomRanksByCount 를 만들어줘야함
+    const ranks = await this.rankRepository.findBottomRanksByCount(
       getDto.count,
     );
-    return images;
+    return ranks;
   }
 }
