@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { Game } from 'src/game/game.entity';
+import { RankTopDataDto } from 'src/rank/dto/ranks.top.dto';
+import { RanksTopDto } from 'src/rank/dto/ranks.top.dto';
+import { RanksTopImageDto } from 'src/rank/dto/ranks.top.image.dto';
 import { Rank } from 'src/rank/rank.entity';
 import { Season } from 'src/season/season.entity';
 import { Title } from 'src/title/title.entity';
@@ -44,6 +47,7 @@ export class TestService {
   seasons: Season[] = [];
   ranks: Rank[] = [];
 
+  /** 유저 생성 태초 유저임*/
   async createBasicUser(): Promise<User> {
     const index: number = this.users.length;
     const user = await this.userRepository.save({
@@ -56,6 +60,7 @@ export class TestService {
     return user;
   }
 
+  /** 이미지 없는 유저 생성*/
   async createBasicUserWithoutImg(): Promise<User> {
     const index: number = this.users.length;
     const user = await this.userRepository.save({
@@ -68,6 +73,7 @@ export class TestService {
     return user;
   }
 
+  /**이모지 타이틀 어치브먼트 생성*/
   async createBasicCollectable(): Promise<void> {
     for (let i = 0; i < 10; i++) {
       this.emojis.push(
@@ -96,6 +102,7 @@ export class TestService {
     }
   }
 
+  /**이모지를 선택하지 않은 유저 생성[null null null null]*/
   async createUserWithUnSelectedEmojis(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithUEmoji',
@@ -114,6 +121,7 @@ export class TestService {
     return user;
   }
 
+  /**이모지가 아예 없는 유저 생성*/
   async createUserWithUnAchievedEmoji(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithoutAchievements',
@@ -123,6 +131,7 @@ export class TestService {
     return user;
   }
 
+  /** 어치브먼트를 선택하지 않은 유저 생성[null null null]*/
   async createUserWithUnSelectedAchievements(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithAchievements',
@@ -140,6 +149,7 @@ export class TestService {
     return user;
   }
 
+  /** 어치브먼트가 아예 없는 유저 생성*/
   async createUserWithUnAchievedAchievements(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithoutAchievements',
@@ -149,7 +159,7 @@ export class TestService {
     return user;
   }
 
-  //selected 한 칭호가 있는경우
+  /** 타이틀을 선택한 유저 생성*/
   async createUserWithSelectedTitles(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithAchievements',
@@ -168,7 +178,7 @@ export class TestService {
     return user;
   }
 
-  //selected 한 칭호가 없는경우
+  /**타이틀을 선택하지 않은 유저 생성*/
   async createUserWithUnSelectedTitles(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithAchievements',
@@ -187,6 +197,7 @@ export class TestService {
     return user;
   }
 
+  /**기본 시즌 생성*/
   async createBasicSeasons(n: number): Promise<Season[]> {
     for (let i = 1; i <= n; i++) {
       this.seasons.push(
@@ -201,6 +212,7 @@ export class TestService {
     return this.seasons;
   }
 
+  /**생성된 유저 혹은 유저들 에게 랭크 값 부여*/
   async createBasicRank(): Promise<Rank[]> {
     for (let i = 0; i < this.users.length; i++) {
       for (const c of this.seasons) {
@@ -208,9 +220,7 @@ export class TestService {
           await this.rankRepository.save({
             season: c,
             user: this.users[i],
-            ladderRank: i + 1,
             ladderPoint: 100 - i,
-            highestRanking: i + 1,
             highestPoint: 1000 - i,
           }),
         );
@@ -219,6 +229,7 @@ export class TestService {
     return this.ranks;
   }
 
+  /**이모지 타이틀 어치브먼트를 모두 가진 유저 생성*/
   async createUserWithCollectables(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithCollectable',
@@ -253,6 +264,7 @@ export class TestService {
     return user;
   }
 
+  /**이모지를 반대로 선택한 유저 생성 [3 2 1 0]*/
   async createReverseSelectedEmojiUser(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithMixedEmoji',
@@ -271,6 +283,7 @@ export class TestService {
     return user;
   }
 
+  /**이모지를 임의로 선택한 유저생성[0 null 2 null]*/
   async createMixedSelectedEmojiUser(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithMixedWithNullEmoji',
@@ -291,6 +304,7 @@ export class TestService {
     return user;
   }
 
+  /**어치브먼트를 반대로 선택한 유저 생성 [3 2 1 0]*/
   async createReverseSelectedAchievementUser(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithReversedAchievement',
@@ -309,6 +323,7 @@ export class TestService {
     return user;
   }
 
+  /** 어치브먼트를 임의로 선택한 유저 생성 [0 null 2 null]*/
   async createMixedSelectedAchievementUser(): Promise<User> {
     const user: User = await this.userRepository.save({
       nickname: 'userWithMixedWithNullAchievement',
@@ -327,5 +342,28 @@ export class TestService {
       selectedOrder: 2,
     });
     return user;
+  }
+
+  /** 프론트에서 달라하는 count number 설정 나는 10으로했쩡*/
+  async createCountNum(): Promise<number> {
+    const countNum = 10;
+    return countNum;
+  }
+
+  /** countNum에따라 topranks 반환*/
+  async createTopRankData(countNum: number): Promise<RanksTopDto> {
+    const topRanksData: RanksTopDto = { top: [] };
+
+    for (let i = 0; i < countNum; i++) {
+      const user = this.users[i]; // 현재 사용자 데이터 가져오기
+      const rankData: RankTopDataDto = {
+        id: user[i].id,
+        rank: i + 1,
+        nickname: user.nickname,
+        ladderPoint: 100 - i,
+      };
+      topRanksData.top.push(rankData);
+    }
+    return topRanksData;
   }
 }
