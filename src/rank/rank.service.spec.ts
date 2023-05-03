@@ -174,18 +174,18 @@ describe('RankService', () => {
     expect(bottomRankResult.length).toEqual(bottomRankDto.count);
     expect(bottomRankResult[0].rank).toEqual(bottomRankDto.offset);
     expect(bottomRankResult[0].nickname).toEqual(
-      testData.ranks[4].user.nickname,
+      testData.ranks[bottomRankDto.offset].user.nickname,
     );
     expect(bottomRankResult[0].ladderPoint).toEqual(
-      testData.ranks[4].ladderPoint,
+      testData.ranks[bottomRankDto.offset].ladderPoint,
     );
 
     expect(bottomRankResult[1].rank).toEqual(bottomRankDto.offset + 1);
     expect(bottomRankResult[1].nickname).toEqual(
-      testData.ranks[5].user.nickname,
+      testData.ranks[bottomRankDto.offset + 1].user.nickname,
     );
     expect(bottomRankResult[1].ladderPoint).toEqual(
-      testData.ranks[5].ladderPoint,
+      testData.ranks[bottomRankDto.offset + 1].ladderPoint,
     );
   });
 });
