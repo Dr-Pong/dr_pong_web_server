@@ -8,6 +8,9 @@ import { UserRankStatDto } from './dto/user.rank.stat.dto';
 import { GetUserBestRankStatDto } from './dto/get.user.best.rnak.stat.dto';
 import { RankRepository } from './rank.repository';
 import { SeasonRepository } from 'src/season/season.repository';
+import { GetRanksTopCountDto } from './dto/get.ranks.top.count.dto';
+import { RanksTopDto } from './dto/ranks.top.dto';
+import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
 
 @Injectable()
 export class RankService {
@@ -23,7 +26,10 @@ export class RankService {
     getDto: GetUserRankStatDto,
   ): Promise<UserRankStatDto> {
     const currentSeason = await this.seasonRepository.findCurrentSeason();
-    const userRanks = await this.rankRepository.findByUserIdAndSeasonId(getDto.userId, currentSeason.id);
+    const userRanks = await this.rankRepository.findByUserIdAndSeasonId(
+      getDto.userId,
+      currentSeason.id,
+    );
 
     if (!userRanks) {
       const responseDto: UserRankStatDto = {
@@ -41,7 +47,9 @@ export class RankService {
   async getUserBestRank(
     getDto: GetUserBestRankStatDto,
   ): Promise<UserRankStatDto> {
-    const userRanks = await this.rankRepository.findHighestRankByUserId(getDto.userId);
+    const userRanks = await this.rankRepository.findHighestRankByUserId(
+      getDto.userId,
+    );
 
     if (!userRanks) {
       const responseDto: UserRankStatDto = {
@@ -54,5 +62,21 @@ export class RankService {
       record: userRanks.highestPoint,
     };
     return responseDto;
+  }
+
+  async getTopRanksByCount(getDto: GetRanksTopCountDto): Promise<Rank[]> {
+    // repository 에서 findTopRanksByCount 를 만들어줘야함
+    const ranks = await this.rankRepository.findTopRanksByCount(getDto.count);
+    return ranks;
+  }
+
+  async getTopRanksImageByCount(
+    getDto: GetRanksTopImageDto,
+  ): Promise<string[]> {
+    // repository 에서 findTopRanksImageByCount 를 만들어줘야함
+    const images = await this.rankRepository.findTopRanksImageByCount(
+      getDto.count,
+    );
+    return images;
   }
 }
