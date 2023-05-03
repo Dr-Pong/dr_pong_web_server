@@ -153,13 +153,17 @@ export class UserController {
     @Body()
     patchRequestDto: PatchUsersDetailRequestDto,
   ): Promise<void> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
     const patchUserDetailDto: PatchUserDetailDto = {
-      nickname: nickname,
+      userId: userInfoDto.id,
       imgUrl: patchRequestDto.imgUrl,
       statusMessage: patchRequestDto.message,
     };
     const patchUserTitleDto: PatchUserTitleDto = {
-      nickname: nickname,
+      userId: userInfoDto.id,
       titleId: patchRequestDto.title,
     };
     await this.userService.patchUserDetail(patchUserDetailDto);

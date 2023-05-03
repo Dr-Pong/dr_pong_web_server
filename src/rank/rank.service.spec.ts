@@ -87,10 +87,6 @@ describe('RankService', () => {
     const result5 = await service.getUserRankBySeason(invalidgetDto2);
 
     //then
-    //랭크데이터가 잘 반환되는지 확인
-    expect(result1.rank).toEqual(testData.ranks[0].ladderRank);
-    expect(result2.rank).toEqual(testData.ranks[1].ladderRank);
-    expect(result3.rank).toEqual(testData.ranks[2].ladderRank);
 
     //랭크데이터가 잘 반환되는지 확인
     expect(result1.record).toEqual(testData.ranks[0].ladderPoint);
@@ -98,8 +94,8 @@ describe('RankService', () => {
     expect(result3.record).toEqual(testData.ranks[2].ladderPoint);
 
     //없는시즌 데이터는 null로 반환
-    expect(result4).toEqual({ rank: null, record: null });
-    expect(result5).toEqual({ rank: null, record: null });
+    expect(result4).toEqual({ record: null });
+    expect(result5).toEqual({ record: null });
   });
 
   it('유저 시즌 최고점 랭크데이터 반환', async () => {
@@ -129,17 +125,12 @@ describe('RankService', () => {
     const result5 = await service.getUserBestRank(invalidgetDto1);
 
     //then
-    expect(result1.rank).toEqual(testData.ranks[0].highestRanking);
-    expect(result2.rank).toEqual(testData.ranks[1].highestRanking);
-    expect(result3.rank).toEqual(testData.ranks[2].highestRanking);
-    expect(result4.rank).toEqual(testData.ranks[1].highestRanking);
-
     expect(result1.record).toEqual(testData.ranks[0].highestPoint); //시즌1데이터
     expect(result2.record).toEqual(testData.ranks[1].highestPoint); //시즌2데이터
     expect(result3.record).toEqual(testData.ranks[2].highestPoint); //시즌3데이터
     expect(result4.record).toEqual(testData.ranks[1].highestPoint); //시즌2데이터
 
     //없는시즌 데이터는 null로 반환
-    expect(result5).toEqual({ rank: null, record: null });
+    expect(result5).toEqual({ record: null });
   });
 });

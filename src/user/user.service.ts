@@ -19,7 +19,6 @@ import { UserRepository } from './user.repository';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
     private userRepository: UserRepository,
     private jwtService: JwtService,
   ) {}
@@ -27,7 +26,7 @@ export class UserService {
 
   //get detail service
   async getUsersDetail(getDto: GetUserDetailDto): Promise<UserDetailDto> {
-    const user = await this.userRepository.findById(getDto.userId);
+    const user = await this.userRepository.findByNickname(getDto.nickname);
     if (!user) throw new NotFoundException('No such User');
 
     const responseDto: UserDetailDto = {

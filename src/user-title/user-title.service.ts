@@ -12,7 +12,6 @@ import { UserTitleRepository } from './user-title.repository';
 @Injectable()
 export class UserTitleService {
   constructor(
-    @InjectRepository(UserTitle)
     private userTitleRepository: UserTitleRepository,
   ) {}
 
@@ -54,7 +53,7 @@ export class UserTitleService {
       await this.userTitleRepository.updateIsSelectedFalse(oldTitle);
     if (patchDto.titleId) {
       const newTitle: UserTitle = await this.userTitleRepository.findByUserIdAndTitleId(patchDto.userId, patchDto.titleId);    
-      if (!userTitle) {
+      if (!newTitle) {
         throw new BadRequestException('No such title');
       }
       await this.userTitleRepository.updateIsSelectedTrue(newTitle);
