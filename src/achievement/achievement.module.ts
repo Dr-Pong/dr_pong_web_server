@@ -3,9 +3,5 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Achievement } from './achievement.entity';
 import { AchievementRepository } from './achievement.repository';
 
-@Module({
-	imports:[],
-	providers:[],
-	exports:[],
-})
+@Module({})
 export class AchievementModule {}
