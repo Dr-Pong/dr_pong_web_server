@@ -14,7 +14,7 @@ import { TestModule } from 'src/test/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { RankModule } from './rank.module';
 import { RanksTopDto } from './dto/ranks.top.dto';
-import { GetRanksTopCountDto } from './dto/get.ranks.top.count.dto';
+import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { RanksBottomDto } from './dto/ranks.bottom.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
 import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
@@ -63,7 +63,6 @@ describe('RankService', () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
   });
-
 
   it('유저 현시즌 랭크 데이터 반환', async () => {
     //given
@@ -145,22 +144,48 @@ describe('RankService', () => {
     expect(result5).toEqual({ record: null });
   });
 
-  // it('count에 따른 랭크데이터 반환 Bottom', async () => {
-  //   const countNum = await testData.createCountNum(); //랭크데이터 반환할 개수
-  //   const offsetNum = await testData.createOffset();
+  it('count에 따른 Top 랭크데이터 반환', async () => {
+    const topRankDto: GetRanksTopDto = {
+      count: 10,
+    };
 
-  //   const bottom: RanksBottomDto = await testData.createBottomRankData(
-  //     countNum,
-  //     offsetNum,
-  //   );
+    const topRankResult = await service.getTopRanksByCount(topRankDto); //top[rank, nickname, ladderPoint] 반환
 
-  //   const bottomRankDto: GetRanksBottomDto = {
-  //     count: countNum,
-  //     offset: offsetNum,
-  //   };
+    expect(topRankResult.length).toEqual(10);
+    expect(topRankResult[0].rank).toEqual(1);
+    expect(topRankResult[0].nickname).toEqual(testData.ranks[0].user.nickname);
+    expect(topRankResult[0].ladderPoint).toEqual(testData.ranks[0].ladderPoint);
+    expect(topRankResult[0].image).toEqual(testData.ranks[0].user.imageUrl);
 
-  //   const bottomRankResult = await service.getBottomRanksByCount(bottomRankDto); //top[rank, nickname, ladderPoint] 반환
+    expect(topRankResult[1].rank).toEqual(2);
+    expect(topRankResult[1].nickname).toEqual(testData.ranks[1].user.nickname);
+    expect(topRankResult[1].ladderPoint).toEqual(testData.ranks[1].ladderPoint);
+    expect(topRankResult[1].image).toEqual(testData.ranks[1].user.imageUrl);
+  });
 
-  //   expect(bottomRankResult).toEqul(bottom);
-  // });
+  it('count에 따른 Bottom 랭크데이터 반환', async () => {
+    const bottomRankDto: GetRanksBottomDto = {
+      count: 10,
+      offset: 4,
+    };
+
+    const bottomRankResult = await service.getBottomRanksByCount(bottomRankDto); //top[rank, nickname, ladderPoint] 반환
+
+    expect(bottomRankResult.length).toEqual(bottomRankDto.count);
+    expect(bottomRankResult[0].rank).toEqual(bottomRankDto.offset);
+    expect(bottomRankResult[0].nickname).toEqual(
+      testData.ranks[bottomRankDto.offset].user.nickname,
+    );
+    expect(bottomRankResult[0].ladderPoint).toEqual(
+      testData.ranks[bottomRankDto.offset].ladderPoint,
+    );
+
+    expect(bottomRankResult[1].rank).toEqual(bottomRankDto.offset + 1);
+    expect(bottomRankResult[1].nickname).toEqual(
+      testData.ranks[bottomRankDto.offset + 1].user.nickname,
+    );
+    expect(bottomRankResult[1].ladderPoint).toEqual(
+      testData.ranks[bottomRankDto.offset + 1].ladderPoint,
+    );
+  });
 });
