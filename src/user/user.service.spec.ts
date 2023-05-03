@@ -73,7 +73,7 @@ describe('UserService', () => {
     const basicUser: User = await testData.createBasicUser();
 
     const patchUserDetailRequest: PatchUserDetailDto = {
-      nickname: basicUser.nickname,
+      userId: basicUser.nickname,
       imgUrl: 'changedImageUrl',
       statusMessage: 'change message',
     }
@@ -82,7 +82,7 @@ describe('UserService', () => {
 
     const result: User = await userRepository.findOne({where:{id:basicUser.id}});
 
-    expect(result.nickname).toBe(patchUserDetailRequest.nickname);
+    expect(result.nickname).toBe(patchUserDetailRequest.userId);
     expect(result.imageUrl).toBe(patchUserDetailRequest.imgUrl);
     expect(result.statusMessage).toBe(patchUserDetailRequest.statusMessage);
   });
