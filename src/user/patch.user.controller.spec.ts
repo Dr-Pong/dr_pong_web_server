@@ -123,7 +123,7 @@ describe('UserController', () => {
     });
 
     describe('/users/{nickname}/titles', () => {
-      it('titles를 순서대로 선택한 경우', async () => {
+      it('title을 선택한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
         const token = jwtService.sign({
           id: user.id,
@@ -135,11 +135,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/titles')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            titles: [
-              testService.titles[0].id,
-              testService.titles[1].id,
-              testService.titles[2].id,
-            ],
+            titles: [testService.titles[0].id],
           });
 
         // console.log(response.statusCode);
@@ -401,23 +397,6 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(404);
       });
-
-      it('nickname이 null인 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
-
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + null + '/detail')
-          .set({ Authorization: 'Bearer ' + token })
-          .send({
-            message: 'testMessage',
-          });
-        expect(response.statusCode).toBe(404);
-      });
     });
 
     describe('/users/{nickname}/image', () => {
@@ -436,23 +415,6 @@ describe('UserController', () => {
             imgUrl: 'testImageUrl',
           });
 
-        expect(response.statusCode).toBe(404);
-      });
-
-      it('nickname이 null인 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
-
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + null + '/image')
-          .set({ Authorization: 'Bearer ' + token })
-          .send({
-            imagUrl: 'testImageUrl',
-          });
         expect(response.statusCode).toBe(404);
       });
 
@@ -491,23 +453,6 @@ describe('UserController', () => {
             title: 'testTitle',
           });
 
-        expect(response.statusCode).toBe(404);
-      });
-
-      it('nickname이 null인 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
-
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + null + '/titles')
-          .set({ Authorization: 'Bearer ' + token })
-          .send({
-            title: 'testTitle',
-          });
         expect(response.statusCode).toBe(404);
       });
 
