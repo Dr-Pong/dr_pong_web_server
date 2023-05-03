@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { Game } from 'src/game/game.entity';
+import { RanksBottomDto } from 'src/rank/dto/ranks.bottom.dto';
 import { RankTopDataDto } from 'src/rank/dto/ranks.top.dto';
 import { RanksTopDto } from 'src/rank/dto/ranks.top.dto';
 import { RanksTopImageDto } from 'src/rank/dto/ranks.top.image.dto';
@@ -11,7 +12,6 @@ import { Season } from 'src/season/season.entity';
 import { Title } from 'src/title/title.entity';
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
-import { UserGame } from 'src/user-game/user-game.entity';
 import { UserTitle } from 'src/user-title/user-title.entity';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
@@ -350,20 +350,44 @@ export class TestService {
     return countNum;
   }
 
-  /** countNum에따라 topranks 반환*/
+  /** 프론트에서 달라하는 offset 설정 나는 11로했쩡*/
+  async createOffset(): Promise<number> {
+    const offset = 11;
+    return offset;
+  }
+
+  /** countNum에따라 topRanks 반환*/
   async createTopRankData(countNum: number): Promise<RanksTopDto> {
     const topRanksData: RanksTopDto = { top: [] };
 
     for (let i = 0; i < countNum; i++) {
-      const user = this.users[i]; // 현재 사용자 데이터 가져오기
+      if (this.users.length <= i) break;
       const rankData: RankTopDataDto = {
-        id: user[i].id,
+        id: this.users[i].id,
         rank: i + 1,
-        nickname: user.nickname,
+        nickname: this.users[i].nickname,
         ladderPoint: 100 - i,
       };
       topRanksData.top.push(rankData);
     }
     return topRanksData;
+  }
+
+  /** countNum에 따라 랭커 이미지 반환 */
+  async createTopRankImageData(countNum: number): Promise<RanksTopImageDto> {
+    const topRankImageData: RanksTopImageDto = { image: [] };
+    for (let i = 0; i < countNum; i++) {
+      if (this.users.length <= i) break;
+      topRankImageData.image.push(this.users[i].imageUrl);
+    }
+    return topRankImageData;
+  }
+
+  /** countNum 과 offset 에따라 bottomRanks 반환*/
+  async createBottomRankData(
+    countNum: number,
+    offsetNum: number,
+  ): Promise<RanksBottomDto> {
+    return;
   }
 }
