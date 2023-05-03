@@ -1,27 +1,33 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { In, IsNull, Not, Repository } from "typeorm";
 import { UserEmoji } from "./user-emoji.entity";
 
-export class UserEmojiRepository extends Repository<UserEmoji> {
+@Injectable()
+export class UserEmojiRepository {
+	constructor(
+		@InjectRepository(UserEmoji)
+		private readonly repository: Repository<UserEmoji>,
+	) {}
 	async findAllByUserId(userId:number): Promise<UserEmoji[]> {
-		return await this.find({where:{user:{id:userId}}});
+		return await this.repository.find({where:{user:{id:userId}}});
 	}
 
 	async findAllByUserIdAndSelected(userId:number): Promise<UserEmoji[]> {
-		return await this.find({where:{user:{id:userId}, selectedOrder:Not(IsNull())}});
+		return await this.repository.find({where:{user:{id:userId}, selectedOrder:Not(IsNull())}});
 	}
 
 	async findAllByUserIdAndEmojiIds(userId: number, emojiIds:number[]): Promise<UserEmoji[]> {
-		return await this.find({where: {user: { id: userId },emoji: { id: In(emojiIds) },},});
+		return await this.repository.find({where: {user: { id: userId },emoji: { id: In(emojiIds) },},});
 	}
 
 	async updateSelectedOrderNull(userEmoji: UserEmoji): Promise<void> {
 		userEmoji.selectedOrder = null;
-		await this.save(userEmoji);
+		await this.repository.save(userEmoji);
 	}
 
 	async updateSelectedOrder(userEmoji: UserEmoji, order:number): Promise<void> {
 		userEmoji.selectedOrder = order;
-		await this.save(userEmoji);
+		await this.repository.save(userEmoji);
 	}
 }

@@ -17,9 +17,7 @@ import { UserAchievementRepository } from './user-achievement.repository';
 @Injectable()
 export class UserAchievementService {
   constructor(
-    @InjectRepository(UserAchievement)
     private userAchievementRepository: UserAchievementRepository,
-    @InjectRepository(Achievement)
     private achievementRepository: AchievementRepository,
   ) {}
 

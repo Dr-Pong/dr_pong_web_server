@@ -153,10 +153,10 @@ describe('UserEmojiService', () => {
     expect(reversedCase.emojis[2].id).toBe(testData.emojis[1].id);
     expect(reversedCase.emojis[3].id).toBe(testData.emojis[0].id);
 
-    expect(mixedCase.emojis[0]).toBe(null);
-    expect(mixedCase.emojis[1].id).toBe(testData.emojis[2].id);
-    expect(mixedCase.emojis[2]).toBe(null);
-    expect(mixedCase.emojis[3].id).toBe(testData.emojis[0].id);
+    expect(mixedCase.emojis[0].id).toBe(testData.emojis[2].id);
+    expect(mixedCase.emojis[1]).toBe(null);
+    expect(mixedCase.emojis[2].id).toBe(testData.emojis[3].id);
+    expect(mixedCase.emojis[3]).toBe(null);
   });
 
   it('유저 이모지 Patch (valid case)', async () => {

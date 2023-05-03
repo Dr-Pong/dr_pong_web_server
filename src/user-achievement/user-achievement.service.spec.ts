@@ -152,9 +152,9 @@ describe('UserAchievemetService', () => {
     expect(reversedCase.achievements[1].id).toBe(testData.achievements[1].id);
     expect(reversedCase.achievements[2].id).toBe(testData.achievements[0].id);
     
-    expect(mixedCase.achievements[0]).toBe(null);
-    expect(mixedCase.achievements[1].id).toBe(testData.achievements[2].id);
-    expect(mixedCase.achievements[2]).toBe(null);
+    expect(mixedCase.achievements[0].id).toBe(testData.achievements[2].id);
+    expect(mixedCase.achievements[1]).toBe(null);
+    expect(mixedCase.achievements[2].id).toBe(testData.achievements[3].id);
   });
 
   it('유저 이모지 Patch (valid case)', async () => {

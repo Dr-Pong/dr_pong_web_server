@@ -12,7 +12,6 @@ import { UserTitleRepository } from './user-title.repository';
 @Injectable()
 export class UserTitleService {
   constructor(
-    @InjectRepository(UserTitle)
     private userTitleRepository: UserTitleRepository,
   ) {}
 

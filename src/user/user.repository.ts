@@ -1,12 +1,14 @@
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
 import { PatchUserDetailDto } from "./dto/patch.user.detail.dto";
 import { User } from "./user.entity";
 
+@Injectable()
 export class UserRepository {
 	constructor (
 		@InjectRepository(User)
-		private repository: Repository<User>,
+		private readonly repository: Repository<User>,
 	) {}
 
 	async findById(userId: number): Promise<User> {

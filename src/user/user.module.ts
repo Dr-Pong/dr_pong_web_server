@@ -13,7 +13,9 @@ import { UserAchievementModule } from 'src/user-achievement/user-achievement.mod
 import { UserRepository } from './user.repository';
 
 @Module({
-  imports: [UsertitleModule, TypeOrmModule.forFeature([User]),
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    UsertitleModule,
     UserAchievementModule,
     UserEmojiModule,
     UsertitleModule,
@@ -21,6 +23,6 @@ import { UserRepository } from './user.repository';
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository],
-  exports: [UserService, TypeOrmModule.forFeature([User]),],
+  exports: [UserService],
 })
 export class UserModule {}
