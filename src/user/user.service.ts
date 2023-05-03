@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserTitle } from 'src/user-title/user-title.entity';
@@ -12,7 +16,10 @@ import { UserInfoDto } from './dto/user.info.dto';
 import { JwtService } from '@nestjs/jwt';
 import { GetUserMeDto } from './dto/get.user.me.dto';
 import { TokenInterface } from 'src/auth/jwt/jwt.token.interface';
-import { ROLETYPE_GUEST, ROLETYPE_NONAME } from 'src/global/type/type.user.roletype';
+import {
+  ROLETYPE_GUEST,
+  ROLETYPE_NONAME,
+} from 'src/global/type/type.user.roletype';
 import { UserMeDto } from './dto/user.me.dto';
 import { UserRepository } from './user.repository';
 
@@ -46,11 +53,13 @@ export class UserService {
         id: userFromMemory.id,
         nickname: userFromMemory.nickname,
         roleType: userFromMemory.roleType,
-      }
+      };
       return responseDto;
     }
 
-    const userFromDatabase = await this.userRepository.findByNickname(getDto.nickname);
+    const userFromDatabase = await this.userRepository.findByNickname(
+      getDto.nickname,
+    );
     if (!userFromDatabase) throw new NotFoundException('No such User');
 
     this.users.set(userFromDatabase.nickname, userFromDatabase);
@@ -77,28 +86,28 @@ export class UserService {
       isSecondAuthOn: false,
       roleType: ROLETYPE_GUEST,
     };
-  
+
     const nonameUserMeDto: UserMeDto = {
       nickname: '',
       imgUrl: '',
       isSecondAuthOn: false,
       roleType: ROLETYPE_NONAME,
     };
-  
+
     if (!getDto.token) {
       return guestUserMeDto;
     }
-  
+
     const jwt: TokenInterface = this.jwtService.verify(getDto.token);
     if (jwt.roleType === ROLETYPE_NONAME) {
       return nonameUserMeDto;
     }
-  
+
     const user = await this.userRepository.findById(jwt.id);
     if (!user) {
       throw new UnauthorizedException();
     }
-  
+
     const responseDto: UserMeDto = {
       nickname: user.nickname,
       imgUrl: user.imageUrl,

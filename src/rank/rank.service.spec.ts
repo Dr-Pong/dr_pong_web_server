@@ -13,6 +13,12 @@ import { TestService } from 'src/test/test.service';
 import { TestModule } from 'src/test/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { RankModule } from './rank.module';
+import { RanksTopDto } from './dto/ranks.top.dto';
+import { GetRanksTopCountDto } from './dto/get.ranks.top.count.dto';
+import { RanksBottomDto } from './dto/ranks.bottom.dto';
+import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
+import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
+import { RanksTopImageDto } from './dto/ranks.top.image.dto';
 
 describe('RankService', () => {
   let service: RankService;
@@ -24,11 +30,7 @@ describe('RankService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(typeORMConfig),
-        RankModule,
-        TestModule,
-      ],
+      imports: [TypeOrmModule.forRoot(typeORMConfig), RankModule, TestModule],
       providers: [
         {
           provide: getRepositoryToken(Rank),
@@ -45,6 +47,14 @@ describe('RankService', () => {
     await testData.createBasicSeasons(3);
     await testData.createBasicUser();
     await testData.createBasicUser();
+    await testData.createBasicUser();
+    await testData.createBasicUser();
+    await testData.createBasicUser();
+    await testData.createBasicUser();
+    await testData.createBasicUser();
+    await testData.createBasicUser();
+    await testData.createBasicUser();
+    await testData.createBasicUser();
     await testData.createBasicRank();
   });
 
@@ -53,6 +63,7 @@ describe('RankService', () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
   });
+
 
   it('유저 현시즌 랭크 데이터 반환', async () => {
     //given
@@ -133,4 +144,23 @@ describe('RankService', () => {
     //없는시즌 데이터는 null로 반환
     expect(result5).toEqual({ record: null });
   });
+
+  // it('count에 따른 랭크데이터 반환 Bottom', async () => {
+  //   const countNum = await testData.createCountNum(); //랭크데이터 반환할 개수
+  //   const offsetNum = await testData.createOffset();
+
+  //   const bottom: RanksBottomDto = await testData.createBottomRankData(
+  //     countNum,
+  //     offsetNum,
+  //   );
+
+  //   const bottomRankDto: GetRanksBottomDto = {
+  //     count: countNum,
+  //     offset: offsetNum,
+  //   };
+
+  //   const bottomRankResult = await service.getBottomRanksByCount(bottomRankDto); //top[rank, nickname, ladderPoint] 반환
+
+  //   expect(bottomRankResult).toEqul(bottom);
+  // });
 });
