@@ -82,8 +82,8 @@ describe('UserController', () => {
       await app.close();
     });
 
-    describe('/users/{nickname}/detail', () => {
-      it('nickname 의 titile이 null인경우', async () => {
+    describe('/users/{nickname}/message', () => {
+      it('message를 변경한 경우', async () => {
         const user: User = await testService.createBasicUser();
         const token = jwtService.sign({
           id: user.id,
@@ -91,44 +91,62 @@ describe('UserController', () => {
           roleType: user.roleType,
         });
         const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/detail')
+          .patch('/users/' + user.nickname + '/message')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgUrl: 'changed',
-            title: null,
             message: 'change message',
           });
         // console.log(response.body);
-        const result = await userTitleRepository.findOne({
-          where: { user: { id: user.id }, isSelected: true },
-        });
-
-        // console.log(response.body.title);
         expect(response.statusCode).toBe(200);
-        expect(result).toBe(null);
+        expect(response.body.message).toBe('change message');
       });
+    });
 
-      it('nickname 의 title이 있는경우', async () => {
-        const user: User = await testService.createUserWithSelectedTitles();
+    describe('users/{nickname}/image', () => {
+      it('image를 변경한 경우', async () => {
+        const user: User = await testService.createBasicUser();
         const token = jwtService.sign({
           id: user.id,
           nickname: user.nickname,
           roleType: user.roleType,
         });
         const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/detail')
+          .patch('/users/' + user.nickname + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgUrl: 'changed',
-            title: testService.titles[0].id,
-            message: 'change message',
+            imgUrl: 'change image',
           });
-        // console.log(response.statusCode);
+        // console.log(response.body);
         expect(response.statusCode).toBe(200);
+        expect(response.body.imgUrl).not.toBe(null);
+      });
+    });
+
+    describe('/users/{nickname}/titles', () => {
+      it('titles를 순서대로 선택한 경우', async () => {
+        const user: User = await testService.createUserWithCollectables();
+        const token = jwtService.sign({
+          id: user.id,
+          nickname: user.nickname,
+          roleType: user.roleType,
+        });
+
+        const response = await request(app.getHttpServer())
+          .patch('/users/' + user.nickname + '/titles')
+          .set({ Authorization: 'Bearer ' + token })
+          .send({
+            titles: [
+              testService.titles[0].id,
+              testService.titles[1].id,
+              testService.titles[2].id,
+            ],
+          });
+
+        // console.log(response.statusCode);
         const result = await userTitleRepository.findOne({
           where: { user: { id: user.id }, isSelected: true },
         });
-        // console.log(result);
+        expect(response.statusCode).toBe(200);
         expect(result.title.id).toBe(testService.titles[0].id);
       });
     });
@@ -301,6 +319,7 @@ describe('UserController', () => {
       });
     });
   });
+
   describe('patch Error Cases Test', () => {
     describe('/users/{nickname}/detail', () => {
       it('존재하지 않는 유저의 경우', async () => {
@@ -343,14 +362,6 @@ describe('UserController', () => {
         expect(response.statusCode).toBe(404);
       });
 
-      // it('유저에게 없는 imageUrl를 요청한 경우', async () => {
-      //   const user: User = await testService.createUserWithCollectables();
-      //   const response = await request(app.getHttpServer()).get(
-      //     '/users/' + user.nickname + '/detail',
-      //   );
-      //   expect(response.statusCode).toBe(200);
-      // });
-
       it('유저에게 없는 title을 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
         const token = jwtService.sign({
@@ -364,6 +375,153 @@ describe('UserController', () => {
           .send({
             nickname: 'testNickname',
             imgeUrl: 'testImageUrl',
+            title: testService.titles[9].id,
+          });
+
+        // console.log(response.body);
+        expect(response.statusCode).toBe(400);
+      });
+    });
+
+    describe('/users/{nickname}/messages', () => {
+      it('존재하지 않는 유저의 경우', async () => {
+        const basicUser = await testService.createBasicUser();
+        const token = jwtService.sign({
+          id: basicUser.id,
+          nickname: basicUser.nickname,
+          roleType: basicUser.roleType,
+        });
+
+        const response = await request(app.getHttpServer())
+          .patch('/users/' + 'nonono' + '/messages')
+          .set({ Authorization: 'Bearer ' + token })
+          .send({
+            messgae: 'testMessage',
+          });
+
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('nickname이 null인 경우', async () => {
+        const basicUser = await testService.createBasicUser();
+        const token = jwtService.sign({
+          id: basicUser.id,
+          nickname: basicUser.nickname,
+          roleType: basicUser.roleType,
+        });
+
+        const response = await request(app.getHttpServer())
+          .patch('/users/' + null + '/detail')
+          .set({ Authorization: 'Bearer ' + token })
+          .send({
+            message: 'testMessage',
+          });
+        expect(response.statusCode).toBe(404);
+      });
+    });
+
+    describe('/users/{nickname}/image', () => {
+      it('존재하지 않는 유저의 경우', async () => {
+        const basicUser = await testService.createBasicUser();
+        const token = jwtService.sign({
+          id: basicUser.id,
+          nickname: basicUser.nickname,
+          roleType: basicUser.roleType,
+        });
+
+        const response = await request(app.getHttpServer())
+          .patch('/users/' + 'nonono' + '/image')
+          .set({ Authorization: 'Bearer ' + token })
+          .send({
+            imgUrl: 'testImageUrl',
+          });
+
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('nickname이 null인 경우', async () => {
+        const basicUser = await testService.createBasicUser();
+        const token = jwtService.sign({
+          id: basicUser.id,
+          nickname: basicUser.nickname,
+          roleType: basicUser.roleType,
+        });
+
+        const response = await request(app.getHttpServer())
+          .patch('/users/' + null + '/image')
+          .set({ Authorization: 'Bearer ' + token })
+          .send({
+            imagUrl: 'testImageUrl',
+          });
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('유저에게 없는 image를 요청한 경우', async () => {
+        const user: User = await testService.createUserWithCollectables();
+        const token = jwtService.sign({
+          id: user.id,
+          nickname: user.nickname,
+          roleType: user.roleType,
+        });
+        const response = await request(app.getHttpServer())
+          .patch('/users/' + user.nickname + '/image')
+          .set({ Authorization: 'Bearer ' + token })
+          .send({
+            imgeUrl: testService.images[9].id,
+          });
+
+        // console.log(response.body);
+        expect(response.statusCode).toBe(400);
+      });
+    });
+
+    describe('/users/{nickname}/titles', () => {
+      it('존재하지 않는 유저의 경우', async () => {
+        const basicUser = await testService.createBasicUser();
+        const token = jwtService.sign({
+          id: basicUser.id,
+          nickname: basicUser.nickname,
+          roleType: basicUser.roleType,
+        });
+
+        const response = await request(app.getHttpServer())
+          .patch('/users/' + 'nonono' + '/titles')
+          .set({ Authorization: 'Bearer ' + token })
+          .send({
+            title: 'testTitle',
+          });
+
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('nickname이 null인 경우', async () => {
+        const basicUser = await testService.createBasicUser();
+        const token = jwtService.sign({
+          id: basicUser.id,
+          nickname: basicUser.nickname,
+          roleType: basicUser.roleType,
+        });
+
+        const response = await request(app.getHttpServer())
+          .patch('/users/' + null + '/titles')
+          .set({ Authorization: 'Bearer ' + token })
+          .send({
+            title: 'testTitle',
+          });
+        expect(response.statusCode).toBe(404);
+      });
+
+      it('유저에게 없는 title을 요청한 경우', async () => {
+        const user: User = await testService.createUserWithCollectables();
+        const token = jwtService.sign({
+          id: user.id,
+          nickname: user.nickname,
+          roleType: user.roleType,
+        });
+        const response = await request(app.getHttpServer())
+          .patch('/users/' + user.nickname + '/titles')
+          .set({ Authorization: 'Bearer ' + token })
+          .send({
             title: testService.titles[9].id,
           });
 
