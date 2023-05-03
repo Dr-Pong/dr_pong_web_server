@@ -1,3 +1,3 @@
-export class GetRanksTopCountDto {
+export class GetRanksTopDto {
   count: number;
 }
