@@ -3,9 +3,5 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Emoji } from './emoji.entity';
 import { EmojiRepository } from './emoji.repository';
 
-@Module({
-	imports:[],
-	providers:[],
-	exports:[]
-})
+@Module({})
 export class EmojiModule {}
