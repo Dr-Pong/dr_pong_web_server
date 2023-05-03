@@ -12,7 +12,6 @@ import { SeasonRepository } from 'src/season/season.repository';
 @Injectable()
 export class RankService {
   constructor(
-    private seasonRepository: SeasonRepository,
     private rankRepository: RankRepository,
   ) {}
 
