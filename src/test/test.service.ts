@@ -58,6 +58,19 @@ export class TestService {
     return user;
   }
 
+  async createBasicUsers(): Promise<void> {
+    // 해결
+    for (let i = 0; i < 10; i++) {
+      const user = await this.userRepository.save({
+        nickname: 'user' + i.toString(),
+        email: i.toString() + '@mail.com',
+        statusMessage: i.toString(),
+        imageUrl: 'basicImage' + i.toString(),
+      });
+      this.users.push(user);
+    }
+  }
+
   /** 이미지 없는 유저 생성*/
   async createBasicUserWithoutImg(): Promise<User> {
     const index: number = this.users.length;

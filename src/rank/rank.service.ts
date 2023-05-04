@@ -16,7 +16,10 @@ import { RankBottomDataDto, RanksBottomDto } from './dto/ranks.bottom.dto';
 
 @Injectable()
 export class RankService {
-  constructor(private rankRepository: RankRepository) {}
+  constructor(
+    private rankRepository: RankRepository,
+    private seasonRepository: SeasonRepository,
+  ) {}
 
   //get 유저 현시즌 랭크 데이터
   async getUserRankBySeason(
@@ -62,7 +65,11 @@ export class RankService {
 
   //상위 랭크 카운트 만큼 랭크 정보를 가져옴
   async getTopRanksByCount(getDto: GetRanksTopDto): Promise<RanksTopDto> {
-    const ranks = await this.rankRepository.findTopRanksByCount(getDto);
+    const nowSeason: Season = await this.seasonRepository.findCurrentSeason();
+    const ranks = await this.rankRepository.findTopRanksByCount(
+      getDto,
+      nowSeason,
+    );
 
     const topRankData: RankTopDataDto[] = [];
     for (let i = 0; i < ranks.length; i++) {
@@ -86,7 +93,11 @@ export class RankService {
   async getBottomRanksByCount(
     getDto: GetRanksBottomDto,
   ): Promise<RanksBottomDto> {
-    const ranks = await this.rankRepository.findBottomRanksByCount(getDto);
+    const nowSeason: Season = await this.seasonRepository.findCurrentSeason();
+    const ranks = await this.rankRepository.findBottomRanksByCount(
+      getDto,
+      nowSeason,
+    );
 
     const bottomRankData: RankBottomDataDto[] = [];
     for (let i = 0; i < ranks.length; i++) {

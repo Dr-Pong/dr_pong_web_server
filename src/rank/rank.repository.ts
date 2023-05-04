@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Rank } from './rank.entity';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
+import { Season } from 'src/season/season.entity';
 
 @Injectable()
 export class RankRepository {
@@ -28,18 +29,26 @@ export class RankRepository {
     });
   }
 
-  async findTopRanksByCount(getDto: GetRanksTopDto): Promise<Rank[]> {
+  async findTopRanksByCount(
+    getDto: GetRanksTopDto,
+    nowSeason: Season,
+  ): Promise<Rank[]> {
     return await this.repository.find({
+      where: { season: { id: nowSeason.id } },
       take: getDto.count,
-      order: { ladderPoint: 'ASC' },
+      order: { ladderPoint: 'DESC' },
     });
   }
 
-  async findBottomRanksByCount(getDto: GetRanksBottomDto): Promise<Rank[]> {
+  async findBottomRanksByCount(
+    getDto: GetRanksBottomDto,
+    nowSeason: Season,
+  ): Promise<Rank[]> {
     return await this.repository.find({
+      where: { season: { id: nowSeason.id } },
       take: getDto.count,
       skip: getDto.offset,
-      order: { ladderPoint: 'ASC' },
+      order: { ladderPoint: 'DESC' },
     });
   }
 }
