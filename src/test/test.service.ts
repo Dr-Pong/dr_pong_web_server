@@ -39,7 +39,7 @@ export class TestService {
     private profileImageRepository: Repository<ProfileImage>,
     @InjectRepository(Game)
     private gameRepository: Repository<Game>,
-  ) { }
+  ) {}
   users: User[] = [];
   profileImages: ProfileImage[] = [];
   emojis: Emoji[] = [];
@@ -50,12 +50,16 @@ export class TestService {
   topRanks: Rank[] = [];
 
   async createProfileImages(): Promise<void> {
-    this.profileImages.push(await this.profileImageRepository.save({
-      url: 'basic image1',
-    }));
-    this.profileImages.push(await this.profileImageRepository.save({
-      url: 'basic image2',
-    }));
+    this.profileImages.push(
+      await this.profileImageRepository.save({
+        url: 'basic image1',
+      }),
+    );
+    this.profileImages.push(
+      await this.profileImageRepository.save({
+        url: 'basic image2',
+      }),
+    );
   }
 
   async createBasicUsers(): Promise<void> {
@@ -78,7 +82,33 @@ export class TestService {
       nickname: 'user' + index.toString(),
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
-      image: this.profileImages[0],
+      imageUrl: 'basicImage' + index.toString(),
+    });
+    this.users.push(user);
+    return user;
+  }
+
+  async createBasicUsers(): Promise<void> {
+    // 해결
+    for (let i = 0; i < 10; i++) {
+      const user = await this.userRepository.save({
+        nickname: 'user' + i.toString(),
+        email: i.toString() + '@mail.com',
+        statusMessage: i.toString(),
+        imageUrl: 'basicImage' + i.toString(),
+      });
+      this.users.push(user);
+    }
+  }
+
+  /** 이미지 없는 유저 생성*/
+  async createBasicUserWithoutImg(): Promise<User> {
+    const index: number = this.users.length;
+    const user = await this.userRepository.save({
+      nickname: 'user' + index.toString(),
+      email: index.toString() + '@mail.com',
+      statusMessage: index.toString(),
+      imageUrl: null,
     });
     this.users.push(user);
     return user;
