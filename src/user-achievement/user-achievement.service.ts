@@ -74,7 +74,6 @@ export class UserAchievementService {
     return responseDto;
   }
 
-  //patch user achievement Patch 가 old 랑 to_change로 저장하고 return 하는 로직을 구현해야한다
   @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUserAchievements(
     patchDto: PatchUserAchievementsDto,
