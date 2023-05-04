@@ -39,6 +39,11 @@ import { UserInfoDto } from './dto/user.info.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { userInfo } from 'os';
 import { UserTitleSelectedDto } from 'src/user-title/dto/user.title.selected.dto';
+import { PatchUsersImageRequestDto } from './dto/patch.users.image.request.dto';
+import { PatchUsersImageDto } from './dto/patch.users.image.dto';
+import { PatchUsersStatusMessageRequestDto } from './dto/patch.users.status.message.request.dto';
+import { PatchUsersStatusMessageDto } from './dto/patch.users.status.message.dto';
+import { PatchUsersTitleRequestDto } from './dto/patch.users.title.request.dto';
 
 @Controller('users')
 export class UserController {
@@ -146,28 +151,61 @@ export class UserController {
     return responseDto;
   }
 
+  /** Patch Users title*/
   @UseGuards(AuthGuard('jwt'))
-  @Patch('/:nickname/detail')
+  @Patch('/:nickname/title')
   async usersDetailByNicknamePatch(
     @Param('nickname') nickname: string,
     @Body()
-    patchRequestDto: PatchUsersDetailRequestDto,
+    patchRequestDto: PatchUsersTitleRequestDto,
   ): Promise<void> {
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
     );
-    const patchUserDetailDto: PatchUserDetailDto = {
-      userId: userInfoDto.id,
-      imgUrl: patchRequestDto.imgUrl,
-      statusMessage: patchRequestDto.message,
-    };
     const patchUserTitleDto: PatchUserTitleDto = {
       userId: userInfoDto.id,
-      titleId: patchRequestDto.title,
+      titleId: patchRequestDto.titleId,
     };
-    await this.userService.patchUserDetail(patchUserDetailDto);
     await this.userTitleService.patchUserTitle(patchUserTitleDto);
+  }
+
+  /** Patch User Image*/
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/:nickname/image')
+  async usersImageByNicknamePatch(
+    @Param('nickname') nickname: string,
+    @Body()
+    patchRequestDto: PatchUsersImageRequestDto,
+  ): Promise<void> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const patchUserImageDto: PatchUsersImageDto = {
+      userId: userInfoDto.id,
+      imageId: patchRequestDto.imageId,
+    };
+    await this.userService.patchUserImage(patchUserImageDto);
+  }
+
+  /** Patch User StatusMessage*/
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/:nickname/image')
+  async usersMessageByNicknamePatch(
+    @Param('nickname') nickname: string,
+    @Body()
+    patchRequestDto: PatchUsersStatusMessageRequestDto,
+  ): Promise<void> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const patchUserImageDto: PatchUsersStatusMessageDto = {
+      userId: userInfoDto.id,
+      message: patchRequestDto.message,
+    };
+    await this.userService.patchUserStatusMessage(patchUserImageDto);
   }
 
   @UseGuards(AuthGuard('jwt'))
