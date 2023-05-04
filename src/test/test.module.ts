@@ -11,6 +11,7 @@ import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
+import { ProfileImage } from 'src/profile-image/profile-image.entity';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
       UserAchievement,
       Emoji,
       UserEmoji,
+      ProfileImage
     ]),
   ],
   providers: [TestService],
@@ -44,4 +46,4 @@ import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
     ]),
   ],
 })
-export class TestModule {}
+export class TestModule { }
