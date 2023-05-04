@@ -143,7 +143,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/titles')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            titles: [testService.titles[0].id],
+            titles: [testService.titles[1].id],
           });
 
         // console.log(response.statusCode);
@@ -151,7 +151,7 @@ describe('UserController', () => {
           where: { user: { id: user.id }, isSelected: true },
         });
         expect(response.statusCode).toBe(200);
-        expect(result.title.id).toBe(testService.titles[0].id);
+        expect(result.title.id).toBe(testService.titles[1].id);
       });
     });
 
