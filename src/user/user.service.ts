@@ -21,14 +21,14 @@ import {
 } from 'src/global/type/type.user.roletype';
 import { UserMeDto } from './dto/user.me.dto';
 import { UserRepository } from './user.repository';
-import { PatchUserMessagDto } from './dto/patch.user.message.dto';
+import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtService,
-  ) { }
+  ) {}
   users: Map<string, User> = new Map();
 
   //get detail service
@@ -79,7 +79,7 @@ export class UserService {
     await this.userRepository.updateUserImage(user, patchDto);
   }
 
-  async patchUserStatusMessage(patchDto: PatchUserMessagDto): Promise<void> {
+  async patchUserStatusMessage(patchDto: PatchUserMessageDto): Promise<void> {
     const user = await this.userRepository.findById(patchDto.userId);
     if (!user) throw new NotFoundException('No such User');
 

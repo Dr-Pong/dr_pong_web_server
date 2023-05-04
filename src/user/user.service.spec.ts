@@ -11,10 +11,14 @@ import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserDetailDto } from './dto/user.detail.dto';
 import { UserModule } from './user.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { ROLETYPE_GUEST, ROLETYPE_MEMBER, ROLETYPE_NONAME } from 'src/global/type/type.user.roletype';
+import {
+  ROLETYPE_GUEST,
+  ROLETYPE_MEMBER,
+  ROLETYPE_NONAME,
+} from 'src/global/type/type.user.roletype';
 import { GetUserMeDto } from './dto/get.user.me.dto';
 import { AuthModule } from 'src/auth/auth.module';
-import { PatchUserMessagDto } from './dto/patch.user.message.dto';
+import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 
 describe('UserService', () => {
   let service: UserService;
@@ -25,11 +29,7 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(typeORMConfig),
-        UserModule,
-        TestModule,
-      ],
+      imports: [TypeOrmModule.forRoot(typeORMConfig), UserModule, TestModule],
       providers: [
         JwtService,
         {
@@ -75,11 +75,13 @@ describe('UserService', () => {
     const patchUserImageRequest: PatchUserImageDto = {
       userId: basicUser.id,
       imgUrl: 'changedImageUrl',
-    }
+    };
 
     await service.patchUserImage(patchUserImageRequest);
 
-    const result: User = await userRepository.findOne({ where: { id: basicUser.id } });
+    const result: User = await userRepository.findOne({
+      where: { id: basicUser.id },
+    });
 
     expect(result.id).toBe(patchUserImageRequest.userId);
     expect(result.imageUrl).toBe(patchUserImageRequest.imgUrl);
@@ -88,14 +90,16 @@ describe('UserService', () => {
   it('User Message Patch 테스트', async () => {
     const basicUser: User = await testData.createBasicUser();
 
-    const patchUserMessageRequest: PatchUserMessagDto = {
+    const patchUserMessageRequest: PatchUserMessageDto = {
       userId: basicUser.id,
       message: 'changedMessage',
-    }
+    };
 
     await service.patchUserStatusMessage(patchUserMessageRequest);
 
-    const result: User = await userRepository.findOne({ where: { id: basicUser.id } });
+    const result: User = await userRepository.findOne({
+      where: { id: basicUser.id },
+    });
 
     expect(result.id).toBe(patchUserMessageRequest.userId);
     expect(result.statusMessage).toBe(patchUserMessageRequest.message);
