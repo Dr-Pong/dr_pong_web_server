@@ -11,10 +11,12 @@ import { UserEmojiModule } from 'src/user-emoji/user-emoji.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { UserAchievementModule } from 'src/user-achievement/user-achievement.module';
 import { UserRepository } from './user.repository';
+import { ProfileImageRepository } from 'src/profile-image/profile-image.repository';
+import { ProfileImage } from 'src/profile-image/profile-image.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, ProfileImage]),
     UsertitleModule,
     UserAchievementModule,
     UserEmojiModule,
@@ -22,7 +24,7 @@ import { UserRepository } from './user.repository';
     AuthModule,
   ],
   controllers: [UserController],
-  providers: [UserService, UserRepository],
+  providers: [UserService, UserRepository, ProfileImageRepository],
   exports: [UserService],
 })
-export class UserModule {}
+export class UserModule { }

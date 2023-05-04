@@ -1,6 +1,7 @@
 import { BaseTimeEntity } from 'src/base-entity/base-time.entity';
 import { RoleType } from 'src/global/type/type.user.roletype';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ProfileImage } from 'src/profile-image/profile-image.entity';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User extends BaseTimeEntity {
@@ -21,8 +22,9 @@ export class User extends BaseTimeEntity {
   })
   roleType: RoleType;
 
-  @Column({ name: 'image_uri', type: 'number', nullable: true })
-  imageId: number;
+  @ManyToOne(() => ProfileImage, { eager: true })
+  @JoinColumn({ name: 'image_id' })
+  image: ProfileImage;
 
   @Column({ name: 'level', default: 1 })
   level: number;

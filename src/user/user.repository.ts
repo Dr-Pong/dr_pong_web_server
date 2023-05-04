@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ProfileImage } from 'src/profile-image/profile-image.entity';
 import { DataSource, Repository } from 'typeorm';
-import { PatchUserImageDto } from './dto/patch.user.image.dto';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 import { User } from './user.entity';
 
@@ -10,7 +10,7 @@ export class UserRepository {
   constructor(
     @InjectRepository(User)
     private readonly repository: Repository<User>,
-  ) {}
+  ) { }
 
   async findById(userId: number): Promise<User> {
     return await this.repository.findOne({ where: { id: userId } });
@@ -22,9 +22,9 @@ export class UserRepository {
 
   async updateUserImage(
     user: User,
-    patchDto: PatchUserImageDto,
+    image: ProfileImage,
   ): Promise<void> {
-    user.imageUrl = patchDto.imageId; //여기야 남준아
+    user.image = image;
     await this.repository.save(user);
   }
 

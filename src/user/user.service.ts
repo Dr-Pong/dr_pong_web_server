@@ -22,13 +22,17 @@ import {
 import { UserMeDto } from './dto/user.me.dto';
 import { UserRepository } from './user.repository';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
+import { ProfileImageRepository } from 'src/profile-image/profile-image.repository';
+import { ProfileImage } from 'src/profile-image/profile-image.entity';
+import { ProfileImageDto, ProfileImagesDto } from 'src/profile-image/profile-image.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UserRepository,
+    private profileImageRepository: ProfileImageRepository,
     private jwtService: JwtService,
-  ) {}
+  ) { }
   users: Map<string, User> = new Map();
 
   //get detail service
@@ -38,7 +42,7 @@ export class UserService {
 
     const responseDto: UserDetailDto = {
       nickname: user.nickname,
-      imgUrl: user.imageUrl,
+      imgUrl: user.image.url,
       level: user.level,
       statusMessage: user.statusMessage,
     };
@@ -75,8 +79,10 @@ export class UserService {
   async patchUserImage(patchDto: PatchUserImageDto): Promise<void> {
     const user = await this.userRepository.findById(patchDto.userId);
     if (!user) throw new NotFoundException('No such User');
+    const image = await this.profileImageRepository.findById(patchDto.imageId);
+    if (!image) throw new NotFoundException('No such Image');
 
-    await this.userRepository.updateUserImage(user, patchDto);
+    await this.userRepository.updateUserImage(user, image);
   }
 
   async patchUserStatusMessage(patchDto: PatchUserMessageDto): Promise<void> {
@@ -117,10 +123,21 @@ export class UserService {
 
     const responseDto: UserMeDto = {
       nickname: user.nickname,
-      imgUrl: user.imageUrl,
+      imgUrl: user.image.url,
       isSecondAuthOn: user.isSecondAuthOn,
       roleType: user.roleType,
     };
+    return responseDto;
+  }
+
+  async getUserImages(): Promise<ProfileImagesDto> {
+    const profileImages: ProfileImage[] = await this.profileImageRepository.findAll();
+    const imageDtos: ProfileImageDto[] = profileImages.map((profileImages) => {
+      return { id: profileImages.id, url: profileImages.url };
+    });
+    const responseDto: ProfileImagesDto = {
+      images: imageDtos,
+    }
     return responseDto;
   }
 }
