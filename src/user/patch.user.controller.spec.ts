@@ -94,11 +94,14 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/message')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            message: 'change message',
+            message: 'Patch change message',
           });
         // console.log(response.body);
+        const result = await userRepository.findOne({
+          where: { nickname: user.nickname },
+        });
         expect(response.statusCode).toBe(200);
-        expect(response.body.message).toBe('change message');
+        expect(result.statusMessage).toBe('Patch change message');
       });
     });
 
@@ -114,11 +117,16 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgUrl: 'change image',
+            imgUrl: 'Patch change image',
           });
         // console.log(response.body);
+
+        const result = await userRepository.findOne({
+          where: { nickname: user.nickname },
+        });
+
         expect(response.statusCode).toBe(200);
-        expect(response.body.imgUrl).not.toBe(null);
+        expect(result.imageUrl).toBe('Patch change image');
       });
     });
 
