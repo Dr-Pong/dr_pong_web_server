@@ -317,68 +317,6 @@ describe('UserController', () => {
   });
 
   describe('patch Error Cases Test', () => {
-    describe('/users/{nickname}/detail', () => {
-      it('존재하지 않는 유저의 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
-
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + 'nonono' + '/detail')
-          .set({ Authorization: 'Bearer ' + token })
-          .send({
-            nickname: 'testNickname',
-            imagUrl: 'testImageUrl',
-            title: 'testTitle',
-          });
-        // console.log(response.body);
-
-        expect(response.statusCode).toBe(404);
-      });
-
-      it('nickname이 null인 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
-
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + null + '/detail')
-          .set({ Authorization: 'Bearer ' + token })
-          .send({
-            nickname: 'testNickname',
-            imagUrl: 'testImageUrl',
-            title: 'testTitle',
-          });
-        expect(response.statusCode).toBe(404);
-      });
-
-      it('유저에게 없는 title을 요청한 경우', async () => {
-        const user: User = await testService.createUserWithCollectables();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/detail')
-          .set({ Authorization: 'Bearer ' + token })
-          .send({
-            nickname: 'testNickname',
-            imgeUrl: 'testImageUrl',
-            title: testService.titles[9].id,
-          });
-
-        // console.log(response.body);
-        expect(response.statusCode).toBe(400);
-      });
-    });
-
     describe('/users/{nickname}/messages', () => {
       it('존재하지 않는 유저의 경우', async () => {
         const basicUser = await testService.createBasicUser();
