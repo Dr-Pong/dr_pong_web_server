@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserAchievementService } from './user-achievement.service';
-import { AppModule } from 'src/app.module';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
 import { UserAchievement } from './user-achievement.entity';
@@ -9,9 +8,10 @@ import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
 import { BadRequestException } from '@nestjs/common';
 import { TestService } from 'src/test/test.service';
 import { typeORMConfig } from 'src/configs/typeorm.config';
-import { UserEmojiModule } from 'src/user-emoji/user-emoji.module';
 import { TestModule } from 'src/test/test.module';
 import { UserAchievementModule } from './user-achievement.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 describe('UserAchievemetService', () => {
   let service: UserAchievementService;
@@ -19,10 +19,22 @@ describe('UserAchievemetService', () => {
   let userAchievementRepository: Repository<UserAchievement>;
   let dataSources: DataSource;
 
-  beforeEach(async () => {
+  initializeTransactionalContext();
+  beforeAll(async () => {
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(typeORMConfig),
+        TypeOrmModule.forRootAsync({
+          useFactory() {
+            return typeORMConfig;
+          },
+          async dataSourceFactory(options) {
+            if (!options) {
+              throw new Error('Invalid options passed');
+            }
+            return addTransactionalDataSource({ dataSource: new DataSource(options) });
+          },
+        }),
         UserAchievementModule,
         TestModule,
       ],
@@ -40,16 +52,23 @@ describe('UserAchievemetService', () => {
       getRepositoryToken(UserAchievement),
     );
     dataSources = module.get<DataSource>(DataSource);
-
-    await testData.createBasicCollectable();
+    await dataSources.synchronize(true);
   });
+
+  beforeEach(async () => {
+    await testData.createBasicCollectable();
+  })
 
   afterEach(async () => {
     // afterEach가 없어서 일단 만들었는데 여기가 맞는지 모르겠음
     jest.resetAllMocks();
+    await dataSources.synchronize(true);
+  });
+
+  afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
-  });
+  })
 
   it('유저 이모지 전체 Get(selected=false, valid case)', async () => {
     //given
@@ -90,7 +109,7 @@ describe('UserAchievemetService', () => {
     expect(noEmojiCase.achievements.some(item => item.status === "selected")).toBe(false);
     expect(noEmojiCase.achievements.some(item => item.status === "achieved")).toBe(false);
     expect(noEmojiCase.achievements.some(item => item.status === "unachieved")).toBe(true);
- });
+  });
 
   it('유저 선택 이모지 Get (selected=true, valid case)', async () => {
     //given
@@ -151,7 +170,7 @@ describe('UserAchievemetService', () => {
     expect(reversedCase.achievements[0].id).toBe(testData.achievements[2].id);
     expect(reversedCase.achievements[1].id).toBe(testData.achievements[1].id);
     expect(reversedCase.achievements[2].id).toBe(testData.achievements[0].id);
-    
+
     expect(mixedCase.achievements[0].id).toBe(testData.achievements[2].id);
     expect(mixedCase.achievements[1]).toBe(null);
     expect(mixedCase.achievements[2].id).toBe(testData.achievements[3].id);
@@ -163,6 +182,7 @@ describe('UserAchievemetService', () => {
     const mixedUser = await testData.createUserWithUnSelectedAchievements();
     const mixedWithNullUser = await testData.createUserWithUnSelectedAchievements();
 
+    console.log(testData.achievements.length);
     // isSelected가 다 false인경우
     const orderedRequest: PatchUserAchievementsDto = {
       userId: orderedUser.id,
@@ -198,17 +218,17 @@ describe('UserAchievemetService', () => {
     await service.patchUserAchievements(mixedOrderRequest);
     await service.patchUserAchievements(mixedWithNullRequest);
 
-    const orderedCase : UserAchievement[] = await userAchievementRepository.find({
-      where: { user: { id: orderedUser.id }, selectedOrder:Not(IsNull()) },
-      order:{selectedOrder:'ASC'},
+    const orderedCase: UserAchievement[] = await userAchievementRepository.find({
+      where: { user: { id: orderedUser.id }, selectedOrder: Not(IsNull()) },
+      order: { selectedOrder: 'ASC' },
     });
-    const mixedCase : UserAchievement[] = await userAchievementRepository.find({
-      where: { user: { id: mixedUser.id }, selectedOrder:Not(IsNull()) },
-      order:{selectedOrder:'ASC'},
+    const mixedCase: UserAchievement[] = await userAchievementRepository.find({
+      where: { user: { id: mixedUser.id }, selectedOrder: Not(IsNull()) },
+      order: { selectedOrder: 'ASC' },
     });
     const mixeWithNullCase: UserAchievement[] = await userAchievementRepository.find({
-      where:{user:{id:mixedWithNullUser.id}, selectedOrder:Not(IsNull())},
-      order:{selectedOrder:'ASC'},
+      where: { user: { id: mixedWithNullUser.id }, selectedOrder: Not(IsNull()) },
+      order: { selectedOrder: 'ASC' },
     })
 
     expect(orderedCase.length).toBe(3);
@@ -233,7 +253,7 @@ describe('UserAchievemetService', () => {
 
   it('유저 이모지 Patch (invalid case)', async () => {
     //given
-    const oneValidTwoInvalidUser = await testData.createUserWithUnSelectedAchievements();
+    const oneValidTwoInvalidUser = await testData.createUserWithCollectables();
     const allInvalidUser = await testData.createUserWithUnSelectedAchievements();
 
     // isSelected가 다 false인경우
@@ -243,7 +263,6 @@ describe('UserAchievemetService', () => {
         testData.achievements[0].id,
         null,
         10000000,
-        -100,
       ],
     };
 
@@ -253,9 +272,10 @@ describe('UserAchievemetService', () => {
         -1,
         -2,
         -3,
-        -4,
       ],
     };
+
+    const pastTitle = await userAchievementRepository.find({ where: { user: { id: oneValidTwoInvalidUser.id }, selectedOrder: Not(IsNull()) } });
 
     //when
     //validUpdateDto1 에대한 실행
@@ -266,5 +286,9 @@ describe('UserAchievemetService', () => {
     await expect(
       service.patchUserAchievements(allInvalidRequest)
     ,).rejects.toThrow(new BadRequestException('No such achievement'));
+
+    const afterPatch = await userAchievementRepository.find({ where: { user: { id: oneValidTwoInvalidUser.id }, selectedOrder: Not(IsNull()) } });
+    expect(pastTitle.length).toBe(afterPatch.length);
+    expect(pastTitle[0].id).toBe(afterPatch[0].id)
   });
 });

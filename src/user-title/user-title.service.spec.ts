@@ -4,15 +4,12 @@ import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserTitle } from 'src/user-title/user-title.entity';
 import { UsertitleModule } from 'src/user-title/user-title.module';
-import { Title } from 'src/title/title.entity';
-import { TitleModule } from 'src/title/title.module';
-import { User } from 'src/user/user.entity';
-import { UserModule } from 'src/user/user.module';
 import { UserTitleService } from './user-title.service';
 import { GetUserTitlesDto } from './dto/get.user.titles.dto';
 import { TestService } from 'src/test/test.service';
-import { AppModule } from 'src/app.module';
 import { TestModule } from 'src/test/test.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 describe('UserTitleService', () => {
   let service: UserTitleService;
@@ -20,10 +17,21 @@ describe('UserTitleService', () => {
   let userTitleRepository: Repository<UserTitle>;
   let dataSources: DataSource;
 
-  beforeEach(async () => {
+  initializeTransactionalContext();
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(typeORMConfig),
+        TypeOrmModule.forRootAsync({
+          useFactory() {
+            return typeORMConfig;
+          },
+          async dataSourceFactory(options) {
+            if (!options) {
+              throw new Error('Invalid options passed');
+            }
+            return addTransactionalDataSource({ dataSource: new DataSource(options) });
+          },
+        }),
         UsertitleModule,
         TestModule,
       ],
@@ -41,15 +49,22 @@ describe('UserTitleService', () => {
     );
     dataSources = module.get<DataSource>(DataSource);
     testData = module.get<TestService>(TestService);
-
-    await testData.createBasicCollectable();
+    await dataSources.synchronize(true);
   });
+
+  beforeEach(async () => {
+    await testData.createBasicCollectable();
+  })
 
   afterEach(async () => {
     jest.resetAllMocks();
+    await dataSources.synchronize(true);
+  });
+
+  afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
-  });
+  })
 
   it('유저 Get 모든 titles 테스트', async () => {
     const titleSelectedByUser = await testData.createUserWithCollectables();

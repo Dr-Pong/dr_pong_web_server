@@ -8,14 +8,14 @@ export class UserTitleRepository {
 	constructor(
 		@InjectRepository(UserTitle)
 		private readonly repository: Repository<UserTitle>,
-	) {}
-	async findAllByUserId(userId:number): Promise<UserTitle[]> {
-		const userTitles: UserTitle[] = await this.repository.find({where:{user:{id:userId}}});
+	) { }
+	async findAllByUserId(userId: number): Promise<UserTitle[]> {
+		const userTitles: UserTitle[] = await this.repository.find({ where: { user: { id: userId } } });
 		return userTitles;
 	}
 
-	async findByUserIdAndSelected(userId:number, selected:boolean): Promise<UserTitle> {
-		const selectedUserTitle: UserTitle = await this.repository.findOne({where:{user:{id:userId}, isSelected:selected}});
+	async findByUserIdAndSelected(userId: number, selected: boolean): Promise<UserTitle> {
+		const selectedUserTitle: UserTitle = await this.repository.findOne({ where: { user: { id: userId }, isSelected: selected } });
 		return selectedUserTitle;
 	}
 
@@ -24,8 +24,8 @@ export class UserTitleRepository {
 		await this.repository.save(userTitle);
 	}
 
-	async findByUserIdAndTitleId(userId:number, titleId:number): Promise<UserTitle> {
-		const userTitle: UserTitle = await this.repository.findOne({where:{user:{id:userId}, title:{id:titleId}}});
+	async findByUserIdAndTitleId(userId: number, titleId: number): Promise<UserTitle> {
+		const userTitle: UserTitle = await this.repository.findOne({ where: { user: { id: userId }, title: { id: titleId } } });
 		return userTitle;
 	}
 

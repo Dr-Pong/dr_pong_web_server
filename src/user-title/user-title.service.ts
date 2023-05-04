@@ -1,7 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
-import { Repository } from 'typeorm';
+import {
+  Transactional,
+  IsolationLevel,
+} from 'typeorm-transactional'
 import { UserTitle } from './user-title.entity';
 import { UserTitlesDto } from 'src/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from './dto/get.user.titles.dto';
@@ -13,7 +14,7 @@ import { UserTitleRepository } from './user-title.repository';
 export class UserTitleService {
   constructor(
     private userTitleRepository: UserTitleRepository,
-  ) {}
+  ) { }
 
   //get title service
   async getUserTitles(getDto: GetUserTitlesDto): Promise<UserTitlesDto> {
@@ -47,12 +48,13 @@ export class UserTitleService {
   }
 
   //patch user title
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUserTitle(patchDto: PatchUserTitleDto): Promise<void> {
     const oldTitle: UserTitle = await this.userTitleRepository.findByUserIdAndSelected(patchDto.userId, true);
     if (oldTitle)
       await this.userTitleRepository.updateIsSelectedFalse(oldTitle);
     if (patchDto.titleId) {
-      const newTitle: UserTitle = await this.userTitleRepository.findByUserIdAndTitleId(patchDto.userId, patchDto.titleId);    
+      const newTitle: UserTitle = await this.userTitleRepository.findByUserIdAndTitleId(patchDto.userId, patchDto.titleId);
       if (!newTitle) {
         throw new BadRequestException('No such title');
       }
