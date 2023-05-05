@@ -29,6 +29,8 @@ export class UserAchievementService {
     //achieved이고 selected되지 않은 업적 return
     const allAchievement: Achievement[] = await this.achievementRepository.findAll();
     const userAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserId(getDto.userId);
+    const allAchievement: Achievement[] = await this.achievementRepository.findAll();
+    const userAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserId(getDto.userId);
 
     const achievements: UserAchievementDto[] = [];
     const status = new UserCollectablesStatus(allAchievement.length);
@@ -78,11 +80,10 @@ export class UserAchievementService {
   async patchUserAchievements(
     patchDto: PatchUserAchievementsDto,
   ): Promise<void> {
-    try {
-      const oldAchievements: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndSelected(patchDto.userId);
-      for (const c of oldAchievements) {
-        await this.userAchievementRepository.updateSelectedOrderNull(c);
-      }
+    const oldAchievements: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndSelected(patchDto.userId);
+    for (const c of oldAchievements) {
+      await this.userAchievementRepository.updateSelectedOrderNull(c);
+    }
 
       const toChangeAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndAchievementIds(patchDto.userId, patchDto.achievementsId);
       const countNumbers = patchDto.achievementsId.filter(
