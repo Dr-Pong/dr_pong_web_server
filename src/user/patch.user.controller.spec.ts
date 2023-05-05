@@ -1,20 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
 import { User } from './user.entity';
-import { Title } from 'src/title/title.entity';
 import { TestService } from 'src/test/test.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserTitle } from 'src/user-title/user-title.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
+import { initializeTransactionalContext } from 'typeorm-transactional';
+import { UserService } from './user.service';
+import { UserRepository } from './user.repository';
 
 describe('UserController', () => {
-  let controller: UserController;
   let app: INestApplication;
   let userRepository: Repository<User>;
   let userTitleRepository: Repository<UserTitle>;
@@ -23,66 +23,66 @@ describe('UserController', () => {
   let dataSources: DataSource;
   let testService: TestService;
   let jwtService: JwtService;
+  let userService: UserService;
+  initializeTransactionalContext();
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        AppModule
+      ],
+      providers: [
+        {
+          provide: getRepositoryToken(User),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(UserTitle),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(UserAchievement),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(UserEmoji),
+          useClass: Repository,
+        },
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
     testService = moduleFixture.get<TestService>(TestService);
+    userService = moduleFixture.get<UserService>(UserService);
     dataSources = moduleFixture.get<DataSource>(DataSource);
     jwtService = moduleFixture.get<JwtService>(JwtService);
-
-    await testService.createBasicCollectable();
-    await testService.createProfileImages();
+    userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+    userTitleRepository = moduleFixture.get<Repository<UserTitle>>(getRepositoryToken(UserTitle));
+    userAchievementRepository = moduleFixture.get<Repository<UserAchievement>>(getRepositoryToken(UserAchievement));
+    userEmojiRepository = moduleFixture.get<Repository<UserEmoji>>(getRepositoryToken(UserEmoji));
+    await dataSources.synchronize(true);
   });
 
-  afterEach(async () => {
-    jest.resetAllMocks();
+  beforeEach(async () => {
+    await testService.createProfileImages();
+    await testService.createBasicCollectable();
+  })
+
+  afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
     await app.close();
+  })
+
+  afterEach(async () => {
+    testService.clear();
+    userService.users.clear();
+    jest.resetAllMocks();
+    await dataSources.synchronize(true);
   });
 
   describe('PATCH cases', () => {
-    let app: INestApplication;
-    let dataSources: DataSource;
-    let testService: TestService;
-    let jwtService: JwtService;
-
-    beforeEach(async () => {
-      const moduleFixture: TestingModule = await Test.createTestingModule({
-        imports: [AppModule],
-      }).compile();
-
-      app = moduleFixture.createNestApplication();
-      await app.init();
-      testService = moduleFixture.get<TestService>(TestService);
-      dataSources = moduleFixture.get<DataSource>(DataSource);
-      jwtService = moduleFixture.get<JwtService>(JwtService);
-      userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
-      userTitleRepository = moduleFixture.get<Repository<UserTitle>>(
-        getRepositoryToken(UserTitle),
-      );
-      userAchievementRepository = moduleFixture.get<
-        Repository<UserAchievement>
-      >(getRepositoryToken(UserAchievement));
-      userEmojiRepository = moduleFixture.get<Repository<UserEmoji>>(
-        getRepositoryToken(UserEmoji),
-      );
-
-      await testService.createBasicCollectable();
-    });
-
-    afterEach(async () => {
-      jest.resetAllMocks();
-      await dataSources.dropDatabase();
-      await dataSources.destroy();
-      await app.close();
-    });
-
     describe('/users/{nickname}/message', () => {
       it('message를 변경한 경우', async () => {
         const user: User = await testService.createBasicUser();
@@ -118,7 +118,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imageId: testService.profileImages[1].id,
+            imgId: testService.profileImages[1].id,
           });
         // console.log(response.body);
 
@@ -141,10 +141,10 @@ describe('UserController', () => {
         });
 
         const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/titles')
+          .patch('/users/' + user.nickname + '/title')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            titles: [testService.titles[1].id],
+            title: testService.titles[1].id,
           });
 
         // console.log(response.statusCode);
@@ -336,7 +336,7 @@ describe('UserController', () => {
         });
 
         const response = await request(app.getHttpServer())
-          .patch('/users/' + 'nonono' + '/messages')
+          .patch('/users/' + 'nonono' + '/message')
           .set({ Authorization: 'Bearer ' + token })
           .send({
             messgae: 'testMessage',
@@ -376,11 +376,11 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgeUrl: testService.profileImages[9].id, // testdptj images[] 선언후  testservice에 있는 이미지 아이디가 아니라서 400이 나와야함
+            imgId: 1000, // testdptj images[] 선언후  testservice에 있는 이미지 아이디가 아니라서 400이 나와야함
           });
 
         // console.log(response.body);
-        expect(response.statusCode).toBe(400);
+        expect(response.statusCode).toBe(404);
       });
     });
 
@@ -394,7 +394,7 @@ describe('UserController', () => {
         });
 
         const response = await request(app.getHttpServer())
-          .patch('/users/' + 'nonono' + '/titles')
+          .patch('/users/' + 'nonono' + '/title')
           .set({ Authorization: 'Bearer ' + token })
           .send({
             title: 'testTitle',
@@ -411,7 +411,7 @@ describe('UserController', () => {
           roleType: user.roleType,
         });
         const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/titles')
+          .patch('/users/' + user.nickname + '/title')
           .set({ Authorization: 'Bearer ' + token })
           .send({
             title: testService.titles[9].id,
