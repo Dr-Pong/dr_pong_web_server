@@ -57,7 +57,8 @@ export class TestService {
     this.achievements.splice(0);
     this.seasons.splice(0);
     this.ranks.splice(0);
-    this.topRanks.splice(0);
+    this.currentSeasonRanks.splice(0);
+    this.currentSeason = null;
   }
 
   async createProfileImages(): Promise<void> {
