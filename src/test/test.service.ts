@@ -39,7 +39,7 @@ export class TestService {
     private profileImageRepository: Repository<ProfileImage>,
     @InjectRepository(Game)
     private gameRepository: Repository<Game>,
-  ) { }
+  ) {}
   users: User[] = [];
   profileImages: ProfileImage[] = [];
   emojis: Emoji[] = [];
@@ -47,15 +47,20 @@ export class TestService {
   achievements: Achievement[] = [];
   seasons: Season[] = [];
   ranks: Rank[] = [];
-  topRanks: Rank[] = [];
+  currentSeasonRanks: Rank[] = [];
+  currentSeason: Season;
 
   async createProfileImages(): Promise<void> {
-    this.profileImages.push(await this.profileImageRepository.save({
-      url: 'basic image1',
-    }));
-    this.profileImages.push(await this.profileImageRepository.save({
-      url: 'basic image2',
-    }));
+    this.profileImages.push(
+      await this.profileImageRepository.save({
+        url: 'basic image1',
+      }),
+    );
+    this.profileImages.push(
+      await this.profileImageRepository.save({
+        url: 'basic image2',
+      }),
+    );
   }
 
   /** 유저 생성 태초 유저임*/
@@ -65,7 +70,33 @@ export class TestService {
       nickname: 'user' + index.toString(),
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
-      image: this.profileImages[0],
+      imageUrl: 'basicImage' + index.toString(),
+    });
+    this.users.push(user);
+    return user;
+  }
+
+  async createBasicUsers(): Promise<void> {
+    // 해결
+    for (let i = 0; i < 10; i++) {
+      const user = await this.userRepository.save({
+        nickname: 'user' + i.toString(),
+        email: i.toString() + '@mail.com',
+        statusMessage: i.toString(),
+        image: this.profileImages[i % 2],
+      });
+      this.users.push(user);
+    }
+  }
+
+  /** 이미지 없는 유저 생성*/
+  async createBasicUserWithoutImg(): Promise<User> {
+    const index: number = this.users.length;
+    const user = await this.userRepository.save({
+      nickname: 'user' + index.toString(),
+      email: index.toString() + '@mail.com',
+      statusMessage: index.toString(),
+      imageUrl: null,
     });
     this.users.push(user);
     return user;
@@ -225,6 +256,26 @@ export class TestService {
       }
     }
     return this.ranks;
+  }
+
+  async createCurrentSeasonRank(): Promise<Rank[]> {
+    this.currentSeason = await this.seasonRepository.save({
+      name: 'currentSeason',
+      startTime: '2021-01-01',
+      endTime: '2022-01-01',
+      imageUrl: 'SeasonImage',
+    });
+    for (let i = 0; i < this.users.length; i++) {
+      this.currentSeasonRanks.push(
+        await this.rankRepository.save({
+          season: this.currentSeason,
+          user: this.users[i],
+          ladderPoint: 100 - i,
+          highestPoint: 1000 - i,
+        }),
+      );
+    }
+    return this.currentSeasonRanks;
   }
 
   /**이모지 타이틀 어치브먼트를 모두 가진 유저 생성*/

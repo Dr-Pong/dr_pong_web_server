@@ -9,14 +9,17 @@ import { GetUserBestRankStatDto } from './dto/get.user.best.rnak.stat.dto';
 import { RankRepository } from './rank.repository';
 import { SeasonRepository } from 'src/season/season.repository';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
-import { RanksTopDto } from './dto/ranks.top.dto';
+import { RankTopDataDto, RanksTopDto } from './dto/ranks.top.dto';
 import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
-import { RanksBottomDto } from './dto/ranks.bottom.dto';
+import { RankBottomDataDto, RanksBottomDto } from './dto/ranks.bottom.dto';
 
 @Injectable()
 export class RankService {
-  constructor(private rankRepository: RankRepository) {}
+  constructor(
+    private rankRepository: RankRepository,
+    private seasonRepository: SeasonRepository,
+  ) {}
 
   //get 유저 현시즌 랭크 데이터
   async getUserRankBySeason(
@@ -60,19 +63,56 @@ export class RankService {
     return responseDto;
   }
 
+  //상위 랭크 카운트 만큼 랭크 정보를 가져옴
   async getTopRanksByCount(getDto: GetRanksTopDto): Promise<RanksTopDto> {
-    // repository 에서 findTopRanksByCount 를 만들어줘야함
-    const ranks = await this.rankRepository.findTopRanksByCount(getDto.count);
-    return ranks;
+    const nowSeason: Season = await this.seasonRepository.findCurrentSeason();
+    const ranks = await this.rankRepository.findTopRanksBySeason(
+      getDto,
+      nowSeason,
+    );
+
+    const topRankData: RankTopDataDto[] = [];
+    for (let i = 0; i < ranks.length; i++) {
+      const rank = ranks[i];
+      topRankData.push({
+        id: rank.user.id,
+        rank: i + 1, // 1을 더해서 순위를 계산
+        nickname: rank.user.nickname,
+        ladderPoint: rank.ladderPoint,
+        imageUrl: rank.user.image.url,
+      });
+    }
+
+    const responseDto: RanksTopDto = {
+      top: topRankData,
+    };
+    return responseDto;
   }
 
+  // 하위 랭크 카운트 만큼 랭크 정보를 가져옴
   async getBottomRanksByCount(
     getDto: GetRanksBottomDto,
   ): Promise<RanksBottomDto> {
-    // repository 에서 findBottomRanksByCount 를 만들어줘야함
-    const ranks = await this.rankRepository.findBottomRanksByCount(
-      getDto.count,
+    const nowSeason: Season = await this.seasonRepository.findCurrentSeason();
+    const ranks = await this.rankRepository.findBottomRanksBySeason(
+      getDto,
+      nowSeason,
     );
-    return ranks;
+
+    const bottomRankData: RankBottomDataDto[] = [];
+    for (let i = 0; i < ranks.length; i++) {
+      const rank = ranks[i];
+      bottomRankData.push({
+        id: rank.user.id,
+        rank: getDto.offset + i + 1,
+        nickname: rank.user.nickname,
+        ladderPoint: rank.ladderPoint,
+      });
+    }
+
+    const responseDto: RanksBottomDto = {
+      bottom: bottomRankData,
+    };
+    return responseDto;
   }
 }
