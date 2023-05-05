@@ -66,7 +66,7 @@ export class RankService {
   //상위 랭크 카운트 만큼 랭크 정보를 가져옴
   async getTopRanksByCount(getDto: GetRanksTopDto): Promise<RanksTopDto> {
     const nowSeason: Season = await this.seasonRepository.findCurrentSeason();
-    const ranks = await this.rankRepository.findTopRanksByCount(
+    const ranks = await this.rankRepository.findTopRanksBySeason(
       getDto,
       nowSeason,
     );
@@ -79,7 +79,7 @@ export class RankService {
         rank: i + 1, // 1을 더해서 순위를 계산
         nickname: rank.user.nickname,
         ladderPoint: rank.ladderPoint,
-        image: rank.user.imageUrl,
+        image: rank.user.image.url,
       });
     }
 
@@ -94,7 +94,7 @@ export class RankService {
     getDto: GetRanksBottomDto,
   ): Promise<RanksBottomDto> {
     const nowSeason: Season = await this.seasonRepository.findCurrentSeason();
-    const ranks = await this.rankRepository.findBottomRanksByCount(
+    const ranks = await this.rankRepository.findBottomRanksBySeason(
       getDto,
       nowSeason,
     );

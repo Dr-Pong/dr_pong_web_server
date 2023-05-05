@@ -29,7 +29,7 @@ export class RankRepository {
     });
   }
 
-  async findTopRanksByCount(
+  async findTopRanksBySeason(
     getDto: GetRanksTopDto,
     nowSeason: Season,
   ): Promise<Rank[]> {
@@ -40,7 +40,7 @@ export class RankRepository {
     });
   }
 
-  async findBottomRanksByCount(
+  async findBottomRanksBySeason(
     getDto: GetRanksBottomDto,
     nowSeason: Season,
   ): Promise<Rank[]> {
