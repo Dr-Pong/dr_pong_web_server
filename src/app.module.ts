@@ -13,6 +13,7 @@ import { TestModule } from './test/test.module';
 import { RankModule } from './rank/rank.module';
 import { SeasonModule } from './season/season.module';
 import { AchievementModule } from './achievement/achievement.module';
+import { ProfileImageModule } from './profile-image/profile-image.module';
 
 @Module({
   imports: [
@@ -26,8 +27,9 @@ import { AchievementModule } from './achievement/achievement.module';
     UserAchievementModule,
     AuthModule,
     TestModule,
+    ProfileImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
