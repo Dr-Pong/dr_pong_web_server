@@ -50,7 +50,7 @@ export class UserController {
     private userAchievementService: UserAchievementService,
     private userEmojiService: UserEmojiService,
     private userTitleService: UserTitleService,
-  ) {}
+  ) { }
 
   @Get('/:nickname/detail')
   async userDetailByNicknameGet(@Param('nickname') nickname: string) {
@@ -93,11 +93,11 @@ export class UserController {
     };
     const achievements = selected
       ? await this.userAchievementService.getUserAchievementsSelected(
-          getUserAchievementDto,
-        )
+        getUserAchievementDto,
+      )
       : await this.userAchievementService.getUserAchievementsAll(
-          getUserAchievementDto,
-        );
+        getUserAchievementDto,
+      );
     const responseDto: UserAchievementsResponseDto = {
       achievements: achievements.achievements,
     };
@@ -163,7 +163,7 @@ export class UserController {
     );
     const patchUserTitleDto: PatchUserTitleDto = {
       userId: userInfoDto.id,
-      titleId: patchRequestDto.titleId,
+      titleId: patchRequestDto.title,
     };
     await this.userTitleService.patchUserTitle(patchUserTitleDto);
   }
@@ -182,14 +182,14 @@ export class UserController {
     );
     const patchUserImageDto: PatchUserImageDto = {
       userId: userInfoDto.id,
-      imageId: patchRequestDto.imageId,
+      imageId: patchRequestDto.imgId,
     };
     await this.userService.patchUserImage(patchUserImageDto);
   }
 
   /** Patch User StatusMessage*/
   @UseGuards(AuthGuard('jwt'))
-  @Patch('/:nickname/image')
+  @Patch('/:nickname/message')
   async usersMessageByNicknamePatch(
     @Param('nickname') nickname: string,
     @Body()
