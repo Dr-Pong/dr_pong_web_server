@@ -53,10 +53,12 @@ describe('UserTitleService', () => {
   });
 
   beforeEach(async () => {
+    await testData.createProfileImages();
     await testData.createBasicCollectable();
   })
 
   afterEach(async () => {
+    testData.clear();
     jest.resetAllMocks();
     await dataSources.synchronize(true);
   });
