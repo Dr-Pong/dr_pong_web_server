@@ -1,3 +1,3 @@
 export class PatchUserAchievementsRequestDto {
-	achievements: (number | null) [];
+	ids: (number | null)[];
 }

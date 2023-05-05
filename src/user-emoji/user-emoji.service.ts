@@ -67,29 +67,33 @@ export class UserEmojiService {
   //patchUseremojis함수
   @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUseremojis(patchDto: PatchUserEmojisDto): Promise<void> {
-    const oldEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndSelected(patchDto.userId);
-    for (const c of oldEmojis) {
-      await this.userEmojiRepository.updateSelectedOrderNull(c);
-    }
-
-    const toChangeEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndEmojiIds(patchDto.userId, patchDto.emojisId);
-
-    const countNumbers = patchDto.emojisId.filter(
-      (elem) => typeof elem === 'number',
-    ).length;
-    if (countNumbers !== toChangeEmojis.length) {
-      throw new BadRequestException('No such emoji');
-    }
-
-    for (const c of toChangeEmojis) {
-      let i = 0;
-      for (const d of patchDto.emojisId) {
-        if (c.emoji.id === d) {
-          await this.userEmojiRepository.updateSelectedOrder(c, i);
-          break;
-        }
-        i++;
+    try {
+      const oldEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndSelected(patchDto.userId);
+      for (const c of oldEmojis) {
+        await this.userEmojiRepository.updateSelectedOrderNull(c);
       }
+
+      const toChangeEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndEmojiIds(patchDto.userId, patchDto.emojisId);
+
+      const countNumbers = patchDto.emojisId.filter(
+        (elem) => typeof elem === 'number',
+      ).length;
+      if (countNumbers !== toChangeEmojis.length) {
+        throw new BadRequestException('No such emoji');
+      }
+
+      for (const c of toChangeEmojis) {
+        let i = 0;
+        for (const d of patchDto.emojisId) {
+          if (c.emoji.id === d) {
+            await this.userEmojiRepository.updateSelectedOrder(c, i);
+            break;
+          }
+          i++;
+        }
+      }
+    } catch (error) {
+      throw new BadRequestException();
     }
   }
 }

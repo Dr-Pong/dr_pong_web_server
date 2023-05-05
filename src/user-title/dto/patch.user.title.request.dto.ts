@@ -1,3 +1,3 @@
 export class PatchUserTitleRequestDto {
-  title: number;
+  id: number;
 }
