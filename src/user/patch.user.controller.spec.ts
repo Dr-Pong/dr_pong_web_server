@@ -118,7 +118,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgId: testService.profileImages[1].id,
+            id: testService.profileImages[1].id,
           });
         // console.log(response.body);
 
@@ -144,7 +144,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/title')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            title: testService.titles[1].id,
+            id: testService.titles[1].id,
           });
 
         // console.log(response.statusCode);
@@ -169,7 +169,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/achievements')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            achievements: [
+            ids: [
               testService.achievements[0].id,
               testService.achievements[1].id,
               testService.achievements[2].id,
@@ -199,7 +199,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/achievements')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            achievements: [
+            ids: [
               testService.achievements[2].id,
               null,
               testService.achievements[3].id,
@@ -230,7 +230,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/achievements')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            achievements: [null, null, null],
+            ids: [null, null, null],
           });
         // console.log(response.body);
         const result = await userAchievementRepository.find({
@@ -255,7 +255,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/emojis')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            emojis: [
+            ids: [
               testService.emojis[0].id,
               testService.emojis[1].id,
               testService.emojis[2].id,
@@ -288,7 +288,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/emojis')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            emojis: [testService.emojis[2].id, null, testService.emojis[3].id],
+            ids: [testService.emojis[2].id, null, testService.emojis[3].id],
           });
 
         const result = await userEmojiRepository.find({
@@ -313,7 +313,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/emojis')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            emojis: [null, null, null],
+            ids: [null, null, null],
           });
 
         const result = await userEmojiRepository.find({
@@ -359,7 +359,7 @@ describe('UserController', () => {
           .patch('/users/' + 'nonono' + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgUrl: 'testImageUrl',
+            id: testService.profileImages[0].id,
           });
 
         expect(response.statusCode).toBe(404);
@@ -376,7 +376,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgId: 1000, // testdptj images[] 선언후  testservice에 있는 이미지 아이디가 아니라서 400이 나와야함
+            id: 1000, // testdptj images[] 선언후  testservice에 있는 이미지 아이디가 아니라서 400이 나와야함
           });
 
         // console.log(response.body);
@@ -397,7 +397,7 @@ describe('UserController', () => {
           .patch('/users/' + 'nonono' + '/title')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            title: 'testTitle',
+            id: testService.titles[0].id,
           });
 
         expect(response.statusCode).toBe(404);
@@ -414,7 +414,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/title')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            title: testService.titles[9].id,
+            id: testService.titles[9].id,
           });
 
         // console.log(response.body);
@@ -435,9 +435,7 @@ describe('UserController', () => {
           .patch('/users/' + 'nonono' + '/achievements')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            nickname: 'testNickname',
-            imagUrl: 'testImageUrl',
-            title: 'testTitle',
+            ids: [null, null, null],
           });
 
         expect(response.statusCode).toBe(404);
@@ -454,7 +452,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/achievements')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            achievements: [testService.achievements[9].id],
+            ids: [testService.achievements[9].id, null, null],
           });
 
         expect(response.statusCode).toBe(400);
@@ -474,9 +472,7 @@ describe('UserController', () => {
           .patch('/users/' + 'nonono' + '/emojis')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            nickname: 'testNickname',
-            imagUrl: 'testImageUrl',
-            title: 'testTitle',
+            ids: [null, null, null],
           });
 
         expect(response.statusCode).toBe(404);
@@ -493,7 +489,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/emojis')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            emojis: [testService.emojis[9].id],
+            ids: [testService.emojis[9].id, null, null],
           });
 
         expect(response.statusCode).toBe(400);
