@@ -18,27 +18,27 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 		})
 	};
-	users : Map<string, AuthDto> = new Map();
+	users: Map<string, AuthDto> = new Map();
 
-	async validate(payload) : Promise<AuthDto> {
+	async validate(payload): Promise<AuthDto> {
 		const user = await this.findUser(payload);
 		this.validateUser(payload, user);
 		return user;
 	}
 
-	async findUser(token: TokenInterface) : Promise<AuthDto> {
+	async findUser(token: TokenInterface): Promise<AuthDto> {
 		const userFromMemory = this.users.get(token.nickname);
 
 		if (userFromMemory)
 			return userFromMemory;
 
-		const userFromDb = await this.userRepository.findOne({where: {nickname:token['nickname']}});
+		const userFromDb = await this.userRepository.findOne({ where: { nickname: token['nickname'] } });
 		if (!userFromDb)
 			throw (new UnauthorizedException());
-		const existUser : AuthDto = {
-			id:userFromDb.id,
-			nickname:userFromDb.nickname,
-			roleType:userFromDb.roleType,
+		const existUser: AuthDto = {
+			id: userFromDb.id,
+			nickname: userFromDb.nickname,
+			roleType: userFromDb.roleType,
 		};
 		return existUser;
 	}
