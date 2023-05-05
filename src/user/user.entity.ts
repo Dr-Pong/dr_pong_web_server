@@ -1,7 +1,13 @@
 import { BaseTimeEntity } from 'src/base-entity/base-time.entity';
 import { RoleType } from 'src/global/type/type.user.roletype';
 import { ProfileImage } from 'src/profile-image/profile-image.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class User extends BaseTimeEntity {
