@@ -63,19 +63,6 @@ export class TestService {
     );
   }
 
-  async createBasicUsers(): Promise<void> {
-    // 해결
-    for (let i = 0; i < 10; i++) {
-      const user = await this.userRepository.save({
-        nickname: 'user' + i.toString(),
-        email: i.toString() + '@mail.com',
-        statusMessage: i.toString(),
-        imageUrl: 'basicImage' + i.toString(),
-      });
-      this.users.push(user);
-    }
-  }
-
   /** 유저 생성 태초 유저임*/
   async createBasicUser(): Promise<User> {
     const index: number = this.users.length;
