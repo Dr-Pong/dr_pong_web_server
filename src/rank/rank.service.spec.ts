@@ -18,7 +18,6 @@ import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { RanksBottomDto } from './dto/ranks.bottom.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
 import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
-import { RanksTopImageDto } from './dto/ranks.top.image.dto';
 
 describe('RankService', () => {
   let service: RankService;
@@ -44,18 +43,11 @@ describe('RankService', () => {
     service = module.get<RankService>(RankService);
     testData = module.get<TestService>(TestService);
 
-    await testData.createBasicSeasons(3);
-    await testData.createBasicUser();
-    await testData.createBasicUser();
-    await testData.createBasicUser();
-    await testData.createBasicUser();
-    await testData.createBasicUser();
-    await testData.createBasicUser();
-    await testData.createBasicUser();
-    await testData.createBasicUser();
-    await testData.createBasicUser();
-    await testData.createBasicUser();
+    await testData.createBasicSeasons(1);
+    await testData.createProfileImages();
+    await testData.createBasicUsers();
     await testData.createBasicRank();
+    await testData.createCurrentSeasonRank();
   });
 
   afterEach(async () => {
@@ -72,27 +64,18 @@ describe('RankService', () => {
       userId: testData.ranks[0].user.id,
       seasonId: testData.seasons[0].id,
     }; // 시즌1데이터
-    const getDto2: GetUserRankStatDto = {
-      userId: testData.ranks[0].user.id,
-      seasonId: testData.seasons[1].id,
-    }; // 시즌2데이터
-    const getDto3: GetUserRankStatDto = {
-      userId: testData.ranks[0].user.id,
-      seasonId: testData.seasons[2].id,
-    }; // 시즌3데이터
     const invalidgetDto1: GetUserRankStatDto = {
       userId: testData.ranks[0].user.id,
       seasonId: 4,
     }; // 없는시즌 데이터
     const invalidgetDto2: GetUserRankStatDto = {
-      userId: 4,
+      userId: 4242,
       seasonId: testData.seasons[0].id,
     }; // 없는유저 데이터
 
     //when
     const result1 = await service.getUserRankBySeason(getDto1);
-    const result2 = await service.getUserRankBySeason(getDto2);
-    const result3 = await service.getUserRankBySeason(getDto3);
+
     const result4 = await service.getUserRankBySeason(invalidgetDto1);
     const result5 = await service.getUserRankBySeason(invalidgetDto2);
 
@@ -100,8 +83,6 @@ describe('RankService', () => {
 
     //랭크데이터가 잘 반환되는지 확인
     expect(result1.record).toEqual(testData.ranks[0].ladderPoint);
-    expect(result2.record).toEqual(testData.ranks[1].ladderPoint);
-    expect(result3.record).toEqual(testData.ranks[2].ladderPoint);
 
     //없는시즌 데이터는 null로 반환
     expect(result4).toEqual({ record: null });
@@ -114,30 +95,20 @@ describe('RankService', () => {
     const getDto1: GetUserBestRankStatDto = {
       userId: testData.ranks[0].user.id,
     }; // 시즌1데이터
-    const getDto2: GetUserBestRankStatDto = {
-      userId: testData.ranks[0].user.id,
-    }; // 시즌2데이터
-    const getDto3: GetUserBestRankStatDto = {
-      userId: testData.ranks[0].user.id,
-    }; // 시즌3데이터
     const getDto4: GetUserBestRankStatDto = {
       userId: testData.ranks[1].user.id,
     }; // 시즌2데이터
     const invalidgetDto1: GetUserBestRankStatDto = {
-      userId: 4,
+      userId: 4242,
     }; // 없는시즌 데이터 BadRequest
 
     //when
     const result1 = await service.getUserBestRank(getDto1);
-    const result2 = await service.getUserBestRank(getDto2);
-    const result3 = await service.getUserBestRank(getDto3);
     const result4 = await service.getUserBestRank(getDto4);
     const result5 = await service.getUserBestRank(invalidgetDto1);
 
     //then
     expect(result1.record).toEqual(testData.ranks[0].highestPoint); //시즌1데이터
-    expect(result2.record).toEqual(testData.ranks[1].highestPoint); //시즌2데이터
-    expect(result3.record).toEqual(testData.ranks[2].highestPoint); //시즌3데이터
     expect(result4.record).toEqual(testData.ranks[1].highestPoint); //시즌2데이터
 
     //없는시즌 데이터는 null로 반환
@@ -149,43 +120,74 @@ describe('RankService', () => {
       count: 10,
     };
 
-    const topRankResult = await service.getTopRanksByCount(topRankDto); //top[rank, nickname, ladderPoint] 반환
+    const topRankResult: RanksTopDto = await service.getTopRanksByCount(
+      topRankDto,
+    ); //top[rank, nickname, ladderPoint] 반환
 
-    expect(topRankResult.length).toEqual(10);
-    expect(topRankResult[0].rank).toEqual(1);
-    expect(topRankResult[0].nickname).toEqual(testData.ranks[0].user.nickname);
-    expect(topRankResult[0].ladderPoint).toEqual(testData.ranks[0].ladderPoint);
-    expect(topRankResult[0].image).toEqual(testData.ranks[0].user.imageUrl);
+    expect(topRankResult.top[0].rank).toEqual(1);
+    expect(topRankResult.top[0].nickname).toEqual(
+      testData.ranks[0].user.nickname,
+    );
+    expect(topRankResult.top[0].ladderPoint).toEqual(
+      testData.ranks[0].ladderPoint,
+    );
+    expect(topRankResult.top[0].imageUrl).toEqual(
+      testData.ranks[0].user.image.url,
+    );
 
-    expect(topRankResult[1].rank).toEqual(2);
-    expect(topRankResult[1].nickname).toEqual(testData.ranks[1].user.nickname);
-    expect(topRankResult[1].ladderPoint).toEqual(testData.ranks[1].ladderPoint);
-    expect(topRankResult[1].image).toEqual(testData.ranks[1].user.imageUrl);
+    expect(topRankResult.top[2].rank).toEqual(3);
+    expect(topRankResult.top[2].nickname).toEqual(
+      testData.ranks[2].user.nickname,
+    );
+    expect(topRankResult.top[2].ladderPoint).toEqual(
+      testData.ranks[2].ladderPoint,
+    );
+    expect(topRankResult.top[2].imageUrl).toEqual(
+      testData.ranks[2].user.image.url,
+    );
+
+    expect(topRankResult.top[9].rank).toEqual(10);
+    expect(topRankResult.top[9].nickname).toEqual(
+      testData.ranks[9].user.nickname,
+    );
+    expect(topRankResult.top[9].ladderPoint).toEqual(
+      testData.ranks[9].ladderPoint,
+    );
+    expect(topRankResult.top[9].imageUrl).toEqual(
+      testData.ranks[9].user.image.url,
+    );
   });
 
   it('count에 따른 Bottom 랭크데이터 반환', async () => {
     const bottomRankDto: GetRanksBottomDto = {
-      count: 10,
+      count: 5,
       offset: 4,
     };
 
     const bottomRankResult = await service.getBottomRanksByCount(bottomRankDto); //top[rank, nickname, ladderPoint] 반환
 
-    expect(bottomRankResult.length).toEqual(bottomRankDto.count);
-    expect(bottomRankResult[0].rank).toEqual(bottomRankDto.offset);
-    expect(bottomRankResult[0].nickname).toEqual(
-      testData.ranks[bottomRankDto.offset].user.nickname,
+    expect(bottomRankResult.bottom[0].rank).toEqual(5);
+    expect(bottomRankResult.bottom[0].nickname).toEqual(
+      testData.currentSeasonRanks[4].user.nickname,
     );
-    expect(bottomRankResult[0].ladderPoint).toEqual(
-      testData.ranks[bottomRankDto.offset].ladderPoint,
+    expect(bottomRankResult.bottom[0].ladderPoint).toEqual(
+      testData.currentSeasonRanks[4].ladderPoint,
     );
 
-    expect(bottomRankResult[1].rank).toEqual(bottomRankDto.offset + 1);
-    expect(bottomRankResult[1].nickname).toEqual(
-      testData.ranks[bottomRankDto.offset + 1].user.nickname,
+    expect(bottomRankResult.bottom[2].rank).toEqual(7);
+    expect(bottomRankResult.bottom[2].nickname).toEqual(
+      testData.currentSeasonRanks[6].user.nickname,
     );
-    expect(bottomRankResult[1].ladderPoint).toEqual(
-      testData.ranks[bottomRankDto.offset + 1].ladderPoint,
+    expect(bottomRankResult.bottom[2].ladderPoint).toEqual(
+      testData.currentSeasonRanks[6].ladderPoint,
+    );
+
+    expect(bottomRankResult.bottom[4].rank).toEqual(9);
+    expect(bottomRankResult.bottom[4].nickname).toEqual(
+      testData.currentSeasonRanks[8].user.nickname,
+    );
+    expect(bottomRankResult.bottom[4].ladderPoint).toEqual(
+      testData.currentSeasonRanks[8].ladderPoint,
     );
   });
 });

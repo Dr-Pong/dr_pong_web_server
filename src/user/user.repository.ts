@@ -10,7 +10,7 @@ export class UserRepository {
   constructor(
     @InjectRepository(User)
     private readonly repository: Repository<User>,
-  ) { }
+  ) {}
 
   async findById(userId: number): Promise<User> {
     return await this.repository.findOne({ where: { id: userId } });
@@ -20,10 +20,7 @@ export class UserRepository {
     return await this.repository.findOne({ where: { nickname } });
   }
 
-  async updateUserImage(
-    user: User,
-    image: ProfileImage,
-  ): Promise<void> {
+  async updateUserImage(user: User, image: ProfileImage): Promise<void> {
     user.image = image;
     await this.repository.save(user);
   }
