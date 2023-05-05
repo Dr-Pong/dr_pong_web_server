@@ -1,11 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { User } from './user.entity';
-import { Title } from 'src/title/title.entity';
 import { TestService } from 'src/test/test.service';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -13,36 +11,49 @@ import {
   COLLECTABLE_SELECTED,
   COLLECTABLE_UNACHIEVED,
 } from 'src/global/type/type.collectable.status';
+import { initializeTransactionalContext } from 'typeorm-transactional';
+import { UserService } from './user.service';
 
 describe('UserController', () => {
-  let controller: UserController;
   let app: INestApplication;
-  let userRepository: Repository<User>;
-  let titleRepository: Repository<Title>;
   let dataSources: DataSource;
   let testService: TestService;
+  let userService: UserService;
   let jwtService: JwtService;
+  initializeTransactionalContext();
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        AppModule
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
     testService = moduleFixture.get<TestService>(TestService);
+    userService = moduleFixture.get<UserService>(UserService);
     dataSources = moduleFixture.get<DataSource>(DataSource);
     jwtService = moduleFixture.get<JwtService>(JwtService);
-
-    await testService.createBasicCollectable();
-    await testService.createProfileImages();
+    await dataSources.synchronize(true);
   });
 
-  afterEach(async () => {
-    jest.resetAllMocks();
+  beforeEach(async () => {
+    await testService.createProfileImages();
+    await testService.createBasicCollectable();
+  })
+
+  afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
     await app.close();
+  })
+
+  afterEach(async () => {
+    testService.clear();
+    userService.users.clear();
+    jest.resetAllMocks();
+    await dataSources.synchronize(true);
   });
 
   describe('GET tests', () => {
@@ -329,7 +340,6 @@ describe('UserController', () => {
           '/users/' + user2.nickname + '/emojis?selected=false',
         );
 
-        // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
         expect(response.body.emojis[0].status).toBe(COLLECTABLE_UNACHIEVED);

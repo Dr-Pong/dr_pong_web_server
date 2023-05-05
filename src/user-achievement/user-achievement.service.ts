@@ -78,7 +78,6 @@ export class UserAchievementService {
   async patchUserAchievements(
     patchDto: PatchUserAchievementsDto,
   ): Promise<void> {
-    console.log(patchDto);
     try {
       const oldAchievements: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndSelected(patchDto.userId);
       for (const c of oldAchievements) {
