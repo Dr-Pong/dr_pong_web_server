@@ -9,10 +9,12 @@ import { UserRepository } from 'src/user/user.repository';
 import { Rank } from './rank.entity';
 import { RankRepository } from './rank.repository';
 import { RankService } from './rank.service';
+import { RankController } from './rank.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Rank, Season])],
   providers: [RankService, RankRepository, SeasonRepository],
   exports: [RankService],
+  controllers: [RankController],
 })
 export class RankModule {}
