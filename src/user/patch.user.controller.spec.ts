@@ -17,7 +17,6 @@ describe('UserController', () => {
   let controller: UserController;
   let app: INestApplication;
   let userRepository: Repository<User>;
-  let titleRepository: Repository<Title>;
   let userTitleRepository: Repository<UserTitle>;
   let userAchievementRepository: Repository<UserAchievement>;
   let userEmojiRepository: Repository<UserEmoji>;
@@ -37,6 +36,7 @@ describe('UserController', () => {
     jwtService = moduleFixture.get<JwtService>(JwtService);
 
     await testService.createBasicCollectable();
+    await testService.createProfileImages();
   });
 
   afterEach(async () => {
@@ -62,6 +62,7 @@ describe('UserController', () => {
       testService = moduleFixture.get<TestService>(TestService);
       dataSources = moduleFixture.get<DataSource>(DataSource);
       jwtService = moduleFixture.get<JwtService>(JwtService);
+      userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
       userTitleRepository = moduleFixture.get<Repository<UserTitle>>(
         getRepositoryToken(UserTitle),
       );
@@ -117,7 +118,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgUrl: 'Patch change image',
+            imageId: testService.profileImages[1].id,
           });
         // console.log(response.body);
 
@@ -126,7 +127,7 @@ describe('UserController', () => {
         });
 
         expect(response.statusCode).toBe(200);
-        expect(result.imageUrl).toBe('Patch change image');
+        expect(result.image.url).toBe(testService.profileImages[1].url);
       });
     });
 
@@ -375,7 +376,7 @@ describe('UserController', () => {
           .patch('/users/' + user.nickname + '/image')
           .set({ Authorization: 'Bearer ' + token })
           .send({
-            imgeUrl: testService.images[9].id, // testdptj images[] 선언후  testservice에 있는 이미지 아이디가 아니라서 400이 나와야함
+            imgeUrl: testService.profileImages[9].id, // testdptj images[] 선언후  testservice에 있는 이미지 아이디가 아니라서 400이 나와야함
           });
 
         // console.log(response.body);

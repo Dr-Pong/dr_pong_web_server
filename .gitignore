@@ -1,7 +1,7 @@
 # compiled output
 /dist
 /node_modules
-src/configs/typeorm.config.ts
+/src/configs/typeorm.config.ts
 # Logs
 logs
 *.log
@@ -28,7 +28,7 @@ lerna-debug.log*
 *.sublime-workspace
 
 # IDE - VSCode
-.vscode/*
+/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json

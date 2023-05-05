@@ -10,6 +10,8 @@ import { UserEmoji } from './user-emoji.entity';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserEmojiModule } from './user-emoji.module';
 import { TestModule } from 'src/test/test.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 describe('UserEmojiService', () => {
   let service: UserEmojiService;
@@ -17,14 +19,26 @@ describe('UserEmojiService', () => {
   let dataSources: DataSource;
   let userEmojiRepository: Repository<UserEmoji>;
 
-  beforeEach(async () => {
+  initializeTransactionalContext();
+  beforeAll(async () => {
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(typeORMConfig),
+        TypeOrmModule.forRootAsync({
+          useFactory() {
+            return typeORMConfig;
+          },
+          async dataSourceFactory(options) {
+            if (!options) {
+              throw new Error('Invalid options passed');
+            }
+            return addTransactionalDataSource({ dataSource: new DataSource(options) });
+          },
+        }),
         UserEmojiModule,
         TestModule,
       ],
-      providers:[
+      providers: [
         {
           provide: getRepositoryToken(UserEmoji),
           useClass: Repository,
@@ -36,12 +50,18 @@ describe('UserEmojiService', () => {
     service = module.get<UserEmojiService>(UserEmojiService);
     testData = module.get<TestService>(TestService);
     dataSources = module.get<DataSource>(DataSource);
-
-    await testData.createBasicCollectable();
   });
+
+  beforeEach(async () => {
+    await testData.createBasicCollectable();
+  })
 
   afterEach(async () => {
     jest.resetAllMocks();
+    await dataSources.synchronize(true);
+  })
+
+  afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
   });
@@ -85,7 +105,7 @@ describe('UserEmojiService', () => {
     expect(noEmojiCase.emojis.some(item => item.status === "selected")).toBe(false);
     expect(noEmojiCase.emojis.some(item => item.status === "achieved")).toBe(false);
     expect(noEmojiCase.emojis.some(item => item.status === "unachieved")).toBe(true);
- });
+  });
 
   it('유저 선택 이모지 Get (selected=true, valid case)', async () => {
     //given
@@ -131,7 +151,7 @@ describe('UserEmojiService', () => {
     expect(selectedCase.emojis[1].id).toBe(testData.emojis[1].id);
     expect(selectedCase.emojis[2].id).toBe(testData.emojis[2].id);
     expect(selectedCase.emojis[3].id).toBe(testData.emojis[3].id);
-  
+
     expect(unSelectedCase.emojis.length).toBe(4);
     expect(unSelectedCase.emojis[0]).toBe(null);
     expect(unSelectedCase.emojis[1]).toBe(null);
@@ -203,17 +223,17 @@ describe('UserEmojiService', () => {
     await service.patchUseremojis(mixedOrderRequest);
     await service.patchUseremojis(mixedWithNullRequest);
 
-    const orderedCase : UserEmoji[] = await userEmojiRepository.find({
-      where: { user: { id: orderedUser.id }, selectedOrder:Not(IsNull()) },
-      order:{selectedOrder:'ASC'},
+    const orderedCase: UserEmoji[] = await userEmojiRepository.find({
+      where: { user: { id: orderedUser.id }, selectedOrder: Not(IsNull()) },
+      order: { selectedOrder: 'ASC' },
     });
-    const mixedCase : UserEmoji[] = await userEmojiRepository.find({
-      where: { user: { id: mixedUser.id }, selectedOrder:Not(IsNull()) },
-      order:{selectedOrder:'ASC'},
+    const mixedCase: UserEmoji[] = await userEmojiRepository.find({
+      where: { user: { id: mixedUser.id }, selectedOrder: Not(IsNull()) },
+      order: { selectedOrder: 'ASC' },
     });
     const mixeWithNullCase: UserEmoji[] = await userEmojiRepository.find({
-      where:{user:{id:mixedWithNullUser.id}, selectedOrder:Not(IsNull())},
-      order:{selectedOrder:'ASC'},
+      where: { user: { id: mixedWithNullUser.id }, selectedOrder: Not(IsNull()) },
+      order: { selectedOrder: 'ASC' },
     })
 
     expect(orderedCase.length).toBe(4);

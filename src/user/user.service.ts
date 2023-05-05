@@ -4,11 +4,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { UserTitle } from 'src/user-title/user-title.entity';
 import { User } from './user.entity';
 import { UserDetailDto } from './dto/user.detail.dto';
-import { PatchUserDetailDto } from './dto/patch.user.detail.dto';
+import { PatchUserImageDto } from './dto/patch.user.image.dto';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserSelectedTitleDto } from './dto/user.selected.title.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
@@ -22,13 +21,18 @@ import {
 } from 'src/global/type/type.user.roletype';
 import { UserMeDto } from './dto/user.me.dto';
 import { UserRepository } from './user.repository';
+import { PatchUserMessageDto } from './dto/patch.user.message.dto';
+import { ProfileImageRepository } from 'src/profile-image/profile-image.repository';
+import { ProfileImage } from 'src/profile-image/profile-image.entity';
+import { ProfileImageDto, ProfileImagesDto } from 'src/profile-image/profile-image.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UserRepository,
+    private profileImageRepository: ProfileImageRepository,
     private jwtService: JwtService,
-  ) {}
+  ) { }
   users: Map<string, User> = new Map();
 
   //get detail service
@@ -38,7 +42,7 @@ export class UserService {
 
     const responseDto: UserDetailDto = {
       nickname: user.nickname,
-      imgUrl: user.imageUrl,
+      imgUrl: user.image.url,
       level: user.level,
       statusMessage: user.statusMessage,
     };
@@ -72,11 +76,20 @@ export class UserService {
   }
 
   //patch detail service
-  async patchUserDetail(patchDto: PatchUserDetailDto): Promise<void> {
+  async patchUserImage(patchDto: PatchUserImageDto): Promise<void> {
+    const user = await this.userRepository.findById(patchDto.userId);
+    if (!user) throw new NotFoundException('No such User');
+    const image = await this.profileImageRepository.findById(patchDto.imageId);
+    if (!image) throw new NotFoundException('No such Image');
+
+    await this.userRepository.updateUserImage(user, image);
+  }
+
+  async patchUserStatusMessage(patchDto: PatchUserMessageDto): Promise<void> {
     const user = await this.userRepository.findById(patchDto.userId);
     if (!user) throw new NotFoundException('No such User');
 
-    await this.userRepository.updateUser(user, patchDto);
+    await this.userRepository.updateUserStatusMessage(user, patchDto);
   }
 
   async getUserMe(getDto: GetUserMeDto): Promise<UserMeDto> {
@@ -110,10 +123,21 @@ export class UserService {
 
     const responseDto: UserMeDto = {
       nickname: user.nickname,
-      imgUrl: user.imageUrl,
+      imgUrl: user.image.url,
       isSecondAuthOn: user.isSecondAuthOn,
       roleType: user.roleType,
     };
+    return responseDto;
+  }
+
+  async getUserImages(): Promise<ProfileImagesDto> {
+    const profileImages: ProfileImage[] = await this.profileImageRepository.findAll();
+    const imageDtos: ProfileImageDto[] = profileImages.map((profileImages) => {
+      return { id: profileImages.id, url: profileImages.url };
+    });
+    const responseDto: ProfileImagesDto = {
+      images: imageDtos,
+    }
     return responseDto;
   }
 }
