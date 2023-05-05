@@ -3,14 +3,10 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserTitle } from 'src/user-title/user-title.entity';
 import { User } from './user.entity';
 import { UserDetailDto } from './dto/user.detail.dto';
 import { PatchUserImageDto } from './dto/patch.user.image.dto';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
-import { UserSelectedTitleDto } from './dto/user.selected.title.dto';
-import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 import { UserInfoDto } from './dto/user.info.dto';
 import { JwtService } from '@nestjs/jwt';
 import { GetUserMeDto } from './dto/get.user.me.dto';
@@ -25,6 +21,7 @@ import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 import { ProfileImageRepository } from 'src/profile-image/profile-image.repository';
 import { ProfileImage } from 'src/profile-image/profile-image.entity';
 import { ProfileImageDto, ProfileImagesDto } from 'src/profile-image/profile-image.dto';
+import { IsolationLevel, Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class UserService {
@@ -75,7 +72,7 @@ export class UserService {
     return responseDto;
   }
 
-  //patch detail service
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUserImage(patchDto: PatchUserImageDto): Promise<void> {
     const user = await this.userRepository.findById(patchDto.userId);
     if (!user) throw new NotFoundException('No such User');
@@ -85,6 +82,7 @@ export class UserService {
     await this.userRepository.updateUserImage(user, image);
   }
 
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUserStatusMessage(patchDto: PatchUserMessageDto): Promise<void> {
     const user = await this.userRepository.findById(patchDto.userId);
     if (!user) throw new NotFoundException('No such User');

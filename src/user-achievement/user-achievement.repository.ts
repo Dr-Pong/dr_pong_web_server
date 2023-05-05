@@ -8,26 +8,26 @@ export class UserAchievementRepository {
 	constructor(
 		@InjectRepository(UserAchievement)
 		private readonly repository: Repository<UserAchievement>,
-	) {}
-	async findAllByUserId(userId:number): Promise<UserAchievement[]> {
-		return await this.repository.find({where:{user:{id:userId}}});
+	) { }
+	async findAllByUserId(userId: number): Promise<UserAchievement[]> {
+		return await this.repository.find({ where: { user: { id: userId } } });
 	}
 
-	async findAllByUserIdAndSelected(userId:number): Promise<UserAchievement[]> {
-		return await this.repository.find({where:{user:{id:userId}, selectedOrder:Not(IsNull())}});
+	async findAllByUserIdAndSelected(userId: number): Promise<UserAchievement[]> {
+		return await this.repository.find({ where: { user: { id: userId }, selectedOrder: Not(IsNull()) } });
 	}
 
-	async findAllByUserIdAndAchievementIds(userId: number, achievementIds:number[]): Promise<UserAchievement[]> {
-		return await this.repository.find({where: {user: { id: userId },achievement: { id: In(achievementIds) },},});
+	async findAllByUserIdAndAchievementIds(userId: number, achievementIds: number[]): Promise<UserAchievement[]> {
+		return await this.repository.find({ where: { user: { id: userId }, achievement: { id: In(achievementIds) }, }, });
 	}
 
 	async updateSelectedOrderNull(userAchievement: UserAchievement): Promise<void> {
 		userAchievement.selectedOrder = null;
-		await this.repository.save(userAchievement);
+		console.log('null', await this.repository.save(userAchievement));
 	}
 
-	async updateSelectedOrder(userAchievement: UserAchievement, order:number): Promise<void> {
+	async updateSelectedOrder(userAchievement: UserAchievement, order: number): Promise<void> {
 		userAchievement.selectedOrder = order;
-		await this.repository.save(userAchievement);
+		console.log('update', await this.repository.save(userAchievement));
 	}
 }
