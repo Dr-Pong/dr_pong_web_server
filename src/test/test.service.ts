@@ -38,7 +38,7 @@ export class TestService {
     private profileImageRepository: Repository<ProfileImage>,
     @InjectRepository(Game)
     private gameRepository: Repository<Game>,
-  ) {}
+  ) { }
   users: User[] = [];
   profileImages: ProfileImage[] = [];
   emojis: Emoji[] = [];

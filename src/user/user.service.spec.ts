@@ -19,6 +19,7 @@ import {
 import { GetUserMeDto } from './dto/get.user.me.dto';
 import { AuthModule } from 'src/auth/auth.module';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
+import { addTransactionalDataSource, initializeTransactionalContext } from 'typeorm-transactional';
 
 describe('UserService', () => {
   let service: UserService;
@@ -27,9 +28,24 @@ describe('UserService', () => {
   let testData: TestService;
   let jwtService: JwtService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
+    initializeTransactionalContext();
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TypeOrmModule.forRoot(typeORMConfig), UserModule, TestModule],
+      imports: [
+        TypeOrmModule.forRootAsync({
+          useFactory() {
+            return typeORMConfig;
+          },
+          async dataSourceFactory(options) {
+            if (!options) {
+              throw new Error('Invalid options passed');
+            }
+            return addTransactionalDataSource({ dataSource: new DataSource(options) });
+          },
+        }),
+        UserModule,
+        TestModule,
+      ],
       providers: [
         JwtService,
         {
@@ -44,13 +60,24 @@ describe('UserService', () => {
     dataSources = module.get<DataSource>(DataSource);
     testData = module.get<TestService>(TestService);
     jwtService = module.get<JwtService>(JwtService);
+    await dataSources.synchronize(true);
   });
 
+  beforeEach(async () => {
+    await testData.createProfileImages();
+  })
+
   afterEach(async () => {
+    testData.clear();
+    service.users.clear();
     jest.resetAllMocks();
+    await dataSources.synchronize(true);
+  });
+
+  afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
-  });
+  })
 
   it('User Detail Get 정보 테스트 ', async () => {
     await testData.createProfileImages();

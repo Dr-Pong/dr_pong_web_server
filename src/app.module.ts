@@ -45,4 +45,4 @@ import { ProfileImageModule } from './profile-image/profile-image.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

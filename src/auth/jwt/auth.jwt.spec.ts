@@ -14,7 +14,7 @@ describe('JwtStrategy', () => {
   let userRepository: Repository<User>;
   let dataSources: DataSource;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
       providers: [
@@ -24,7 +24,7 @@ describe('JwtStrategy', () => {
           provide: getRepositoryToken(User),
           useClass: Repository,
         },
-    ],
+      ],
     }).compile();
 
     jwtStrategy = module.get<JwtStrategy>(JwtStrategy);
@@ -33,7 +33,7 @@ describe('JwtStrategy', () => {
     dataSources = module.get<DataSource>(DataSource);
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     jest.resetAllMocks();
     await dataSources.dropDatabase();
     await dataSources.destroy();
@@ -49,16 +49,16 @@ describe('JwtStrategy', () => {
         statusMessage: 'im admin',
         roleType: 'admin',
       },)
-      const normalUser = await userRepository.save(
-        {
-          nickname: 'normal',
-          email: 'normal@email',
-          imageUrl: 'normal.png',
-          level: 1,
-          statusMessage: 'heehee',
-          roleType: 'member',
-        },)
-  
+    const normalUser = await userRepository.save(
+      {
+        nickname: 'normal',
+        email: 'normal@email',
+        imageUrl: 'normal.png',
+        level: 1,
+        statusMessage: 'heehee',
+        roleType: 'member',
+      },)
+
     const adminToken = jwtService.sign({
       id: admin.id,
       nickname: admin.nickname,
@@ -84,7 +84,7 @@ describe('JwtStrategy', () => {
     //find from memory
     const findedAdmin2 = await jwtStrategy.validate(jwtService.verify(adminToken));
     const findedNormalUser2 = await jwtStrategy.validate(jwtService.verify(normalToken));
-  
+
     expect(findedAdmin2.id).toBe(admin.id);
     expect(findedNormalUser2.id).toBe(normalUser.id);
     expect(findedAdmin2.nickname).toBe(admin.nickname);
@@ -113,11 +113,11 @@ describe('JwtStrategy', () => {
         roleType: 'member',
       },)
     const noNickNameUserToken = jwtService.sign({
-        id:null,
-        nickname: '',
-        roleType: ROLETYPE_NONAME,
-      })
-  
+      id: null,
+      nickname: '',
+      roleType: ROLETYPE_NONAME,
+    })
+
     const notRegisteredUserToken = jwtService.sign({
       id: -1,
       nickname: 'not Rejistered',
@@ -133,7 +133,7 @@ describe('JwtStrategy', () => {
       id: normalUser.id,
       nickname: normalUser.nickname,
       roleType: normalUser.roleType,
-    }, {expiresIn:0});
+    }, { expiresIn: 0 });
 
     await expect(jwtStrategy.validate(jwtService.verify(notRegisteredUserToken))).rejects.toThrow(new UnauthorizedException());
     await expect(jwtStrategy.validate(jwtService.verify(invalidUserToken))).rejects.toThrow(new UnauthorizedException('invalid token'));

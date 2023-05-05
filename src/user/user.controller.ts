@@ -38,7 +38,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { userInfo } from 'os';
 import { UserTitleSelectedDto } from 'src/user-title/dto/user.title.selected.dto';
 import { PatchUserImageRequestDto } from './dto/patch.user.image.request.dto';
-import { PatchUserTitleRequestDto } from './dto/patch.user.title.request.dto';
+import { PatchUserTitleRequestDto } from '../user-title/dto/patch.user.title.request.dto';
 import { PatchUserImageDto } from './dto/patch.user.image.dto';
 import { PatchUserMessageRequestDto } from './dto/patch.user.message.request.dto';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
@@ -163,7 +163,7 @@ export class UserController {
     );
     const patchUserTitleDto: PatchUserTitleDto = {
       userId: userInfoDto.id,
-      titleId: patchRequestDto.title,
+      titleId: patchRequestDto.id,
     };
     await this.userTitleService.patchUserTitle(patchUserTitleDto);
   }
@@ -182,7 +182,7 @@ export class UserController {
     );
     const patchUserImageDto: PatchUserImageDto = {
       userId: userInfoDto.id,
-      imageId: patchRequestDto.imgId,
+      imageId: patchRequestDto.id,
     };
     await this.userService.patchUserImage(patchUserImageDto);
   }
@@ -220,7 +220,7 @@ export class UserController {
     );
     const patchUserAchievementsDto: PatchUserAchievementsDto = {
       userId: userInfoDto.id,
-      achievementsId: patchRequestDto.achievements,
+      achievementsId: patchRequestDto.ids,
     };
     await this.userAchievementService.patchUserAchievements(
       patchUserAchievementsDto,
@@ -242,7 +242,7 @@ export class UserController {
 
     const patchUserAchievementsDto: PatchUserEmojisDto = {
       userId: userInfoDto.id,
-      emojisId: patchRequestDto.emojis,
+      emojisId: patchRequestDto.ids,
     };
 
     await this.userEmojiService.patchUseremojis(patchUserAchievementsDto);

@@ -1,3 +1,3 @@
 export class PatchUserEmojisRequestDto {
-  emojis: (number | null) [];
+  ids: (number | null)[];
 }
