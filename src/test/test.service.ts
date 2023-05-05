@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { count } from 'console';
 import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { Game } from 'src/game/game.entity';
@@ -48,6 +47,17 @@ export class TestService {
   seasons: Season[] = [];
   ranks: Rank[] = [];
   topRanks: Rank[] = [];
+
+  clear(): void {
+    this.users.splice(0);
+    this.profileImages.splice(0);
+    this.emojis.splice(0);
+    this.titles.splice(0);
+    this.achievements.splice(0);
+    this.seasons.splice(0);
+    this.ranks.splice(0);
+    this.topRanks.splice(0);
+  }
 
   async createProfileImages(): Promise<void> {
     this.profileImages.push(await this.profileImageRepository.save({
