@@ -1,7 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { UserEmoji } from './user-emoji.entity';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import {
+  Transactional,
+  IsolationLevel,
+} from 'typeorm-transactional'
 import { Emoji } from 'src/emoji/emoji.entity';
 import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { UserEmojiDto, UseremojisDto } from './dto/user.emojis.dto';
@@ -16,7 +18,7 @@ export class UserEmojiService {
   constructor(
     private readonly userEmojiRepository: UserEmojiRepository,
     private readonly emojiRepository: EmojiRepository,
-  ) {}
+  ) { }
 
   async getUseremojisAll(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
     const allEmoji: Emoji[] = await this.emojiRepository.findAll();
@@ -62,6 +64,7 @@ export class UserEmojiService {
   }
 
   //patchUseremojis함수
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUseremojis(patchDto: PatchUserEmojisDto): Promise<void> {
     const oldEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndSelected(patchDto.userId);
     for (const c of oldEmojis) {
@@ -71,10 +74,10 @@ export class UserEmojiService {
     const toChangeEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndEmojiIds(patchDto.userId, patchDto.emojisId);
 
     const countNumbers = patchDto.emojisId.filter(
-			(elem) => typeof elem === 'number',
-		).length;
-		if (countNumbers !== toChangeEmojis.length) {
-			throw new BadRequestException('No such emoji');
+      (elem) => typeof elem === 'number',
+    ).length;
+    if (countNumbers !== toChangeEmojis.length) {
+      throw new BadRequestException('No such emoji');
     }
 
     for (const c of toChangeEmojis) {

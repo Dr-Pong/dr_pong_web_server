@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import {
+  Transactional,
+  IsolationLevel,
+} from 'typeorm-transactional'
 import { UserAchievement } from './user-achievement.entity';
 import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
 import {
@@ -19,7 +21,7 @@ export class UserAchievementService {
   constructor(
     private userAchievementRepository: UserAchievementRepository,
     private achievementRepository: AchievementRepository,
-  ) {}
+  ) { }
 
   async getUserAchievementsAll(
     getDto: GetUserAchievementsDto,
@@ -72,7 +74,7 @@ export class UserAchievementService {
     return responseDto;
   }
 
-  //patch user achievement Patch 가 old 랑 to_change로 저장하고 return 하는 로직을 구현해야한다
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUserAchievements(
     patchDto: PatchUserAchievementsDto,
   ): Promise<void> {
@@ -80,15 +82,15 @@ export class UserAchievementService {
     for (const c of oldAchievements) {
       await this.userAchievementRepository.updateSelectedOrderNull(c);
     }
-    
+
     const toChangeAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndAchievementIds(patchDto.userId, patchDto.achievementsId);
-		const countNumbers = patchDto.achievementsId.filter(
-			(elem) => typeof elem === 'number',
-		  ).length;
-		  if (countNumbers !== toChangeAchievement.length) {
-			throw new BadRequestException('No such achievement');
-		}
-    
+    const countNumbers = patchDto.achievementsId.filter(
+      (elem) => typeof elem === 'number',
+    ).length;
+    if (countNumbers !== toChangeAchievement.length) {
+      throw new BadRequestException('No such achievement');
+    }
+
     for (const c of toChangeAchievement) {
       let i = 0;
       for (const d of patchDto.achievementsId) {

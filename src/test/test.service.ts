@@ -109,7 +109,7 @@ export class TestService {
     });
     this.users.push(user);
     for (const c of this.emojis) {
-      if (this.emojis[4].id < c.id) continue;
+      if (this.emojis[4].id < c.id) break;
       await this.userEmojiRepository.save({
         user: user,
         emoji: c,
@@ -137,7 +137,7 @@ export class TestService {
       image: this.profileImages[0],
     });
     for (const c of this.achievements) {
-      if (this.achievements[3].id < c.id) continue;
+      if (this.achievements[3].id < c.id) break;
       await this.userAchievementRepository.save({
         user: user,
         achievement: c,
@@ -165,7 +165,7 @@ export class TestService {
       image: this.profileImages[0],
     });
     for (let i = 0; i < this.titles.length; i++) {
-      if (4 < i) continue;
+      if (4 < i) break;
       await this.userTitleRepository.save({
         user: user,
         title: this.titles[i],
@@ -184,7 +184,7 @@ export class TestService {
       image: this.profileImages[0],
     });
     for (let i = 0; i < this.titles.length; i++) {
-      if (4 < i) continue;
+      if (4 < i) break;
       await this.userTitleRepository.save({
         user: user,
         title: this.titles[i],
@@ -236,7 +236,7 @@ export class TestService {
     });
     this.users.push(user);
     for (let i: number = 0; i < this.emojis.length; i++) {
-      if (5 < i) continue;
+      if (5 < i) break;
       await this.userEmojiRepository.save({
         user: user,
         emoji: this.emojis[i],
@@ -244,7 +244,7 @@ export class TestService {
       });
     }
     for (let i = 0; i < this.titles.length; i++) {
-      if (4 < i) continue;
+      if (4 < i) break;
       await this.userTitleRepository.save({
         user: user,
         title: this.titles[i],
@@ -252,7 +252,7 @@ export class TestService {
       });
     }
     for (let i = 0; i < this.achievements.length; i++) {
-      if (5 < i) continue;
+      if (5 < i) break;
       await this.userAchievementRepository.save({
         user: user,
         achievement: this.achievements[i],
@@ -271,7 +271,7 @@ export class TestService {
     });
     this.users.push(user);
     for (let i = 0; i < this.emojis.length; i++) {
-      if (3 < i) continue;
+      if (3 < i) break;
       await this.userEmojiRepository.save({
         user: user,
         emoji: this.emojis[i],
@@ -311,7 +311,7 @@ export class TestService {
     });
     this.users.push(user);
     for (let i = 0; i < this.achievements.length; i++) {
-      if (2 < i) continue;
+      if (2 < i) break;
       await this.userAchievementRepository.save({
         user: user,
         achievement: this.achievements[i],
