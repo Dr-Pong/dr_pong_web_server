@@ -26,6 +26,7 @@ export class UserEmojiService {
 
     const emojis: UserEmojiDto[] = [];
     const status = new UserCollectablesStatus(allEmoji.length);
+
     status.setStatus(userEmoji);
 
     for (const c of allEmoji) {
