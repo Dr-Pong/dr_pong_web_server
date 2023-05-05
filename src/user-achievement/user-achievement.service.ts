@@ -27,8 +27,8 @@ export class UserAchievementService {
     getDto: GetUserAchievementsDto,
   ): Promise<UserAchievementsDto> {
     //achieved이고 selected되지 않은 업적 return
-    const allAchievement = await this.achievementRepository.findAll();
-    const userAchievement = await this.userAchievementRepository.findAllByUserId(getDto.userId);
+    const allAchievement: Achievement[] = await this.achievementRepository.findAll();
+    const userAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserId(getDto.userId);
 
     const achievements: UserAchievementDto[] = [];
     const status = new UserCollectablesStatus(allAchievement.length);
@@ -78,28 +78,33 @@ export class UserAchievementService {
   async patchUserAchievements(
     patchDto: PatchUserAchievementsDto,
   ): Promise<void> {
-    const oldAchievements: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndSelected(patchDto.userId);
-    for (const c of oldAchievements) {
-      await this.userAchievementRepository.updateSelectedOrderNull(c);
-    }
-
-    const toChangeAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndAchievementIds(patchDto.userId, patchDto.achievementsId);
-    const countNumbers = patchDto.achievementsId.filter(
-      (elem) => typeof elem === 'number',
-    ).length;
-    if (countNumbers !== toChangeAchievement.length) {
-      throw new BadRequestException('No such achievement');
-    }
-
-    for (const c of toChangeAchievement) {
-      let i = 0;
-      for (const d of patchDto.achievementsId) {
-        if (c.achievement.id === d) {
-          await this.userAchievementRepository.updateSelectedOrder(c, i);
-          break;
-        }
-        i++;
+    console.log(patchDto);
+    try {
+      const oldAchievements: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndSelected(patchDto.userId);
+      for (const c of oldAchievements) {
+        await this.userAchievementRepository.updateSelectedOrderNull(c);
       }
+
+      const toChangeAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndAchievementIds(patchDto.userId, patchDto.achievementsId);
+      const countNumbers = patchDto.achievementsId.filter(
+        (elem) => typeof elem === 'number',
+      ).length;
+      if (countNumbers !== toChangeAchievement.length) {
+        throw new BadRequestException('No such achievement');
+      }
+
+      for (const c of toChangeAchievement) {
+        let i = 0;
+        for (const d of patchDto.achievementsId) {
+          if (c.achievement.id === d) {
+            await this.userAchievementRepository.updateSelectedOrder(c, i);
+            break;
+          }
+          i++;
+        }
+      }
+    } catch (error) {
+      throw new BadRequestException();
     }
   }
 }

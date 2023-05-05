@@ -27,7 +27,6 @@ import { ProfileImageModule } from './profile-image/profile-image.module';
           throw new Error('Invalid options passed');
         }
         return addTransactionalDataSource({
-          name: 'test',
           dataSource: new DataSource(options),
         });
       },
