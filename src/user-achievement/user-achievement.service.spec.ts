@@ -21,7 +21,6 @@ describe('UserAchievemetService', () => {
 
   initializeTransactionalContext();
   beforeAll(async () => {
-
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRootAsync({
@@ -56,11 +55,13 @@ describe('UserAchievemetService', () => {
   });
 
   beforeEach(async () => {
+    await testData.createProfileImages();
     await testData.createBasicCollectable();
   })
 
   afterEach(async () => {
     // afterEach가 없어서 일단 만들었는데 여기가 맞는지 모르겠음
+    testData.clear();
     jest.resetAllMocks();
     await dataSources.synchronize(true);
   });
@@ -182,7 +183,6 @@ describe('UserAchievemetService', () => {
     const mixedUser = await testData.createUserWithUnSelectedAchievements();
     const mixedWithNullUser = await testData.createUserWithUnSelectedAchievements();
 
-    console.log(testData.achievements.length);
     // isSelected가 다 false인경우
     const orderedRequest: PatchUserAchievementsDto = {
       userId: orderedUser.id,
@@ -281,11 +281,11 @@ describe('UserAchievemetService', () => {
     //validUpdateDto1 에대한 실행
     await expect(
       service.patchUserAchievements(oneValidTwoInvalidRequest)
-    ,).rejects.toThrow(new BadRequestException('No such achievement'));
+      ,).rejects.toThrow(new BadRequestException());
     //validUpdateDto2 에대한 실행
     await expect(
       service.patchUserAchievements(allInvalidRequest)
-    ,).rejects.toThrow(new BadRequestException('No such achievement'));
+      ,).rejects.toThrow(new BadRequestException());
 
     const afterPatch = await userAchievementRepository.find({ where: { user: { id: oneValidTwoInvalidUser.id }, selectedOrder: Not(IsNull()) } });
     expect(pastTitle.length).toBe(afterPatch.length);

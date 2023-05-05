@@ -23,9 +23,11 @@ export class UserAchievementRepository {
 
 	async updateSelectedOrderNull(userAchievement: UserAchievement): Promise<void> {
 		userAchievement.selectedOrder = null;
+		await this.repository.save(userAchievement);
 	}
 
 	async updateSelectedOrder(userAchievement: UserAchievement, order: number): Promise<void> {
 		userAchievement.selectedOrder = order;
+		await this.repository.save(userAchievement);
 	}
 }

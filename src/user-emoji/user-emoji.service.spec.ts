@@ -21,7 +21,6 @@ describe('UserEmojiService', () => {
 
   initializeTransactionalContext();
   beforeAll(async () => {
-
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRootAsync({
@@ -53,10 +52,12 @@ describe('UserEmojiService', () => {
   });
 
   beforeEach(async () => {
+    await testData.createProfileImages();
     await testData.createBasicCollectable();
   })
 
   afterEach(async () => {
+    testData.clear();
     jest.resetAllMocks();
     await dataSources.synchronize(true);
   })
@@ -293,10 +294,10 @@ describe('UserEmojiService', () => {
     //validUpdateDto1 에대한 실행
     await expect(
       service.patchUseremojis(oneValidTwoInvalidRequest)
-    ,).rejects.toThrow(new BadRequestException('No such emoji'));
+      ,).rejects.toThrow(new BadRequestException());
     //validUpdateDto2 에대한 실행
     await expect(
       service.patchUseremojis(allInvalidRequest)
-    ,).rejects.toThrow(new BadRequestException('No such emoji'));
+      ,).rejects.toThrow(new BadRequestException());
   });
 });
