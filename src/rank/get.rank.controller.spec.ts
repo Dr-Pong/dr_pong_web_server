@@ -12,7 +12,6 @@ describe('RankController', () => {
   let app: INestApplication;
   let dataSources: DataSource;
   let testService: TestService;
-  let rankService: RankService;
   initializeTransactionalContext();
 
   beforeAll(async () => {
@@ -24,7 +23,6 @@ describe('RankController', () => {
     await app.init();
     testService = moduleFixture.get<TestService>(TestService);
     dataSources = moduleFixture.get<DataSource>(DataSource);
-    rankService = moduleFixture.get<RankService>(RankService);
     await dataSources.synchronize(true);
   });
 
@@ -106,7 +104,6 @@ describe('RankController', () => {
         expect(response.body.bottom[0].nickname).toBe(
           testService.users[4].nickname,
         );
-        console.log(response.body.bottom[0]);
 
         expect(response.body.bottom[1].rank).toBe(6);
         expect(response.body.bottom[2].rank).toBe(7);
