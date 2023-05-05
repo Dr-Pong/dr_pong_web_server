@@ -4,6 +4,7 @@ import { count } from 'console';
 import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { Game } from 'src/game/game.entity';
+import { ProfileImage } from 'src/profile-image/profile-image.entity';
 import { Rank } from 'src/rank/rank.entity';
 import { Season } from 'src/season/season.entity';
 import { Title } from 'src/title/title.entity';
@@ -34,16 +35,28 @@ export class TestService {
     private rankRepository: Repository<Rank>,
     @InjectRepository(Season)
     private seasonRepository: Repository<Season>,
+    @InjectRepository(ProfileImage)
+    private profileImageRepository: Repository<ProfileImage>,
     @InjectRepository(Game)
     private gameRepository: Repository<Game>,
   ) { }
   users: User[] = [];
+  profileImages: ProfileImage[] = [];
   emojis: Emoji[] = [];
   titles: Title[] = [];
   achievements: Achievement[] = [];
   seasons: Season[] = [];
   ranks: Rank[] = [];
   topRanks: Rank[] = [];
+
+  async createProfileImages(): Promise<void> {
+    this.profileImages.push(await this.profileImageRepository.save({
+      url: 'basic image1',
+    }));
+    this.profileImages.push(await this.profileImageRepository.save({
+      url: 'basic image2',
+    }));
+  }
 
   /** 유저 생성 태초 유저임*/
   async createBasicUser(): Promise<User> {
@@ -52,20 +65,7 @@ export class TestService {
       nickname: 'user' + index.toString(),
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
-      imageUrl: 'basicImage' + index.toString(),
-    });
-    this.users.push(user);
-    return user;
-  }
-
-  /** 이미지 없는 유저 생성*/
-  async createBasicUserWithoutImg(): Promise<User> {
-    const index: number = this.users.length;
-    const user = await this.userRepository.save({
-      nickname: 'user' + index.toString(),
-      email: index.toString() + '@mail.com',
-      statusMessage: index.toString(),
-      imageUrl: null,
+      image: this.profileImages[0],
     });
     this.users.push(user);
     return user;
@@ -105,7 +105,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithUEmoji',
       email: 'emoji@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     this.users.push(user);
     for (const c of this.emojis) {
@@ -124,7 +124,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithoutAchievements',
       email: '@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     return user;
   }
@@ -134,7 +134,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithAchievements',
       email: 'achv@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     for (const c of this.achievements) {
       if (this.achievements[3].id < c.id) break;
@@ -152,7 +152,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithoutAchievements',
       email: '@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     return user;
   }
@@ -162,7 +162,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithAchievements',
       email: 'achv@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     for (let i = 0; i < this.titles.length; i++) {
       if (4 < i) break;
@@ -181,7 +181,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithAchievements',
       email: 'achv@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     for (let i = 0; i < this.titles.length; i++) {
       if (4 < i) break;
@@ -232,7 +232,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithCollectable',
       email: 'user@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     this.users.push(user);
     for (let i: number = 0; i < this.emojis.length; i++) {
@@ -267,7 +267,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithMixedEmoji',
       email: 'emoji@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     this.users.push(user);
     for (let i = 0; i < this.emojis.length; i++) {
@@ -286,7 +286,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithMixedWithNullEmoji',
       email: 'emoji@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     this.users.push(user);
     await this.userEmojiRepository.save({
@@ -307,7 +307,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithReversedAchievement',
       email: 'achievement@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     this.users.push(user);
     for (let i = 0; i < this.achievements.length; i++) {
@@ -326,7 +326,7 @@ export class TestService {
     const user: User = await this.userRepository.save({
       nickname: 'userWithMixedWithNullAchievement',
       email: 'achievement@mail.com',
-      imageUrl: 'basicImage',
+      image: this.profileImages[0],
     });
     this.users.push(user);
     await this.userAchievementRepository.save({

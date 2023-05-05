@@ -35,6 +35,7 @@ describe('UserController', () => {
     jwtService = moduleFixture.get<JwtService>(JwtService);
 
     await testService.createBasicCollectable();
+    await testService.createProfileImages();
   });
 
   afterEach(async () => {
@@ -64,20 +65,7 @@ describe('UserController', () => {
         // console.log('타이틀 있는경우', response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
-        expect(response.body.imgUrl).toBe(user.imageUrl); //원하는 데이터 넣기
-        expect(response.body.statusMessage).toBe(user.statusMessage); //원하는 데이터 넣기
-      });
-
-      it('이미지가 없는 경우', async () => {
-        const user: User = await testService.createBasicUserWithoutImg();
-        const response = await request(app.getHttpServer()).get(
-          '/users/' + user.nickname + '/detail',
-        );
-
-        // console.log('타이틀 있는경우', response.body);
-        expect(response.statusCode).toBe(200);
-        expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
-        expect(response.body.imgUrl).toBe(null); //원하는 데이터 넣기
+        expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
         expect(response.body.statusMessage).toBe(user.statusMessage); //원하는 데이터 넣기
       });
 
@@ -90,7 +78,7 @@ describe('UserController', () => {
         // console.log('없는경우', response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
-        expect(response.body.imgUrl).toBe(user.imageUrl); //원하는 데이터 넣기
+        expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
         expect(response.body.statusMessage).toBe(user.statusMessage); //원하는 데이터 넣기
         expect(response.body).toHaveProperty('title.id'); //원하는 데이터 넣기
         expect(response.body).toHaveProperty('title.title'); //원하는 데이터 넣기
@@ -105,7 +93,7 @@ describe('UserController', () => {
         // console.log('없는경우', response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
-        expect(response.body.imgUrl).toBe(user.imageUrl); //원하는 데이터 넣기
+        expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
         expect(response.body.statusMessage).toBe(user.statusMessage); //원하는 데이터 넣기
         expect(response.body.title).toBe(null); //원하는 데이터 넣기
       });

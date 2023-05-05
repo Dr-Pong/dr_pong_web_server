@@ -11,10 +11,14 @@ import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserDetailDto } from './dto/user.detail.dto';
 import { UserModule } from './user.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { ROLETYPE_GUEST, ROLETYPE_MEMBER, ROLETYPE_NONAME } from 'src/global/type/type.user.roletype';
+import {
+  ROLETYPE_GUEST,
+  ROLETYPE_MEMBER,
+  ROLETYPE_NONAME,
+} from 'src/global/type/type.user.roletype';
 import { GetUserMeDto } from './dto/get.user.me.dto';
 import { AuthModule } from 'src/auth/auth.module';
-import { PatchUserMessagDto } from './dto/patch.user.message.dto';
+import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 
 describe('UserService', () => {
   let service: UserService;
@@ -25,11 +29,7 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(typeORMConfig),
-        UserModule,
-        TestModule,
-      ],
+      imports: [TypeOrmModule.forRoot(typeORMConfig), UserModule, TestModule],
       providers: [
         JwtService,
         {
@@ -53,6 +53,7 @@ describe('UserService', () => {
   });
 
   it('User Detail Get 정보 테스트 ', async () => {
+    await testData.createProfileImages();
     const basicUser: User = await testData.createBasicUser();
 
     const getUserDetailRequest: GetUserDetailDto = {
@@ -64,44 +65,51 @@ describe('UserService', () => {
     );
 
     expect(result.nickname).toBe(basicUser.nickname);
-    expect(result.imgUrl).toBe(basicUser.imageUrl);
+    expect(result.imgUrl).toBe(basicUser.image.url);
     expect(result.statusMessage).toBe(basicUser.statusMessage);
     expect(result.level).toBe(basicUser.level);
   });
 
   it('User Image Patch 테스트', async () => {
+    await testData.createProfileImages();
     const basicUser: User = await testData.createBasicUser();
 
     const patchUserImageRequest: PatchUserImageDto = {
       userId: basicUser.id,
-      imgUrl: 'changedImageUrl',
-    }
+      imageId: testData.profileImages[1].id,
+    };
 
     await service.patchUserImage(patchUserImageRequest);
 
-    const result: User = await userRepository.findOne({ where: { id: basicUser.id } });
+    const result: User = await userRepository.findOne({
+      where: { id: basicUser.id },
+    });
 
     expect(result.id).toBe(patchUserImageRequest.userId);
-    expect(result.imageUrl).toBe(patchUserImageRequest.imgUrl);
+    expect(result.image.id).toBe(patchUserImageRequest.imageId);
   });
 
   it('User Message Patch 테스트', async () => {
+    await testData.createProfileImages();
     const basicUser: User = await testData.createBasicUser();
 
-    const patchUserMessageRequest: PatchUserMessagDto = {
+    const patchUserMessageRequest: PatchUserMessageDto = {
       userId: basicUser.id,
       message: 'changedMessage',
-    }
+    };
 
     await service.patchUserStatusMessage(patchUserMessageRequest);
 
-    const result: User = await userRepository.findOne({ where: { id: basicUser.id } });
+    const result: User = await userRepository.findOne({
+      where: { id: basicUser.id },
+    });
 
     expect(result.id).toBe(patchUserMessageRequest.userId);
     expect(result.statusMessage).toBe(patchUserMessageRequest.message);
   });
 
   it('User Me Get Service 테스트', async () => {
+    await testData.createProfileImages();
     const basicUser: User = await testData.createBasicUser();
 
     const validToken: string = jwtService.sign({
@@ -133,7 +141,7 @@ describe('UserService', () => {
     const guestCase = await service.getUserMe(guestDto);
 
     expect(basicCase.nickname).toBe(basicUser.nickname);
-    expect(basicCase.imgUrl).toBe(basicUser.imageUrl);
+    expect(basicCase.imgUrl).toBe(basicUser.image.url);
     expect(basicCase.isSecondAuthOn).toBe(false);
     expect(basicCase.roleType).toBe(ROLETYPE_MEMBER);
 
@@ -148,14 +156,12 @@ describe('UserService', () => {
     expect(guestCase.roleType).toBe(ROLETYPE_GUEST);
   });
 
-  // it('User Image Get Service 테스트', async () => {
-  //   await testData.createImages();
-  //   const basicUser: User = await testData.createBasicUser();
+  it('User Image Get Service 테스트', async () => {
+    await testData.createProfileImages();
+    const basicCase = await service.getUserImages();
 
-  //   const basicCase = await service.getUserImages(basicDto);
-
-  //   expect(basicCase.length).toBe(testData.images.length);
-  //   expect(basicCase.images[0].id).toBe(testData.images[0].id);
-  //   expect(basicCase.images[0].url).toBe(testData.images[0].imageUrl);
-  // });
+    expect(basicCase.images.length).toBe(testData.profileImages.length);
+    expect(basicCase.images[0].id).toBe(testData.profileImages[0].id);
+    expect(basicCase.images[0].url).toBe(testData.profileImages[0].url);
+  });
 });

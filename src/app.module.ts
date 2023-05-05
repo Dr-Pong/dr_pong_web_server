@@ -14,6 +14,7 @@ import { RankModule } from './rank/rank.module';
 import { SeasonModule } from './season/season.module';
 import { AchievementModule } from './achievement/achievement.module';
 import { DataSource } from 'typeorm';
+import { ProfileImageModule } from './profile-image/profile-image.module';
 
 @Module({
   imports: [
@@ -36,6 +37,8 @@ import { DataSource } from 'typeorm';
     AchievementModule,
     UserAchievementModule,
     AuthModule,
+    TestModule,
+    ProfileImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

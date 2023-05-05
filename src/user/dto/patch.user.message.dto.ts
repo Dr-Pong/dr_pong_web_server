@@ -1,5 +1,5 @@
-export class PatchUserMessagDto {
-	userId: number;
+export class PatchUserMessageDto {
+  userId: number;
 
-	message: string;
+  message: string;
 }
