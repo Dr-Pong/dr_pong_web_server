@@ -47,7 +47,8 @@ export class TestService {
   achievements: Achievement[] = [];
   seasons: Season[] = [];
   ranks: Rank[] = [];
-  topRanks: Rank[] = [];
+  currentSeasonRanks: Rank[] = [];
+  currentSeason: Season;
 
   async createProfileImages(): Promise<void> {
     this.profileImages.push(
@@ -95,7 +96,7 @@ export class TestService {
         nickname: 'user' + i.toString(),
         email: i.toString() + '@mail.com',
         statusMessage: i.toString(),
-        imageUrl: 'basicImage' + i.toString(),
+        image: this.profileImages[i % 2],
       });
       this.users.push(user);
     }
@@ -268,6 +269,26 @@ export class TestService {
       }
     }
     return this.ranks;
+  }
+
+  async createCurrentSeasonRank(): Promise<Rank[]> {
+    this.currentSeason = await this.seasonRepository.save({
+      name: 'currentSeason',
+      startTime: '2021-01-01',
+      endTime: '2022-01-01',
+      imageUrl: 'SeasonImage',
+    });
+    for (let i = 0; i < this.users.length; i++) {
+      this.currentSeasonRanks.push(
+        await this.rankRepository.save({
+          season: this.currentSeason,
+          user: this.users[i],
+          ladderPoint: 100 - i,
+          highestPoint: 1000 - i,
+        }),
+      );
+    }
+    return this.currentSeasonRanks;
   }
 
   /**이모지 타이틀 어치브먼트를 모두 가진 유저 생성*/

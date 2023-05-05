@@ -44,8 +44,10 @@ describe('RankService', () => {
     testData = module.get<TestService>(TestService);
 
     await testData.createBasicSeasons(1);
+    await testData.createProfileImages();
     await testData.createBasicUsers();
     await testData.createBasicRank();
+    await testData.createCurrentSeasonRank();
   });
 
   afterEach(async () => {
@@ -113,40 +115,48 @@ describe('RankService', () => {
     expect(result5).toEqual({ record: null });
   });
 
-  // it('count에 따른 Top 랭크데이터 반환', async () => {
-  //   const topRankDto: GetRanksTopDto = {
-  //     count: 10,
-  //   };
+  it('count에 따른 Top 랭크데이터 반환', async () => {
+    const topRankDto: GetRanksTopDto = {
+      count: 10,
+    };
 
-  //   const topRankResult: RanksTopDto = await service.getTopRanksByCount(
-  //     topRankDto,
-  //   ); //top[rank, nickname, ladderPoint] 반환
+    const topRankResult: RanksTopDto = await service.getTopRanksByCount(
+      topRankDto,
+    ); //top[rank, nickname, ladderPoint] 반환
 
-  //   expect(topRankResult.top[0].rank).toEqual(1);
-  //   expect(topRankResult.top[0].nickname).toEqual(
-  //     testData.ranks[0].user.nickname,
-  //   );
-  //   expect(topRankResult.top[0].ladderPoint).toEqual(
-  //     testData.ranks[0].ladderPoint,
-  //   );
-  //   expect(topRankResult.top[0].image).toEqual(testData.ranks[0].user.image);
+    expect(topRankResult.top[0].rank).toEqual(1);
+    expect(topRankResult.top[0].nickname).toEqual(
+      testData.ranks[0].user.nickname,
+    );
+    expect(topRankResult.top[0].ladderPoint).toEqual(
+      testData.ranks[0].ladderPoint,
+    );
+    expect(topRankResult.top[0].imageUrl).toEqual(
+      testData.ranks[0].user.image.url,
+    );
 
-  //   expect(topRankResult.top[2].rank).toEqual(3);
-  //   expect(topRankResult.top[2].nickname).toEqual(
-  //     testData.ranks[2].user.nickname,
-  //   );
-  //   expect(topRankResult.top[2].ladderPoint).toEqual(
-  //     testData.ranks[2].ladderPoint,
-  //   );
+    expect(topRankResult.top[2].rank).toEqual(3);
+    expect(topRankResult.top[2].nickname).toEqual(
+      testData.ranks[2].user.nickname,
+    );
+    expect(topRankResult.top[2].ladderPoint).toEqual(
+      testData.ranks[2].ladderPoint,
+    );
+    expect(topRankResult.top[2].imageUrl).toEqual(
+      testData.ranks[2].user.image.url,
+    );
 
-  //   expect(topRankResult.top[9].rank).toEqual(10);
-  //   expect(topRankResult.top[9].nickname).toEqual(
-  //     testData.ranks[9].user.nickname,
-  //   );
-  //   expect(topRankResult.top[9].ladderPoint).toEqual(
-  //     testData.ranks[9].ladderPoint,
-  //   );
-  // });
+    expect(topRankResult.top[9].rank).toEqual(10);
+    expect(topRankResult.top[9].nickname).toEqual(
+      testData.ranks[9].user.nickname,
+    );
+    expect(topRankResult.top[9].ladderPoint).toEqual(
+      testData.ranks[9].ladderPoint,
+    );
+    expect(topRankResult.top[9].imageUrl).toEqual(
+      testData.ranks[9].user.image.url,
+    );
+  });
 
   it('count에 따른 Bottom 랭크데이터 반환', async () => {
     const bottomRankDto: GetRanksBottomDto = {
@@ -158,26 +168,26 @@ describe('RankService', () => {
 
     expect(bottomRankResult.bottom[0].rank).toEqual(5);
     expect(bottomRankResult.bottom[0].nickname).toEqual(
-      testData.ranks[4].user.nickname,
+      testData.currentSeasonRanks[4].user.nickname,
     );
     expect(bottomRankResult.bottom[0].ladderPoint).toEqual(
-      testData.ranks[4].ladderPoint,
+      testData.currentSeasonRanks[4].ladderPoint,
     );
 
     expect(bottomRankResult.bottom[2].rank).toEqual(7);
     expect(bottomRankResult.bottom[2].nickname).toEqual(
-      testData.ranks[6].user.nickname,
+      testData.currentSeasonRanks[6].user.nickname,
     );
     expect(bottomRankResult.bottom[2].ladderPoint).toEqual(
-      testData.ranks[6].ladderPoint,
+      testData.currentSeasonRanks[6].ladderPoint,
     );
 
     expect(bottomRankResult.bottom[4].rank).toEqual(9);
     expect(bottomRankResult.bottom[4].nickname).toEqual(
-      testData.ranks[8].user.nickname,
+      testData.currentSeasonRanks[8].user.nickname,
     );
     expect(bottomRankResult.bottom[4].ladderPoint).toEqual(
-      testData.ranks[8].ladderPoint,
+      testData.currentSeasonRanks[8].ladderPoint,
     );
   });
 });

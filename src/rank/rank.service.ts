@@ -79,7 +79,7 @@ export class RankService {
         rank: i + 1, // 1을 더해서 순위를 계산
         nickname: rank.user.nickname,
         ladderPoint: rank.ladderPoint,
-        image: rank.user.image.url,
+        imageUrl: rank.user.image.url,
       });
     }
 
