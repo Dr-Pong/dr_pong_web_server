@@ -18,6 +18,7 @@ import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { RanksBottomDto } from './dto/ranks.bottom.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
 import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
+import { UserGame } from 'src/user-game/user-game.entity';
 
 describe('RankService', () => {
   let service: RankService;
@@ -48,6 +49,8 @@ describe('RankService', () => {
     await testData.createBasicUsers();
     await testData.createBasicRank();
     await testData.createCurrentSeasonRank();
+    await testData.createBasicGames();
+    await testData.createBasicUserGames();
   });
 
   afterEach(async () => {
@@ -89,6 +92,75 @@ describe('RankService', () => {
     expect(result5).toEqual({ record: null });
   });
 
+  it('유저 현시즌 record rank tier반환', async () => {
+    //given
+    const getDto1: GetUserRankStatDto = {
+      userId: testData.ranks[0].user.id,
+      seasonId: testData.seasons[0].id,
+    }; // 시즌1데이터
+    const invalidgetDto1: GetUserRankStatDto = {
+      userId: testData.ranks[0].user.id,
+      seasonId: 4,
+    }; // 없는시즌 데이터
+    const invalidgetDto2: GetUserRankStatDto = {
+      userId: 4242,
+      seasonId: testData.seasons[0].id,
+    }; // 없는유저 데이터
+
+    //when
+    const recordRankTier = await service.getUserRankTierBySeason(getDto1);
+
+    const invalidRecordRankTier = await service.getUserRankTierBySeason(
+      invalidgetDto1,
+    );
+    const invalidRecordRankTier2 = await service.getUserRankTierBySeason(
+      invalidgetDto2,
+    );
+    const currentSeason = testData.seasons[0];
+
+    const userRankInDb: Rank[] = await rankRepository.find({
+      where: {
+        user: { id: testData.users[0].id },
+        season: { id: currentSeason.id },
+      },
+      order: {
+        ladderPoint: 'DESC',
+      },
+    });
+
+    //전체 db에서 현재시즌 데이터정렬
+    const testRank = userRankInDb.findIndex(
+      (rank) => rank.id === testData.ranks[0].id,
+    );
+
+    let testTier: string;
+
+    if (Number(process.env.DOCTOR_CUT) < testData.ranks[0].ladderPoint)
+      testTier = 'doctor';
+    else if (Number(process.env.MASTER_CUT) < testData.ranks[0].ladderPoint)
+      testTier = 'master';
+    else if (Number(process.env.BACHELOR_CUT) < testData.ranks[0].ladderPoint)
+      testTier = 'bachelor';
+    else testTier = 'student';
+
+    //랭크데이터가 잘 반환되는지 확인
+    expect(recordRankTier.record).toEqual(testData.ranks[0].ladderPoint);
+    expect(recordRankTier.rank).toEqual(testRank + 1);
+    expect(recordRankTier.tier).toEqual(testTier);
+
+    //없는시즌 데이터는 null로 반환
+    expect(invalidRecordRankTier).toEqual({
+      record: null,
+      rank: null,
+      tier: 'egg',
+    });
+    expect(invalidRecordRankTier2).toEqual({
+      record: null,
+      rank: null,
+      tier: 'egg',
+    });
+  });
+
   it('유저 시즌 최고점 랭크데이터 반환', async () => {
     //given
     //Dto로 반환할때는 highestRank, highestPoint만 반환하도록 수정해야함
@@ -113,6 +185,57 @@ describe('RankService', () => {
 
     //없는시즌 데이터는 null로 반환
     expect(result5).toEqual({ record: null });
+  });
+
+  it('유저의 역대최고 record rank tier반환', async () => {
+    const getDto1: GetUserBestRankStatDto = {
+      userId: testData.users[0].id,
+    }; // user1의 역대최고 랭크데이터
+
+    const invalidgetDto1: GetUserBestRankStatDto = {
+      userId: 4242,
+    }; // 없는시즌 데이터 BadRequest
+
+    const recordRankTier = await service.getUserBestRankTier(getDto1);
+    const invalidRecordRankTier = await service.getUserBestRankTier(
+      invalidgetDto1,
+    );
+
+    const userRankInDb: Rank[] = await rankRepository.find({
+      where: {
+        user: { id: testData.users[0].id },
+      },
+      order: {
+        highestPoint: 'DESC',
+      },
+    });
+
+    //전체 db에서 현재시즌 데이터정렬
+    const testRank = userRankInDb.findIndex(
+      (rank) => rank.id === testData.ranks[0].id,
+    );
+
+    let testTier: string;
+
+    if (Number(process.env.DOCTOR_CUT) < testData.ranks[0].highestPoint)
+      testTier = 'doctor';
+    else if (Number(process.env.MASTER_CUT) < testData.ranks[0].highestPoint)
+      testTier = 'master';
+    else if (Number(process.env.BACHELOR_CUT) < testData.ranks[0].highestPoint)
+      testTier = 'bachelor';
+    else testTier = 'student';
+
+    //랭크데이터가 잘 반환되는지 확인
+    expect(recordRankTier.record).toEqual(testData.ranks[0].highestPoint);
+    expect(recordRankTier.rank).toEqual(testRank + 1);
+    expect(recordRankTier.tier).toEqual(testTier);
+
+    //없는시즌 데이터는 null로 반환
+    expect(invalidRecordRankTier).toEqual({
+      record: null,
+      rank: null,
+      tier: 'egg',
+    });
   });
 
   it('count에 따른 Top 랭크데이터 반환', async () => {
