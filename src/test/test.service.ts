@@ -437,27 +437,15 @@ export class TestService {
     for (let i = 0; i < this.users.length; i++) {
       for (const c of this.seasons) {
         for (let j = 0; j < 3; j++) {
-          if (i % 2 == 0) {
-            this.userGames.push(
-              await this.userGameRepository.save({
-                user: this.users[i],
-                game: this.games[j / 2],
-                result: GAMERESULT_WIN,
-                score: 10,
-                lpChange: 10,
-              }),
-            );
-          } else {
-            this.userGames.push(
-              await this.userGameRepository.save({
-                user: this.users[i],
-                game: this.games[j / 2],
-                result: GAMERESULT_LOSE,
-                score: 10,
-                lpChange: -10,
-              }),
-            );
-          }
+          this.userGames.push(
+            await this.userGameRepository.save({
+              user: this.users[i],
+              game: this.games[j / 2],
+              result: i % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
+              score: i % 2 === 0 ? 10 : 0,
+              lpChange: i % 2 === 0 ? 10 : -10,
+            }),
+          );
         }
       }
     }
