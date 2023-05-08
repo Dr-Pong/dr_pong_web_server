@@ -38,7 +38,7 @@ export class TestService {
     private profileImageRepository: Repository<ProfileImage>,
     @InjectRepository(Game)
     private gameRepository: Repository<Game>,
-  ) { }
+  ) {}
   users: User[] = [];
   profileImages: ProfileImage[] = [];
   emojis: Emoji[] = [];
@@ -48,6 +48,7 @@ export class TestService {
   ranks: Rank[] = [];
   currentSeasonRanks: Rank[] = [];
   currentSeason: Season;
+  games: Game[] = [];
 
   clear(): void {
     this.users.splice(0);
@@ -59,6 +60,7 @@ export class TestService {
     this.ranks.splice(0);
     this.currentSeasonRanks.splice(0);
     this.currentSeason = null;
+    this.games.splice(0);
   }
 
   async createProfileImages(): Promise<void> {
@@ -402,5 +404,24 @@ export class TestService {
       selectedOrder: 2,
     });
     return user;
+  }
+
+  /**생성된 유저의 게임 데이터 생성 1시즌당 3개의 겜데이터 생성  */
+  async createBasicUserGames(): Promise<Game[]> {
+    for (let i = 0; i < this.users.length; i++) {
+      for (const c of this.seasons) {
+        for (let j = 0; j < 3; j++) {
+          this.games.push(
+            await this.gameRepository.save({
+              season: c,
+              startTime: '2021-01-01',
+              playTime: 100,
+              type: 1,
+            }),
+          );
+        }
+      }
+    }
+    return this.games;
   }
 }
