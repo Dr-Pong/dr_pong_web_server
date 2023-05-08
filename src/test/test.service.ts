@@ -81,7 +81,7 @@ export class TestService {
       nickname: 'user' + index.toString(),
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
-      imageUrl: 'basicImage' + index.toString(),
+      image: this.profileImages[0],
     });
     this.users.push(user);
     return user;
@@ -107,7 +107,7 @@ export class TestService {
       nickname: 'user' + index.toString(),
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
-      imageUrl: null,
+      image: this.profileImages[0],
     });
     this.users.push(user);
     return user;

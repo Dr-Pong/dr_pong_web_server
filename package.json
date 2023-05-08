@@ -71,6 +71,11 @@
     "typescript": "^4.7.4"
   },
   "jest": {
+    "verbose": true,
+    "maxWorkers": 1,
+    "forceExit": true,
+    "preset": "ts-jest",
+    "testURL": "http://localhost/",
     "moduleFileExtensions": [
       "js",
       "json",
