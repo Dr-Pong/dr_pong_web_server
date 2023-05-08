@@ -17,8 +17,6 @@ import { RanksTopDto } from './dto/ranks.top.dto';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { RanksBottomDto } from './dto/ranks.bottom.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
-import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
-import { UserGame } from 'src/user-game/user-game.entity';
 
 describe('RankService', () => {
   let service: RankService;
