@@ -31,7 +31,9 @@ describe('UserAchievemetService', () => {
             if (!options) {
               throw new Error('Invalid options passed');
             }
-            return addTransactionalDataSource({ dataSource: new DataSource(options) });
+            return addTransactionalDataSource({
+              dataSource: new DataSource(options),
+            });
           },
         }),
         UserAchievementModule,
@@ -57,7 +59,7 @@ describe('UserAchievemetService', () => {
   beforeEach(async () => {
     await testData.createProfileImages();
     await testData.createBasicCollectable();
-  })
+  });
 
   afterEach(async () => {
     // afterEach가 없어서 일단 만들었는데 여기가 맞는지 모르겠음
@@ -69,13 +71,15 @@ describe('UserAchievemetService', () => {
   afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
-  })
+  });
 
   it('유저 이모지 전체 Get(selected=false, valid case)', async () => {
     //given
     //false로 들어온 경우
-    const achievementSelectedWithUser = await testData.createUserWithCollectables();
-    const noAchievementSelectedWithUser = await testData.createUserWithUnSelectedAchievements();
+    const achievementSelectedWithUser =
+      await testData.createUserWithCollectables();
+    const noAchievementSelectedWithUser =
+      await testData.createUserWithUnSelectedAchievements();
     const userWithOutAchievement = await testData.createBasicUser();
 
     //user[0]친구가 : selected와 acheieved, unacheieved가 전부 있음
@@ -94,31 +98,57 @@ describe('UserAchievemetService', () => {
 
     //When
     const selectedCase = await service.getUserAchievementsAll(mixedRequest);
-    const nonSelectedCase = await service.getUserAchievementsAll(unSelectedRequest);
+    const nonSelectedCase = await service.getUserAchievementsAll(
+      unSelectedRequest,
+    );
     const noEmojiCase = await service.getUserAchievementsAll(noEmojiRequest);
 
     //then
     expect(selectedCase.achievements.length).toBe(testData.achievements.length);
-    expect(selectedCase.achievements.some(item => item.status === "selected")).toBe(true);
-    expect(selectedCase.achievements.some(item => item.status === "achieved")).toBe(true);
-    expect(selectedCase.achievements.some(item => item.status === "unachieved")).toBe(true);
-    expect(nonSelectedCase.achievements.length).toBe(testData.achievements.length);
-    expect(nonSelectedCase.achievements.some(item => item.status === "selected")).toBe(false);
-    expect(nonSelectedCase.achievements.some(item => item.status === "achieved")).toBe(true);
-    expect(nonSelectedCase.achievements.some(item => item.status === "unachieved")).toBe(true);
+    expect(
+      selectedCase.achievements.some((item) => item.status === 'selected'),
+    ).toBe(true);
+    expect(
+      selectedCase.achievements.some((item) => item.status === 'achieved'),
+    ).toBe(true);
+    expect(
+      selectedCase.achievements.some((item) => item.status === 'unachieved'),
+    ).toBe(true);
+    expect(nonSelectedCase.achievements.length).toBe(
+      testData.achievements.length,
+    );
+    expect(
+      nonSelectedCase.achievements.some((item) => item.status === 'selected'),
+    ).toBe(false);
+    expect(
+      nonSelectedCase.achievements.some((item) => item.status === 'achieved'),
+    ).toBe(true);
+    expect(
+      nonSelectedCase.achievements.some((item) => item.status === 'unachieved'),
+    ).toBe(true);
     expect(noEmojiCase.achievements.length).toBe(testData.achievements.length);
-    expect(noEmojiCase.achievements.some(item => item.status === "selected")).toBe(false);
-    expect(noEmojiCase.achievements.some(item => item.status === "achieved")).toBe(false);
-    expect(noEmojiCase.achievements.some(item => item.status === "unachieved")).toBe(true);
+    expect(
+      noEmojiCase.achievements.some((item) => item.status === 'selected'),
+    ).toBe(false);
+    expect(
+      noEmojiCase.achievements.some((item) => item.status === 'achieved'),
+    ).toBe(false);
+    expect(
+      noEmojiCase.achievements.some((item) => item.status === 'unachieved'),
+    ).toBe(true);
   });
 
   it('유저 선택 이모지 Get (selected=true, valid case)', async () => {
     //given
-    const achievementSelectedWithUser = await testData.createUserWithCollectables();
-    const nonAchievementSelectedWithUser = await testData.createUserWithUnSelectedAchievements();
+    const achievementSelectedWithUser =
+      await testData.createUserWithCollectables();
+    const nonAchievementSelectedWithUser =
+      await testData.createUserWithUnSelectedAchievements();
     const userWithOutAchievement = await testData.createBasicUser();
-    const userWithReversedAchievement = await testData.createReverseSelectedAchievementUser();
-    const userWithMixedAchievement = await testData.createMixedSelectedAchievementUser();
+    const userWithReversedAchievement =
+      await testData.createReverseSelectedAchievementUser();
+    const userWithMixedAchievement =
+      await testData.createMixedSelectedAchievementUser();
 
     //when
 
@@ -136,15 +166,25 @@ describe('UserAchievemetService', () => {
 
     const reverseSelectedRequest: GetUserAchievementsDto = {
       userId: userWithReversedAchievement.id,
-    }
+    };
     const mixedSelectedRequest: GetUserAchievementsDto = {
       userId: userWithMixedAchievement.id,
-    }
-    const selectedCase = await service.getUserAchievementsSelected(selectedRequest);
-    const unSelectedCase = await service.getUserAchievementsSelected(unSelectedRequest);
-    const noEmojiCase = await service.getUserAchievementsSelected(nonSelectedRequest);
-    const reversedCase = await service.getUserAchievementsSelected(reverseSelectedRequest);
-    const mixedCase = await service.getUserAchievementsSelected(mixedSelectedRequest);
+    };
+    const selectedCase = await service.getUserAchievementsSelected(
+      selectedRequest,
+    );
+    const unSelectedCase = await service.getUserAchievementsSelected(
+      unSelectedRequest,
+    );
+    const noEmojiCase = await service.getUserAchievementsSelected(
+      nonSelectedRequest,
+    );
+    const reversedCase = await service.getUserAchievementsSelected(
+      reverseSelectedRequest,
+    );
+    const mixedCase = await service.getUserAchievementsSelected(
+      mixedSelectedRequest,
+    );
 
     //then
     expect(selectedCase.achievements.length).toBe(3);
@@ -181,7 +221,8 @@ describe('UserAchievemetService', () => {
     //given
     const orderedUser = await testData.createUserWithUnSelectedAchievements();
     const mixedUser = await testData.createUserWithUnSelectedAchievements();
-    const mixedWithNullUser = await testData.createUserWithUnSelectedAchievements();
+    const mixedWithNullUser =
+      await testData.createUserWithUnSelectedAchievements();
 
     // isSelected가 다 false인경우
     const orderedRequest: PatchUserAchievementsDto = {
@@ -204,11 +245,7 @@ describe('UserAchievemetService', () => {
 
     const mixedWithNullRequest: PatchUserAchievementsDto = {
       userId: mixedWithNullUser.id,
-      achievementsId: [
-        null,
-        testData.achievements[2].id,
-        null,
-      ],
+      achievementsId: [null, testData.achievements[2].id, null],
     };
 
     //when
@@ -218,18 +255,24 @@ describe('UserAchievemetService', () => {
     await service.patchUserAchievements(mixedOrderRequest);
     await service.patchUserAchievements(mixedWithNullRequest);
 
-    const orderedCase: UserAchievement[] = await userAchievementRepository.find({
-      where: { user: { id: orderedUser.id }, selectedOrder: Not(IsNull()) },
-      order: { selectedOrder: 'ASC' },
-    });
+    const orderedCase: UserAchievement[] = await userAchievementRepository.find(
+      {
+        where: { user: { id: orderedUser.id }, selectedOrder: Not(IsNull()) },
+        order: { selectedOrder: 'ASC' },
+      },
+    );
     const mixedCase: UserAchievement[] = await userAchievementRepository.find({
       where: { user: { id: mixedUser.id }, selectedOrder: Not(IsNull()) },
       order: { selectedOrder: 'ASC' },
     });
-    const mixeWithNullCase: UserAchievement[] = await userAchievementRepository.find({
-      where: { user: { id: mixedWithNullUser.id }, selectedOrder: Not(IsNull()) },
-      order: { selectedOrder: 'ASC' },
-    })
+    const mixeWithNullCase: UserAchievement[] =
+      await userAchievementRepository.find({
+        where: {
+          user: { id: mixedWithNullUser.id },
+          selectedOrder: Not(IsNull()),
+        },
+        order: { selectedOrder: 'ASC' },
+      });
 
     expect(orderedCase.length).toBe(3);
     expect(orderedCase[0].selectedOrder).toBe(0);
@@ -254,41 +297,44 @@ describe('UserAchievemetService', () => {
   it('유저 이모지 Patch (invalid case)', async () => {
     //given
     const oneValidTwoInvalidUser = await testData.createUserWithCollectables();
-    const allInvalidUser = await testData.createUserWithUnSelectedAchievements();
+    const allInvalidUser =
+      await testData.createUserWithUnSelectedAchievements();
 
     // isSelected가 다 false인경우
     const oneValidTwoInvalidRequest: PatchUserAchievementsDto = {
       userId: oneValidTwoInvalidUser.id,
-      achievementsId: [
-        testData.achievements[0].id,
-        null,
-        10000000,
-      ],
+      achievementsId: [testData.achievements[0].id, null, 10000000],
     };
 
     const allInvalidRequest: PatchUserAchievementsDto = {
       userId: allInvalidUser.id,
-      achievementsId: [
-        -1,
-        -2,
-        -3,
-      ],
+      achievementsId: [-1, -2, -3],
     };
 
-    const pastTitle = await userAchievementRepository.find({ where: { user: { id: oneValidTwoInvalidUser.id }, selectedOrder: Not(IsNull()) } });
+    const pastTitle = await userAchievementRepository.find({
+      where: {
+        user: { id: oneValidTwoInvalidUser.id },
+        selectedOrder: Not(IsNull()),
+      },
+    });
 
     //when
     //validUpdateDto1 에대한 실행
     await expect(
-      service.patchUserAchievements(oneValidTwoInvalidRequest)
-      ,).rejects.toThrow(new BadRequestException());
+      service.patchUserAchievements(oneValidTwoInvalidRequest),
+    ).rejects.toThrow(new BadRequestException());
     //validUpdateDto2 에대한 실행
     await expect(
-      service.patchUserAchievements(allInvalidRequest)
-      ,).rejects.toThrow(new BadRequestException());
+      service.patchUserAchievements(allInvalidRequest),
+    ).rejects.toThrow(new BadRequestException());
 
-    const afterPatch = await userAchievementRepository.find({ where: { user: { id: oneValidTwoInvalidUser.id }, selectedOrder: Not(IsNull()) } });
+    const afterPatch = await userAchievementRepository.find({
+      where: {
+        user: { id: oneValidTwoInvalidUser.id },
+        selectedOrder: Not(IsNull()),
+      },
+    });
     expect(pastTitle.length).toBe(afterPatch.length);
-    expect(pastTitle[0].id).toBe(afterPatch[0].id)
+    expect(pastTitle[0].id).toBe(afterPatch[0].id);
   });
 });
