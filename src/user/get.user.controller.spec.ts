@@ -56,6 +56,13 @@ describe('UserController', () => {
     await dataSources.synchronize(true);
   });
 
+  afterEach(async () => {
+    testService.clear();
+    userService.users.clear();
+    jest.resetAllMocks();
+    await dataSources.synchronize(true);
+  });
+
   describe('GET tests', () => {
     it('GET /users/me', async () => {
       // const response = (await request(app.getHttpServer()).get('/users/me')).header(

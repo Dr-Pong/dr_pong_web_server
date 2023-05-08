@@ -1,8 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import {
-  Transactional,
-  IsolationLevel,
-} from 'typeorm-transactional'
+import { Transactional, IsolationLevel } from 'typeorm-transactional';
 import { UserAchievement } from './user-achievement.entity';
 import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
 import {
@@ -21,14 +18,16 @@ export class UserAchievementService {
   constructor(
     private userAchievementRepository: UserAchievementRepository,
     private achievementRepository: AchievementRepository,
-  ) { }
+  ) {}
 
   async getUserAchievementsAll(
     getDto: GetUserAchievementsDto,
   ): Promise<UserAchievementsDto> {
     //achieved이고 selected되지 않은 업적 return
-    const allAchievement: Achievement[] = await this.achievementRepository.findAll();
-    const userAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserId(getDto.userId);
+    const allAchievement: Achievement[] =
+      await this.achievementRepository.findAll();
+    const userAchievement: UserAchievement[] =
+      await this.userAchievementRepository.findAllByUserId(getDto.userId);
 
     const achievements: UserAchievementDto[] = [];
     const status = new UserCollectablesStatus(allAchievement.length);
@@ -55,7 +54,10 @@ export class UserAchievementService {
     getDto: GetUserAchievementsDto,
   ): Promise<UserAchievementsDto> {
     //achieved이고 selected된 업적 return
-    const selectAchievement = await this.userAchievementRepository.findAllByUserIdAndSelected(getDto.userId);
+    const selectAchievement =
+      await this.userAchievementRepository.findAllByUserIdAndSelected(
+        getDto.userId,
+      );
 
     const achievements: UserAchievementDto[] = [null, null, null];
 
@@ -78,32 +80,38 @@ export class UserAchievementService {
   async patchUserAchievements(
     patchDto: PatchUserAchievementsDto,
   ): Promise<void> {
-    try {
-      const oldAchievements: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndSelected(patchDto.userId);
-      for (const c of oldAchievements) {
-        await this.userAchievementRepository.updateSelectedOrderNull(c);
-      }
-
-      const toChangeAchievement: UserAchievement[] = await this.userAchievementRepository.findAllByUserIdAndAchievementIds(patchDto.userId, patchDto.achievementsId);
-      const countNumbers = patchDto.achievementsId.filter(
-        (elem) => typeof elem === 'number',
-      ).length;
-      if (countNumbers !== toChangeAchievement.length) {
-        throw new BadRequestException('No such achievement');
-      }
-
-      for (const c of toChangeAchievement) {
-        let i = 0;
-        for (const d of patchDto.achievementsId) {
-          if (c.achievement.id === d) {
-            await this.userAchievementRepository.updateSelectedOrder(c, i);
-            break;
-          }
-          i++;
-        }
-      }
-    } catch (error) {
-      throw new BadRequestException();
+    const oldAchievements: UserAchievement[] =
+      await this.userAchievementRepository.findAllByUserIdAndSelected(
+        patchDto.userId,
+      );
+    for (const c of oldAchievements) {
+      await this.userAchievementRepository.updateSelectedOrderNull(c);
     }
+
+    const toChangeAchievement: UserAchievement[] =
+      await this.userAchievementRepository.findAllByUserIdAndAchievementIds(
+        patchDto.userId,
+        patchDto.achievementsId,
+      );
+    const countNumbers = patchDto.achievementsId.filter(
+      (elem) => typeof elem === 'number',
+    ).length;
+    if (countNumbers !== toChangeAchievement.length) {
+      throw new BadRequestException('No such achievement');
+    }
+
+    for (const c of toChangeAchievement) {
+      let i = 0;
+      for (const d of patchDto.achievementsId) {
+        if (c.achievement.id === d) {
+          await this.userAchievementRepository.updateSelectedOrder(c, i);
+          break;
+        }
+        i++;
+      }
+    }
+  }
+  catch(error) {
+    throw new BadRequestException();
   }
 }
