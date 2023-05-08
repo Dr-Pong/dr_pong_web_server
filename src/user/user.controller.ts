@@ -50,7 +50,7 @@ export class UserController {
     private userAchievementService: UserAchievementService,
     private userEmojiService: UserEmojiService,
     private userTitleService: UserTitleService,
-  ) { }
+  ) {}
 
   @Get('/:nickname/detail')
   async userDetailByNicknameGet(@Param('nickname') nickname: string) {
@@ -93,11 +93,11 @@ export class UserController {
     };
     const achievements = selected
       ? await this.userAchievementService.getUserAchievementsSelected(
-        getUserAchievementDto,
-      )
+          getUserAchievementDto,
+        )
       : await this.userAchievementService.getUserAchievementsAll(
-        getUserAchievementDto,
-      );
+          getUserAchievementDto,
+        );
     const responseDto: UserAchievementsResponseDto = {
       achievements: achievements.achievements,
     };
@@ -182,7 +182,7 @@ export class UserController {
     );
     const patchUserImageDto: PatchUserImageDto = {
       userId: userInfoDto.id,
-      imageId: patchRequestDto.id,
+      imageId: patchRequestDto.imgId,
     };
     await this.userService.patchUserImage(patchUserImageDto);
   }
