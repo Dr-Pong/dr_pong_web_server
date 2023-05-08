@@ -31,7 +31,4 @@ export class UserGame extends BaseTimeEntity {
 
   @Column()
   lpChange: number;
-
-  @Column()
-  lpResult: number;
 }

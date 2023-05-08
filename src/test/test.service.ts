@@ -3,12 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { Game } from 'src/game/game.entity';
+import { GAMETYPE_NORMAL } from 'src/global/type/type.game';
+import {
+  GAMERESULT_LOSE,
+  GAMERESULT_WIN,
+} from 'src/global/type/type.game.result';
+import { ROLETYPE_MEMBER } from 'src/global/type/type.user.roletype';
 import { ProfileImage } from 'src/profile-image/profile-image.entity';
 import { Rank } from 'src/rank/rank.entity';
 import { Season } from 'src/season/season.entity';
 import { Title } from 'src/title/title.entity';
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
+import { UserGame } from 'src/user-game/user-game.entity';
 import { UserTitle } from 'src/user-title/user-title.entity';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
@@ -38,7 +45,9 @@ export class TestService {
     private profileImageRepository: Repository<ProfileImage>,
     @InjectRepository(Game)
     private gameRepository: Repository<Game>,
-  ) { }
+    @InjectRepository(UserGame)
+    private userGameRepository: Repository<UserGame>,
+  ) {}
   users: User[] = [];
   profileImages: ProfileImage[] = [];
   emojis: Emoji[] = [];
@@ -48,6 +57,8 @@ export class TestService {
   ranks: Rank[] = [];
   currentSeasonRanks: Rank[] = [];
   currentSeason: Season;
+  games: Game[] = [];
+  userGames: UserGame[] = [];
 
   clear(): void {
     this.users.splice(0);
@@ -59,6 +70,7 @@ export class TestService {
     this.ranks.splice(0);
     this.currentSeasonRanks.splice(0);
     this.currentSeason = null;
+    this.games.splice(0);
   }
 
   async createProfileImages(): Promise<void> {
@@ -82,6 +94,7 @@ export class TestService {
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
       image: this.profileImages[0],
+      roleType: ROLETYPE_MEMBER,
     });
     this.users.push(user);
     return user;
@@ -402,5 +415,38 @@ export class TestService {
       selectedOrder: 2,
     });
     return user;
+  }
+
+  /**게임 만들기 */
+  async createBasicGames(): Promise<Game[]> {
+    for (let i = 0; i < 3; i++) {
+      this.games.push(
+        await this.gameRepository.save({
+          season: this.currentSeason,
+          startTime: '2021-01-01',
+          playTime: 10,
+          type: GAMETYPE_NORMAL,
+        }),
+      );
+    }
+    return this.games;
+  }
+
+  /**생성된 유저의 게임 데이터 생성 1시즌당 3개의 겜데이터 생성  */
+  async createBasicUserGames(): Promise<UserGame[]> {
+    for (let i = 0; i < this.users.length; i++) {
+      for (let j = 0; j < 3; j++) {
+        this.userGames.push(
+          await this.userGameRepository.save({
+            user: this.users[i],
+            game: this.games[j / 2],
+            result: i % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
+            score: i % 2 === 0 ? 10 : 0,
+            lpChange: i % 2 === 0 ? 10 : -10,
+          }),
+        );
+      }
+    }
+    return this.userGames;
   }
 }

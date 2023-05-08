@@ -13,6 +13,8 @@ import { RankTopDataDto, RanksTopDto } from './dto/ranks.top.dto';
 import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
 import { RankBottomDataDto, RanksBottomDto } from './dto/ranks.bottom.dto';
+import { RankSeasonStatDto } from './dto/rank.season.stat.dto';
+import { RankBestStatDto } from './dto/rank.best.stat.dto';
 
 @Injectable()
 export class RankService {
@@ -38,6 +40,71 @@ export class RankService {
     }
     const responseDto: UserRankStatDto = {
       record: userRanks.ladderPoint,
+    };
+    return responseDto;
+  }
+
+  /** 유저 현시즌 record rank tier반환 */
+  async getUserRankTierBySeason(
+    getDto: GetUserRankStatDto,
+  ): Promise<RankSeasonStatDto> {
+    const userRanks = await this.rankRepository.findByUserIdAndSeasonId(
+      getDto.userId,
+      getDto.seasonId,
+    );
+
+    if (!userRanks) {
+      const responseDto: RankSeasonStatDto = {
+        record: null,
+        rank: null,
+        tier: 'egg',
+      };
+      return responseDto;
+    }
+
+    const userRank = await this.rankRepository.findRankByLadderPoint(
+      userRanks.ladderPoint,
+    );
+    const userTier = await this.rankRepository.findTierByLadderPoint(
+      userRanks.ladderPoint,
+    );
+
+    const responseDto: RankSeasonStatDto = {
+      record: userRanks.ladderPoint,
+      rank: userRank,
+      tier: userTier,
+    };
+    return responseDto;
+  }
+
+  /** 유저 최고 record rank tier반환*/
+  async getUserBestRankTier(
+    getDto: GetUserBestRankStatDto,
+  ): Promise<RankBestStatDto> {
+    const userRanks = await this.rankRepository.findHighestRankByUserId(
+      getDto.userId,
+    );
+
+    if (!userRanks) {
+      const responseDto: RankBestStatDto = {
+        record: null,
+        rank: null,
+        tier: 'egg',
+      };
+      return responseDto;
+    }
+
+    const userRank = await this.rankRepository.findBestRankByLadderPoint(
+      userRanks.highestPoint,
+    );
+    const userTier = await this.rankRepository.findBestTierByLadderPoint(
+      userRanks.highestPoint,
+    );
+
+    const responseDto: RankBestStatDto = {
+      record: userRanks.highestPoint,
+      rank: userRank,
+      tier: userTier,
     };
     return responseDto;
   }
