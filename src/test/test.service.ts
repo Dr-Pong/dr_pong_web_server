@@ -4,7 +4,10 @@ import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { Game } from 'src/game/game.entity';
 import { GAMETYPE_NORMAL } from 'src/global/type/type.game';
-import { GAMERESULT_WIN } from 'src/global/type/type.game.result';
+import {
+  GAMERESULT_LOSE,
+  GAMERESULT_WIN,
+} from 'src/global/type/type.game.result';
 import { ROLETYPE_MEMBER } from 'src/global/type/type.user.roletype';
 import { ProfileImage } from 'src/profile-image/profile-image.entity';
 import { Rank } from 'src/rank/rank.entity';
@@ -434,15 +437,27 @@ export class TestService {
     for (let i = 0; i < this.users.length; i++) {
       for (const c of this.seasons) {
         for (let j = 0; j < 3; j++) {
-          this.userGames.push(
-            await this.userGameRepository.save({
-              user: this.users[i],
-              game: this.games[j / 2],
-              result: GAMERESULT_WIN,
-              score: 10,
-              lpChange: 10,
-            }),
-          );
+          if (i % 2 == 0) {
+            this.userGames.push(
+              await this.userGameRepository.save({
+                user: this.users[i],
+                game: this.games[j / 2],
+                result: GAMERESULT_WIN,
+                score: 10,
+                lpChange: 10,
+              }),
+            );
+          } else {
+            this.userGames.push(
+              await this.userGameRepository.save({
+                user: this.users[i],
+                game: this.games[j / 2],
+                result: GAMERESULT_LOSE,
+                score: 10,
+                lpChange: -10,
+              }),
+            );
+          }
         }
       }
     }
