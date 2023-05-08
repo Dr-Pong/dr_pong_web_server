@@ -18,7 +18,7 @@ export class UserAchievementService {
   constructor(
     private userAchievementRepository: UserAchievementRepository,
     private achievementRepository: AchievementRepository,
-  ) {}
+  ) { }
 
   async getUserAchievementsAll(
     getDto: GetUserAchievementsDto,
@@ -97,7 +97,7 @@ export class UserAchievementService {
       (elem) => typeof elem === 'number',
     ).length;
     if (countNumbers !== toChangeAchievement.length) {
-      throw new BadRequestException('No such achievement');
+      throw new BadRequestException();
     }
 
     for (const c of toChangeAchievement) {
