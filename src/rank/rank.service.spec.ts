@@ -122,7 +122,7 @@ describe('RankService', () => {
         season: { id: currentSeason.id },
       },
       order: {
-        ladderPoint: 'DESC',
+        ladderPoint: 'ASC',
       },
     });
 
@@ -204,7 +204,7 @@ describe('RankService', () => {
         user: { id: testData.users[0].id },
       },
       order: {
-        highestPoint: 'DESC',
+        highestPoint: 'ASC',
       },
     });
 
