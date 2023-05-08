@@ -1,4 +1,4 @@
-export class UserGameStatDto {
+export class UserGameTotalStatDto {
   winRate: number;
   win: number;
   ties: number;
