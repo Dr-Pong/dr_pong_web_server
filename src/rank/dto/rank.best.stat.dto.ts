@@ -1,4 +1,11 @@
-import { TIER_DOCTOR, TIER_EGG, TierType } from 'src/global/type/type.tier';
+import {
+  TIER_BACHELOR,
+  TIER_DOCTOR,
+  TIER_EGG,
+  TIER_MASTER,
+  TIER_STUDENT,
+  TierType,
+} from 'src/global/type/type.tier';
 
 export class RankBestStatDto {
   record: number | null;
@@ -13,7 +20,18 @@ export class RankBestStatDto {
     };
   }
 
-  static nonDoctorUser(record: number, tier: TierType): RankBestStatDto {
+  static nonDoctorUser(record: number): RankBestStatDto {
+    let tier;
+    switch (true) {
+      case record >= Number(process.env.MASTER_CUT):
+        tier = TIER_MASTER;
+        break;
+      case record >= Number(process.env.BACHELOR_CUT):
+        tier = TIER_BACHELOR;
+        break;
+      default:
+        tier = TIER_STUDENT;
+    }
     return {
       record,
       rank: null,

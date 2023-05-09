@@ -43,29 +43,13 @@ export class RankService {
       return RankBestStatDto.eggUser();
     }
 
-    let userTier;
-    const ladderPoint = userRanks.ladderPoint;
-    switch (true) {
-      case ladderPoint >= Number(process.env.DOCTOR_CUT):
-        userTier = TIER_DOCTOR;
-        break;
-      case ladderPoint >= Number(process.env.MASTER_CUT):
-        userTier = TIER_MASTER;
-        break;
-      case ladderPoint >= Number(process.env.BACHELOR_CUT):
-        userTier = TIER_BACHELOR;
-        break;
-      default:
-        userTier = TIER_STUDENT;
-    }
-
-    if (userTier === TIER_DOCTOR) {
+    if (userRanks.ladderPoint >= Number(process.env.DOCTOR_CUT)) {
       const userRank = await this.rankRepository.findRankByLadderPoint(
         userRanks.ladderPoint,
       );
       return RankBestStatDto.doctorUser(userRanks.ladderPoint, userRank);
     } else {
-      return RankBestStatDto.nonDoctorUser(userRanks.ladderPoint, userTier);
+      return RankBestStatDto.nonDoctorUser(userRanks.ladderPoint);
     }
   }
 
@@ -81,30 +65,13 @@ export class RankService {
       return RankBestStatDto.eggUser();
     }
 
-    let userTier;
-    const highestPoint = userRanks.highestPoint;
-
-    switch (true) {
-      case highestPoint >= Number(process.env.DOCTOR_CUT):
-        userTier = TIER_DOCTOR;
-        break;
-      case highestPoint >= Number(process.env.MASTER_CUT):
-        userTier = TIER_MASTER;
-        break;
-      case highestPoint >= Number(process.env.BACHELOR_CUT):
-        userTier = TIER_BACHELOR;
-        break;
-      default:
-        userTier = TIER_STUDENT;
-    }
-
-    if (userTier === TIER_DOCTOR) {
+    if (userRanks.highestPoint >= Number(process.env.DOCTOR_CUT)) {
       const userRank = await this.rankRepository.findRankByLadderPoint(
         userRanks.highestPoint,
       );
       return RankBestStatDto.doctorUser(userRanks.highestPoint, userRank);
     } else {
-      return RankBestStatDto.nonDoctorUser(userRanks.highestPoint, userTier);
+      return RankBestStatDto.nonDoctorUser(userRanks.highestPoint);
     }
   }
 
