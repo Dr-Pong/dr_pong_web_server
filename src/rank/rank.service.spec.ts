@@ -8,7 +8,7 @@ import { AppModule } from 'src/app.module';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { GetUserRankStatDto } from './dto/get.user.rank.stat.dto';
-import { GetUserBestRankStatDto } from './dto/get.user.best.rnak.stat.dto';
+import { GetUserBestRankStatDto } from './dto/get.user.best.rank.stat.dto';
 import { TestService } from 'src/test/test.service';
 import { TestModule } from 'src/test/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
