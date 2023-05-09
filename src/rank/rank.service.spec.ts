@@ -73,7 +73,6 @@ describe('RankService', () => {
     await testData.createBasicRank();
     await testData.createCurrentSeasonRank();
     await testData.createBasicGames();
-    await testData.createBasicUserGames();
   });
 
   afterEach(async () => {

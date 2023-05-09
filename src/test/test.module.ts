@@ -45,8 +45,8 @@ import { UserGame } from 'src/user-game/user-game.entity';
       UserAchievement,
       Emoji,
       UserEmoji,
-      ProfileImage,
       UserGame,
+      ProfileImage,
     ]),
   ],
 })

@@ -1,4 +1,5 @@
 import { BaseTimeEntity } from 'src/base-entity/base-time.entity';
+import { GameType } from 'src/global/type/type.game';
 import { Season } from 'src/season/season.entity';
 import {
   Column,
@@ -24,5 +25,5 @@ export class Game extends BaseTimeEntity {
   playTime: number;
 
   @Column({ name: 'type', type: 'varchar' })
-  type: string;
+  type: GameType;
 }

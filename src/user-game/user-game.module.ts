@@ -5,15 +5,17 @@ import { Game } from 'src/game/game.entity';
 import { User } from 'src/user/user.entity';
 import { UserGame } from './user-game.entity';
 import { UserRepository } from 'src/user/user.repository';
+import { UserGameRepository } from './user-game.repository';
+import { Season } from 'src/season/season.entity';
+import { SeasonRepository } from 'src/season/season.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Game, UserGame])],
+  imports: [TypeOrmModule.forFeature([UserGame, Season])],
   providers: [
-    UserGameService,
     UserGameRepository,
-    GameRepository,
-    UserRepository,
+    UserGameService,
+    SeasonRepository
   ],
   exports: [UserGameService],
 })
-export class UserGameModule {}
+export class UserGameModule { }
