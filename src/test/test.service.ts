@@ -418,7 +418,9 @@ export class TestService {
   }
 
   /**게임 만들기 */
-  async createBasicGames(): Promise<Game[]> {
+  async createBasicGames(): Promise<void> {
+    await this.createBasicUser();
+    await this.createBasicUser();
     for (let i = 0; i < 3; i++) {
       this.games.push(
         await this.gameRepository.save({
@@ -429,11 +431,6 @@ export class TestService {
         }),
       );
     }
-    return this.games;
-  }
-
-  /**생성된 유저의 게임 데이터 생성 1시즌당 3개의 겜데이터 생성  */
-  async createBasicUserGames(): Promise<UserGame[]> {
     for (let j = 0; j < 6; j++) {
       this.userGames.push(
         await this.userGameRepository.save({
@@ -445,7 +442,6 @@ export class TestService {
         }),
       );
     }
-    return this.userGames;
   }
 
   /** 유저 2명이 진행한 게임 n개 만들기 (노말, 랭크 섞어서) */
