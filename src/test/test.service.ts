@@ -465,11 +465,18 @@ export class TestService {
     }
     for (let i = 0; i < n; i++) {
       await this.userGameRepository.save({
-        user: users[i % 2],
+        user: users[0],
         game: this.games[i],
-        result: i % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
-        score: i % 2 === 0 ? 10 : 0,
-        lpChange: this.games[i].type === GAMETYPE_RANK ? (i % 2 === 0 ? 10 : -10) : 0,
+        result: GAMERESULT_WIN,
+        score: 10,
+        lpChange: this.games[i].type === GAMETYPE_RANK ? 10 : 0,
+      })
+      await this.userGameRepository.save({
+        user: users[1],
+        game: this.games[i],
+        result: GAMERESULT_LOSE,
+        score: 0,
+        lpChange: this.games[i].type === GAMETYPE_RANK ? -10 : 0,
       })
     }
   }
