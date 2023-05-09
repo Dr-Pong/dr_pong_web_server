@@ -128,14 +128,19 @@ describe('RankService', () => {
     );
 
     let testTier: string;
-
-    if (Number(process.env.DOCTOR_CUT) <= testData.ranks[0].ladderPoint)
-      testTier = 'doctor';
-    else if (Number(process.env.MASTER_CUT) <= testData.ranks[0].ladderPoint)
-      testTier = 'master';
-    else if (Number(process.env.BACHELOR_CUT) <= testData.ranks[0].ladderPoint)
-      testTier = 'bachelor';
-    else testTier = 'student';
+    switch (true) {
+      case testData.ranks[0].ladderPoint >= Number(process.env.DOCTOR_CUT):
+        testTier = 'doctor';
+        break;
+      case testData.ranks[0].ladderPoint >= Number(process.env.MASTER_CUT):
+        testTier = 'master';
+        break;
+      case testData.ranks[0].ladderPoint >= Number(process.env.BACHELOR_CUT):
+        testTier = 'bachelor';
+        break;
+      default:
+        testTier = 'student';
+    }
 
     //랭크데이터가 잘 반환되는지 확인
     expect(recordRankTier.record).toEqual(testData.ranks[0].ladderPoint);
@@ -182,14 +187,19 @@ describe('RankService', () => {
     );
 
     let testTier: string;
-
-    if (Number(process.env.DOCTOR_CUT) <= testData.ranks[0].highestPoint)
-      testTier = 'doctor';
-    else if (Number(process.env.MASTER_CUT) <= testData.ranks[0].highestPoint)
-      testTier = 'master';
-    else if (Number(process.env.BACHELOR_CUT) <= testData.ranks[0].highestPoint)
-      testTier = 'bachelor';
-    else testTier = 'student';
+    switch (true) {
+      case testData.ranks[0].ladderPoint >= Number(process.env.DOCTOR_CUT):
+        testTier = 'doctor';
+        break;
+      case testData.ranks[0].ladderPoint >= Number(process.env.MASTER_CUT):
+        testTier = 'master';
+        break;
+      case testData.ranks[0].ladderPoint >= Number(process.env.BACHELOR_CUT):
+        testTier = 'bachelor';
+        break;
+      default:
+        testTier = 'student';
+    }
 
     console.log('RRT', recordRankTier);
     //랭크데이터가 잘 반환되는지 확인
