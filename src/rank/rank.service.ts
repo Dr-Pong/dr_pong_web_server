@@ -5,7 +5,7 @@ import { Rank } from './rank.entity';
 import { Season } from 'src/season/season.entity';
 import { GetUserRankStatDto } from './dto/get.user.rank.stat.dto';
 import { UserRankStatDto } from './dto/user.rank.stat.dto';
-import { GetUserBestRankStatDto } from './dto/get.user.best.rnak.stat.dto';
+import { GetUserBestRankStatDto } from './dto/get.user.best.rank.stat.dto';
 import { RankRepository } from './rank.repository';
 import { SeasonRepository } from 'src/season/season.repository';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
@@ -15,6 +15,13 @@ import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
 import { RankBottomDataDto, RanksBottomDto } from './dto/ranks.bottom.dto';
 import { RankSeasonStatDto } from './dto/rank.season.stat.dto';
 import { RankBestStatDto } from './dto/rank.best.stat.dto';
+import dotenv from 'dotenv';
+import {
+  TIER_BACHELOR,
+  TIER_DOCTOR,
+  TIER_MASTER,
+  TIER_STUDENT,
+} from 'src/global/type/type.tier';
 
 @Injectable()
 export class RankService {
@@ -26,27 +33,6 @@ export class RankService {
   //get 유저 현시즌 랭크 데이터
   async getUserRankBySeason(
     getDto: GetUserRankStatDto,
-  ): Promise<UserRankStatDto> {
-    const userRanks = await this.rankRepository.findByUserIdAndSeasonId(
-      getDto.userId,
-      getDto.seasonId,
-    );
-
-    if (!userRanks) {
-      const responseDto: UserRankStatDto = {
-        record: null,
-      };
-      return responseDto;
-    }
-    const responseDto: UserRankStatDto = {
-      record: userRanks.ladderPoint,
-    };
-    return responseDto;
-  }
-
-  /** 유저 현시즌 record rank tier반환 */
-  async getUserRankTierBySeason(
-    getDto: GetUserRankStatDto,
   ): Promise<RankSeasonStatDto> {
     const userRanks = await this.rankRepository.findByUserIdAndSeasonId(
       getDto.userId,
@@ -54,31 +40,21 @@ export class RankService {
     );
 
     if (!userRanks) {
-      const responseDto: RankSeasonStatDto = {
-        record: null,
-        rank: null,
-        tier: 'egg',
-      };
-      return responseDto;
+      return RankBestStatDto.eggUser();
     }
 
-    const userRank = await this.rankRepository.findRankByLadderPoint(
-      userRanks.ladderPoint,
-    );
-    const userTier = await this.rankRepository.findTierByLadderPoint(
-      userRanks.ladderPoint,
-    );
-
-    const responseDto: RankSeasonStatDto = {
-      record: userRanks.ladderPoint,
-      rank: userRank,
-      tier: userTier,
-    };
-    return responseDto;
+    if (userRanks.ladderPoint >= Number(process.env.DOCTOR_CUT)) {
+      const userRank = await this.rankRepository.findRankByLadderPoint(
+        userRanks.ladderPoint,
+      );
+      return RankBestStatDto.doctorUser(userRanks.ladderPoint, userRank);
+    } else {
+      return RankBestStatDto.nonDoctorUser(userRanks.ladderPoint);
+    }
   }
 
   /** 유저 최고 record rank tier반환*/
-  async getUserBestRankTier(
+  async getUserBestRank(
     getDto: GetUserBestRankStatDto,
   ): Promise<RankBestStatDto> {
     const userRanks = await this.rankRepository.findHighestRankByUserId(
@@ -86,48 +62,17 @@ export class RankService {
     );
 
     if (!userRanks) {
-      const responseDto: RankBestStatDto = {
-        record: null,
-        rank: null,
-        tier: 'egg',
-      };
-      return responseDto;
+      return RankBestStatDto.eggUser();
     }
 
-    const userRank = await this.rankRepository.findBestRankByLadderPoint(
-      userRanks.highestPoint,
-    );
-    const userTier = await this.rankRepository.findBestTierByLadderPoint(
-      userRanks.highestPoint,
-    );
-
-    const responseDto: RankBestStatDto = {
-      record: userRanks.highestPoint,
-      rank: userRank,
-      tier: userTier,
-    };
-    return responseDto;
-  }
-
-  //유저 시즌 최고점 랭크데이터
-  async getUserBestRank(
-    getDto: GetUserBestRankStatDto,
-  ): Promise<UserRankStatDto> {
-    const userRanks = await this.rankRepository.findHighestRankByUserId(
-      getDto.userId,
-    );
-
-    if (!userRanks) {
-      const responseDto: UserRankStatDto = {
-        record: null,
-      };
-      return responseDto;
+    if (userRanks.highestPoint >= Number(process.env.DOCTOR_CUT)) {
+      const userRank = await this.rankRepository.findRankByLadderPoint(
+        userRanks.highestPoint,
+      );
+      return RankBestStatDto.doctorUser(userRanks.highestPoint, userRank);
+    } else {
+      return RankBestStatDto.nonDoctorUser(userRanks.highestPoint);
     }
-
-    const responseDto: UserRankStatDto = {
-      record: userRanks.highestPoint,
-    };
-    return responseDto;
   }
 
   //상위 랭크 카운트 만큼 랭크 정보를 가져옴

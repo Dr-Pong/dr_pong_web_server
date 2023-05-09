@@ -24,9 +24,7 @@ describe('UserController', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        AppModule
-      ],
+      imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -41,13 +39,13 @@ describe('UserController', () => {
   beforeEach(async () => {
     await testService.createProfileImages();
     await testService.createBasicCollectable();
-  })
+  });
 
   afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
     await app.close();
-  })
+  });
 
   afterEach(async () => {
     testService.clear();
@@ -92,8 +90,7 @@ describe('UserController', () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/detail',
         );
-        // console.log('없는경우user', user);
-        // console.log('없는경우', response.body);
+
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
         expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
@@ -117,21 +114,34 @@ describe('UserController', () => {
       });
     });
 
-    describe('GET /users/{nickname}/stat', () => {
-      // it('users/{nickname}/stat', async () => {
-      //   // const user: User = await testService.createBasicUser();
-      //   // await testService.createBasicSeasons(3);
-      //   // await testService.createBasicRank();
-      //   // const response = await request(app.getHttpServer()).get(
-      //   //   '/users/' + user.nickname + '/stat',
-      //   // );
-      //   // console.log(response.body);
-      //   // console.log(response.statusCode);
-      //   // expect(response.statusCode).toBe(200);
-      //   // expect(response.body).toHaveProperty('totalStat'); //원하는 데이터 넣기
-      //   // expect(response.body).toHaveProperty('seasonStat'); //원하는 데이터 넣기
-      //   // expect(response.body).toHaveProperty('bestStat'); //원하는 데이터 넣기
-      // });
+    describe('GET /users/{nickname}/ranks/season', () => {
+      it('유저 현시즌 record rank tier반환', async () => {
+        const user: User = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/ranks/season',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('rank');
+        expect(response.body).toHaveProperty('tier');
+        expect(response.body).toHaveProperty('record');
+      });
+    });
+
+    describe('GET /users/{nickname}/ranks/total', () => {
+      it('역대 최고 랭크 요청', async () => {
+        const user: User = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/ranks/total',
+        );
+
+        // console.log('없는경우user', user);
+        // console.log('없는경우', response.body);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('rank');
+        expect(response.body).toHaveProperty('tier');
+        expect(response.body).toHaveProperty('record');
+      });
     });
 
     describe('/users/{nickname}/achievements?selected=true', () => {

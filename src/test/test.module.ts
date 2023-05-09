@@ -28,7 +28,7 @@ import { UserGame } from 'src/user-game/user-game.entity';
       Emoji,
       UserEmoji,
       ProfileImage,
-      UserGame
+      UserGame,
     ]),
   ],
   providers: [TestService],
@@ -45,8 +45,9 @@ import { UserGame } from 'src/user-game/user-game.entity';
       UserAchievement,
       Emoji,
       UserEmoji,
-      UserGame
+      UserGame,
+      ProfileImage,
     ]),
   ],
 })
-export class TestModule { }
+export class TestModule {}
