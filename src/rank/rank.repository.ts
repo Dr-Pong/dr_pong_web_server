@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { Rank } from './rank.entity';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
@@ -58,9 +58,9 @@ export class RankRepository {
 
   //** 래더 포인트로 순위 조회 */
   async findRankByLadderPoint(ladderPoint: number): Promise<number> {
-    const rank = await this.repository.find({
-      where: { ladderPoint: ladderPoint },
+    const rank = await this.repository.count({
+      where: { ladderPoint: MoreThan(ladderPoint) },
     });
-    return rank.length;
+    return rank + 1;
   }
 }
