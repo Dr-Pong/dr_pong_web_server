@@ -13,6 +13,7 @@ import { UserAchievementModule } from 'src/user-achievement/user-achievement.mod
 import { UserRepository } from './user.repository';
 import { ProfileImageRepository } from 'src/profile-image/profile-image.repository';
 import { ProfileImage } from 'src/profile-image/profile-image.entity';
+import { RankModule } from 'src/rank/rank.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ProfileImage } from 'src/profile-image/profile-image.entity';
     UserEmojiModule,
     UsertitleModule,
     AuthModule,
+    RankModule,
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository, ProfileImageRepository],
