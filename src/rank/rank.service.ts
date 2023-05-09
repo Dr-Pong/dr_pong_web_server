@@ -16,6 +16,12 @@ import { RankBottomDataDto, RanksBottomDto } from './dto/ranks.bottom.dto';
 import { RankSeasonStatDto } from './dto/rank.season.stat.dto';
 import { RankBestStatDto } from './dto/rank.best.stat.dto';
 import dotenv from 'dotenv';
+import {
+  TIER_BACHELOR,
+  TIER_DOCTOR,
+  TIER_MASTER,
+  TIER_STUDENT,
+} from 'src/global/type/type.tier';
 
 @Injectable()
 export class RankService {
@@ -34,47 +40,32 @@ export class RankService {
     );
 
     if (!userRanks) {
-      const responseDto: RankSeasonStatDto = {
-        record: null,
-        rank: null,
-        tier: 'egg',
-      };
-      return responseDto;
+      return RankBestStatDto.eggUser();
     }
 
-    let userTier: string;
+    let userTier;
     const ladderPoint = userRanks.ladderPoint;
     switch (true) {
       case ladderPoint >= Number(process.env.DOCTOR_CUT):
-        userTier = 'doctor';
+        userTier = TIER_DOCTOR;
         break;
       case ladderPoint >= Number(process.env.MASTER_CUT):
-        userTier = 'master';
+        userTier = TIER_MASTER;
         break;
       case ladderPoint >= Number(process.env.BACHELOR_CUT):
-        userTier = 'bachelor';
+        userTier = TIER_BACHELOR;
         break;
       default:
-        userTier = 'student';
+        userTier = TIER_STUDENT;
     }
 
-    if (userTier === 'doctor') {
+    if (userTier === TIER_DOCTOR) {
       const userRank = await this.rankRepository.findRankByLadderPoint(
         userRanks.ladderPoint,
       );
-      const responseDto: RankSeasonStatDto = {
-        record: userRanks.ladderPoint,
-        rank: userRank,
-        tier: userTier,
-      };
-      return responseDto;
+      return RankBestStatDto.doctorUser(userRanks.ladderPoint, userRank);
     } else {
-      const responseDto: RankSeasonStatDto = {
-        record: userRanks.ladderPoint,
-        rank: null,
-        tier: userTier,
-      };
-      return responseDto;
+      return RankBestStatDto.nonDoctorUser(userRanks.ladderPoint, userTier);
     }
   }
 
@@ -87,48 +78,33 @@ export class RankService {
     );
 
     if (!userRanks) {
-      const responseDto: RankBestStatDto = {
-        record: null,
-        rank: null,
-        tier: 'egg',
-      };
-      return responseDto;
+      return RankBestStatDto.eggUser();
     }
 
-    let userTier: string;
-    const ladderPoint = userRanks.highestPoint;
+    let userTier;
+    const highestPoint = userRanks.highestPoint;
 
     switch (true) {
-      case ladderPoint >= Number(process.env.DOCTOR_CUT):
-        userTier = 'doctor';
+      case highestPoint >= Number(process.env.DOCTOR_CUT):
+        userTier = TIER_DOCTOR;
         break;
-      case ladderPoint >= Number(process.env.MASTER_CUT):
-        userTier = 'master';
+      case highestPoint >= Number(process.env.MASTER_CUT):
+        userTier = TIER_MASTER;
         break;
-      case ladderPoint >= Number(process.env.BACHELOR_CUT):
-        userTier = 'bachelor';
+      case highestPoint >= Number(process.env.BACHELOR_CUT):
+        userTier = TIER_BACHELOR;
         break;
       default:
-        userTier = 'student';
+        userTier = TIER_STUDENT;
     }
 
-    if (userTier === 'doctor') {
+    if (userTier === TIER_DOCTOR) {
       const userRank = await this.rankRepository.findRankByLadderPoint(
         userRanks.highestPoint,
       );
-      const responseDto: RankSeasonStatDto = {
-        record: userRanks.highestPoint,
-        rank: userRank,
-        tier: userTier,
-      };
-      return responseDto;
+      return RankBestStatDto.doctorUser(userRanks.highestPoint, userRank);
     } else {
-      const responseDto: RankSeasonStatDto = {
-        record: userRanks.highestPoint,
-        rank: null,
-        tier: userTier,
-      };
-      return responseDto;
+      return RankBestStatDto.nonDoctorUser(userRanks.highestPoint, userTier);
     }
   }
 

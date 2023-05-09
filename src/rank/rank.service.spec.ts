@@ -188,13 +188,13 @@ describe('RankService', () => {
 
     let testTier: string;
     switch (true) {
-      case testData.ranks[0].ladderPoint >= Number(process.env.DOCTOR_CUT):
+      case testData.ranks[0].highestPoint >= Number(process.env.DOCTOR_CUT):
         testTier = 'doctor';
         break;
-      case testData.ranks[0].ladderPoint >= Number(process.env.MASTER_CUT):
+      case testData.ranks[0].highestPoint >= Number(process.env.MASTER_CUT):
         testTier = 'master';
         break;
-      case testData.ranks[0].ladderPoint >= Number(process.env.BACHELOR_CUT):
+      case testData.ranks[0].highestPoint >= Number(process.env.BACHELOR_CUT):
         testTier = 'bachelor';
         break;
       default:
@@ -202,6 +202,7 @@ describe('RankService', () => {
     }
 
     console.log('RRT', recordRankTier);
+
     //랭크데이터가 잘 반환되는지 확인
     expect(recordRankTier.record).toEqual(testData.ranks[0].highestPoint);
     expect(recordRankTier.rank).toEqual(testRank + 1);
