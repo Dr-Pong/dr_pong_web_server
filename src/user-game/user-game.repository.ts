@@ -4,6 +4,8 @@ import { UserGame } from "./user-game.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Game } from "src/game/game.entity";
 import { GetUserGameRecordsDto } from "./dto/get.user-game.records.dto";
+import { GetUserGameSeasonStatDto } from "./dto/get.user-game.season.stat.dto";
+import { FindUserGameSeasonStatDto } from "./dto/find.user-game.season.stat.dto";
 
 @Injectable()
 export class UserGameRepository {
@@ -11,6 +13,14 @@ export class UserGameRepository {
 		@InjectRepository(UserGame)
 		private readonly repository: Repository<UserGame>,
 	) { }
+
+	async findAllByUserId(userId: number): Promise<UserGame[]> {
+		return await this.repository.find({ where: { user: { id: userId } }, loadEagerRelations: false });
+	}
+
+	async findAllByUserIdAndSeasonId(getDto: FindUserGameSeasonStatDto): Promise<UserGame[]> {
+		return await this.repository.find({ where: { user: { id: getDto.userId } }, loadEagerRelations: false });
+	}
 
 	async findAllByUserIdAndGameIdLowerThanLastGameId(getDto: GetUserGameRecordsDto): Promise<any> {
 		const gameIds = this.repository
@@ -31,7 +41,6 @@ export class UserGameRepository {
 			.setParameters(gameIds.getParameters())
 			.getMany();
 
-		// console.log(gameIds.getParameters());
 		return userGames;
 	}
 }
