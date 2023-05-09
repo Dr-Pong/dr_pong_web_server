@@ -5,10 +5,10 @@ import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { TestModule } from 'src/test/test.module';
 import { TestService } from 'src/test/test.service';
-import { GetUserGameTotalStatDto } from './dto/get.user.game.total.stat.dto';
+import { GetUserGameTotalStatDto } from './dto/get.user-game.total.stat.dto';
 import { UserGameModule } from './user-game.module';
 import { UserGameService } from './user-game.service';
-import { GetUserGameSeasonStatDto } from './dto/get.user.game.season.stat.dto';
+import { GetUserGameSeasonStatDto } from './dto/get.user-game.season.stat.dto';
 import {
   GAMERESULT_LOSE,
   GAMERESULT_TIE,
