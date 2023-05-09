@@ -57,39 +57,6 @@ describe('RankService', () => {
     await dataSources.destroy();
   });
 
-  it('유저 현시즌 랭크 데이터 반환', async () => {
-    //given
-
-    //Dto로 반환할때는 rank, bestRank만 반환하도록 수정해야함
-    const getDto1: GetUserRankStatDto = {
-      userId: testData.ranks[0].user.id,
-      seasonId: testData.seasons[0].id,
-    }; // 시즌1데이터
-    const invalidgetDto1: GetUserRankStatDto = {
-      userId: testData.ranks[0].user.id,
-      seasonId: 4,
-    }; // 없는시즌 데이터
-    const invalidgetDto2: GetUserRankStatDto = {
-      userId: 4242,
-      seasonId: testData.seasons[0].id,
-    }; // 없는유저 데이터
-
-    //when
-    const result1 = await service.getUserRankBySeason(getDto1);
-
-    const result4 = await service.getUserRankBySeason(invalidgetDto1);
-    const result5 = await service.getUserRankBySeason(invalidgetDto2);
-
-    //then
-
-    //랭크데이터가 잘 반환되는지 확인
-    expect(result1.record).toEqual(testData.ranks[0].ladderPoint);
-
-    //없는시즌 데이터는 null로 반환
-    expect(result4).toEqual({ record: null });
-    expect(result5).toEqual({ record: null });
-  });
-
   it('유저 현시즌 record rank tier반환', async () => {
     //given
     const getDto1: GetUserRankStatDto = {
@@ -157,32 +124,6 @@ describe('RankService', () => {
       rank: null,
       tier: 'egg',
     });
-  });
-
-  it('유저 시즌 최고점 랭크데이터 반환', async () => {
-    //given
-    //Dto로 반환할때는 highestRank, highestPoint만 반환하도록 수정해야함
-    const getDto1: GetUserBestRankStatDto = {
-      userId: testData.ranks[0].user.id,
-    }; // 시즌1데이터
-    const getDto4: GetUserBestRankStatDto = {
-      userId: testData.ranks[1].user.id,
-    }; // 시즌2데이터
-    const invalidgetDto1: GetUserBestRankStatDto = {
-      userId: 4242,
-    }; // 없는시즌 데이터 BadRequest
-
-    //when
-    const result1 = await service.getUserBestRank(getDto1);
-    const result4 = await service.getUserBestRank(getDto4);
-    const result5 = await service.getUserBestRank(invalidgetDto1);
-
-    //then
-    expect(result1.record).toEqual(testData.ranks[0].highestPoint); //시즌1데이터
-    expect(result4.record).toEqual(testData.ranks[1].highestPoint); //시즌2데이터
-
-    //없는시즌 데이터는 null로 반환
-    expect(result5).toEqual({ record: null });
   });
 
   it('유저의 역대최고 record rank tier반환', async () => {
