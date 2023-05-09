@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Achievement } from 'src/achievement/achievement.entity';
 import { Emoji } from 'src/emoji/emoji.entity';
 import { Game } from 'src/game/game.entity';
-import { GAMETYPE_NORMAL } from 'src/global/type/type.game';
+import { GAMETYPE_NORMAL, GAMETYPE_RANK } from 'src/global/type/type.game';
 import {
   GAMERESULT_LOSE,
   GAMERESULT_WIN,
@@ -47,7 +47,7 @@ export class TestService {
     private gameRepository: Repository<Game>,
     @InjectRepository(UserGame)
     private userGameRepository: Repository<UserGame>,
-  ) {}
+  ) { }
   users: User[] = [];
   profileImages: ProfileImage[] = [];
   emojis: Emoji[] = [];
@@ -434,19 +434,43 @@ export class TestService {
 
   /**생성된 유저의 게임 데이터 생성 1시즌당 3개의 겜데이터 생성  */
   async createBasicUserGames(): Promise<UserGame[]> {
-    for (let i = 0; i < this.users.length; i++) {
-      for (let j = 0; j < 3; j++) {
-        this.userGames.push(
-          await this.userGameRepository.save({
-            user: this.users[i],
-            game: this.games[j / 2],
-            result: i % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
-            score: i % 2 === 0 ? 10 : 0,
-            lpChange: i % 2 === 0 ? 10 : -10,
-          }),
-        );
-      }
+    for (let j = 0; j < 6; j++) {
+      this.userGames.push(
+        await this.userGameRepository.save({
+          user: j % 2 === 0 ? this.users[0] : this.users[1],
+          game: this.games[j / 2],
+          result: j % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
+          score: j % 2 === 0 ? 10 : 0,
+          lpChange: 0,
+        }),
+      );
     }
     return this.userGames;
+  }
+
+  /** 유저 2명이 진행한 게임 n개 만들기 (노말, 랭크 섞어서) */
+  async createMixedTypeGames(n: number): Promise<void> {
+    const winner: User = await this.createBasicUser();
+    const loser: User = await this.createBasicUser();
+    const users: User[] = [winner, loser];
+    for (let i = 0; i < n; i++) {
+      this.games.push(
+        await this.gameRepository.save({
+          season: this.currentSeason,
+          startTime: '2021-01-01',
+          playTime: 10,
+          type: i % 2 === 0 ? GAMETYPE_RANK : GAMETYPE_NORMAL,
+        }),
+      );
+    }
+    for (let i = 0; i < n; i++) {
+      await this.userGameRepository.save({
+        user: users[i % 2],
+        game: this.games[i],
+        result: i % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
+        score: i % 2 === 0 ? 10 : 0,
+        lpChange: this.games[i].type === GAMETYPE_RANK ? (i % 2 === 0 ? 10 : -10) : 0,
+      })
+    }
   }
 }
