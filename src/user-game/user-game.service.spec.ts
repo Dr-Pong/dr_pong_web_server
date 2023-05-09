@@ -16,6 +16,8 @@ import {
 } from 'src/global/type/type.game.result';
 import { addTransactionalDataSource, initializeTransactionalContext } from 'typeorm-transactional';
 import { User } from 'src/user/user.entity';
+import { UserGameRecordsDto } from './dto/user-game.records.dto';
+import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
 
 describe('UserGameService', () => {
   let service: UserGameService;
@@ -63,6 +65,7 @@ describe('UserGameService', () => {
   beforeEach(async () => {
     await testData.createProfileImages();
     await testData.createBasicCollectable();
+    await testData.createCurrentSeasonRank();
   });
 
   afterEach(async () => {
@@ -77,10 +80,11 @@ describe('UserGameService', () => {
   });
 
   it('유저의 전체게임 데이터', async () => {
-    const GetUserAllGameDto: GetUserGameTotalStatDto = {
+    await testData.createBasicGames();
+    const getUserAllGameDto: GetUserGameTotalStatDto = {
       userId: testData.users[0].id,
     };
-    const allGameRessult = await service.getUserGameTotalStat(GetUserAllGameDto);
+    const allGameResult = await service.getUserGameTotalStat(getUserAllGameDto);
 
     const userGameInDb: UserGame[] = await UserGameRepository.find({
       where: { user: { id: testData.users[0].id } },
@@ -98,19 +102,18 @@ describe('UserGameService', () => {
 
     const testWinRate = testWin / (testWin + testLose);
 
-    expect(allGameRessult.length).toBe(6);
-    expect(allGameRessult[0].winRate).toBe(testWinRate);
-    expect(allGameRessult[0].win).toBe(testWin);
-    expect(allGameRessult[0].ties).toBe(testTies);
-    expect(allGameRessult[0].lose).toBe(testLose);
+    expect(allGameResult.winRate).toBe(testWinRate);
+    expect(allGameResult.wins).toBe(testWin);
+    expect(allGameResult.ties).toBe(testTies);
+    expect(allGameResult.loses).toBe(testLose);
   });
 
   it('유저의 현시즌 게임 데이터', async () => {
+    await testData.createBasicGames();
     const GetUserSeasonGameDto: GetUserGameSeasonStatDto = {
       userId: testData.users[0].id,
-      seasonId: testData.seasons[0].id,
     };
-    const currentSeason = testData.seasons[0];
+    const currentSeason = testData.currentSeason;
 
     const seasonGameResult = await service.getUserGameSeasonStat(
       GetUserSeasonGameDto,
@@ -135,38 +138,37 @@ describe('UserGameService', () => {
 
     const seasonWinRate = seasonWin / (seasonWin + seasonLose);
 
-    expect(seasonGameResult.length).toBe(3);
-
-    expect(seasonGameResult[0].winRate).toBe(seasonWinRate);
-    expect(seasonGameResult[0].win).toBe(seasonWin);
-    expect(seasonGameResult[0].ties).toBe(seasonTies);
-    expect(seasonGameResult[0].lose).toBe(seasonLose);
+    expect(seasonGameResult.winRate).toBe(seasonWinRate);
+    expect(seasonGameResult.wins).toBe(seasonWin);
+    expect(seasonGameResult.ties).toBe(seasonTies);
+    expect(seasonGameResult.loses).toBe(seasonLose);
   });
 
   it('count 별 유저의 게임 전적 목록 조회', async () => {
+    await testData.createProfileImages();
     await testData.createMixedTypeGames(15);
 
     const countLowerThanGamesRequest: GetUserGameRecordsDto = {
       userId: testData.users[0].id,
       count: 10,
-      lastGameId: 0,
+      lastGameId: 2147483647,
     }
 
     const countEqualGamesRequest: GetUserGameRecordsDto = {
       userId: testData.users[0].id,
       count: 15,
-      lastGameId: 0,
+      lastGameId: 2147483647,
     }
 
     const countLargerThanGamesRequest: GetUserGameRecordsDto = {
       userId: testData.users[0].id,
       count: 20,
-      lastGameId: 0,
+      lastGameId: 2147483647,
     }
 
-    const countLowerThanGames: UserGameRecoredsDto = service.getUserGameRecordsByCountAndLastGameId(countLowerThanGamesRequest);
-    const countEqualGames: UserGameRecoredsDto = service.getUserGameRecordsByCountAndLastGameId(countEqualGamesRequest);
-    const countLargerThanGames: UserGameRecoredsDto = service.getUserGameRecordsByCountAndLastGameId(countLargerThanGamesRequest);
+    const countLowerThanGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(countLowerThanGamesRequest);
+    const countEqualGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(countEqualGamesRequest);
+    const countLargerThanGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(countLargerThanGamesRequest);
 
     expect(countLowerThanGames.records.length).toBe(10);
     expect(countLowerThanGames.records[0].me.nickname).toBe(testData.users[0].nickname);
@@ -190,7 +192,7 @@ describe('UserGameService', () => {
     const allGamesRequest: GetUserGameRecordsDto = {
       userId: testData.users[0].id,
       count: 10,
-      lastGameId: 0,
+      lastGameId: 2147483647,
     }
 
     const splitedGamesRequest: GetUserGameRecordsDto = {
@@ -205,23 +207,21 @@ describe('UserGameService', () => {
       lastGameId: testData.games[0].id,
     }
 
-    const allGames: UserGameRecoredsDto = service.getUserGameRecordsByCountAndLastGameId(allGamesRequest);
-    const splitedGames: UserGameRecoredsDto = service.getUserGameRecordsByCountAndLastGameId(splitedGamesRequest);
-    const noGames: UserGameRecoredsDto = service.getUserGameRecordsByCountAndLastGameId(noGamesRequest);
+    const allGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(allGamesRequest);
+    const splitedGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(splitedGamesRequest);
+    const noGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(noGamesRequest);
 
     expect(allGames.records.length).toBe(10);
     expect(allGames.records[0].me.nickname).toBe(testData.users[0].nickname);
     expect(allGames.records[0].you.nickname).toBe(testData.users[1].nickname);
     expect(allGames.isLastPage).toBe(false);
 
-    expect(splitedGames.records.length).toBe(testData.games.length);
+    expect(splitedGames.records.length).toBe(4);
     expect(splitedGames.records[0].me.nickname).toBe(testData.users[0].nickname);
     expect(splitedGames.records[0].you.nickname).toBe(testData.users[1].nickname);
     expect(splitedGames.isLastPage).toBe(true);
 
-    expect(noGames.records.length).toBe(testData.games.length);
-    expect(noGames.records[0].me.nickname).toBe(testData.users[0].nickname);
-    expect(noGames.records[0].you.nickname).toBe(testData.users[1].nickname);
+    expect(noGames.records.length).toBe(0);
     expect(noGames.isLastPage).toBe(true);
   });
 
@@ -231,10 +231,10 @@ describe('UserGameService', () => {
     const noGamesRequest: GetUserGameRecordsDto = {
       userId: noGameUser.id,
       count: 10,
-      lastGameId: 0,
+      lastGameId: 2147483647,
     }
 
-    const noGames: UserGameRecoredsDto = await service.getUserGameRecordsByCountAndLastGameId(noGamesRequest);
+    const noGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(noGamesRequest);
 
     expect(noGames.records.length).toBe(0);
     expect(noGames.isLastPage).toBe(true);
