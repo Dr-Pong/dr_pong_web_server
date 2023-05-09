@@ -42,6 +42,11 @@ import { PatchUserTitleRequestDto } from '../user-title/dto/patch.user.title.req
 import { PatchUserImageDto } from './dto/patch.user.image.dto';
 import { PatchUserMessageRequestDto } from './dto/patch.user.message.request.dto';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
+import { UserTotalRankResponseDto } from 'src/rank/dto/user.total.rank.response.dto';
+import { RankService } from 'src/rank/rank.service';
+import { RankBestStatDto } from 'src/rank/dto/rank.best.stat.dto';
+import { GetUserBestRankStatDto } from 'src/rank/dto/get.user.best.rank.stat.dto';
+import { UserSeasonRankResponseDto } from 'src/rank/dto/user.season.rank.response.dto';
 
 @Controller('users')
 export class UserController {
@@ -50,7 +55,8 @@ export class UserController {
     private userAchievementService: UserAchievementService,
     private userEmojiService: UserEmojiService,
     private userTitleService: UserTitleService,
-  ) { }
+    private rankService: RankService,
+  ) {}
 
   @Get('/:nickname/detail')
   async userDetailByNicknameGet(@Param('nickname') nickname: string) {
@@ -93,11 +99,11 @@ export class UserController {
     };
     const achievements = selected
       ? await this.userAchievementService.getUserAchievementsSelected(
-        getUserAchievementDto,
-      )
+          getUserAchievementDto,
+        )
       : await this.userAchievementService.getUserAchievementsAll(
-        getUserAchievementDto,
-      );
+          getUserAchievementDto,
+        );
     const responseDto: UserAchievementsResponseDto = {
       achievements: achievements.achievements,
     };
@@ -131,7 +137,7 @@ export class UserController {
   }
 
   @Get('/:nickname/titles')
-  async getUsersTitlesByNickname(
+  async usersTitlesByNicknameGet(
     @Param('nickname') nickname: string,
   ): Promise<UserTitlesResponseDto> {
     // console.log(nickname);
@@ -145,6 +151,50 @@ export class UserController {
     );
     const responseDto: UserTitlesResponseDto = {
       titles: titles.titles,
+    };
+    return responseDto;
+  }
+
+  //** Get stat's best rank*/
+  @Get('/:nickname/ranks/total')
+  async userTotalRankByNicknameGet(
+    @Param('nickname') nickname: string,
+  ): Promise<UserTotalRankResponseDto> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const getUserTotalRankDto: GetUserBestRankStatDto = {
+      userId: userInfoDto.id,
+    };
+    const userTotalRank: RankBestStatDto =
+      await this.rankService.getUserBestRank(getUserTotalRankDto);
+    const responseDto: UserTotalRankResponseDto = {
+      record: userTotalRank.record,
+      rank: userTotalRank.rank,
+      tier: userTotalRank.tier,
+    };
+    return responseDto;
+  }
+
+  //** Get stat's season rank*/
+  @Get('/:nickname/ranks/season')
+  async userSeasonRankByNicknameGet(
+    @Param('nickname') nickname: string,
+  ): Promise<UserSeasonRankResponseDto> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const getUserSeasonRankDto: GetUserBestRankStatDto = {
+      userId: userInfoDto.id,
+    };
+    const userSeasonRank: RankBestStatDto =
+      await this.rankService.getUserBestRank(getUserSeasonRankDto);
+    const responseDto: UserSeasonRankResponseDto = {
+      record: userSeasonRank.record,
+      rank: userSeasonRank.rank,
+      tier: userSeasonRank.tier,
     };
     return responseDto;
   }
