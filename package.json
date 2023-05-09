@@ -75,6 +75,9 @@
     "maxWorkers": 1,
     "forceExit": true,
     "preset": "ts-jest",
+    "setupFiles": [
+      "dotenv/config"
+    ],
     "testURL": "http://localhost/",
     "moduleFileExtensions": [
       "js",

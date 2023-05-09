@@ -27,4 +27,4 @@ import { ProfileImage } from 'src/profile-image/profile-image.entity';
   providers: [UserService, UserRepository, ProfileImageRepository],
   exports: [UserService],
 })
-export class UserModule { }
+export class UserModule {}

@@ -12,6 +12,7 @@ import { Emoji } from 'src/emoji/emoji.entity';
 import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 import { ProfileImage } from 'src/profile-image/profile-image.entity';
+import { UserGame } from 'src/user-game/user-game.entity';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ProfileImage } from 'src/profile-image/profile-image.entity';
       UserAchievement,
       Emoji,
       UserEmoji,
-      ProfileImage
+      ProfileImage,
+      UserGame,
     ]),
   ],
   providers: [TestService],
@@ -43,7 +45,9 @@ import { ProfileImage } from 'src/profile-image/profile-image.entity';
       UserAchievement,
       Emoji,
       UserEmoji,
+      ProfileImage,
+      UserGame,
     ]),
   ],
 })
-export class TestModule { }
+export class TestModule {}

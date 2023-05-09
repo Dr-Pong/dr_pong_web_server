@@ -28,9 +28,7 @@ describe('UserController', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        AppModule
-      ],
+      imports: [AppModule],
       providers: [
         {
           provide: getRepositoryToken(User),
@@ -57,23 +55,31 @@ describe('UserController', () => {
     userService = moduleFixture.get<UserService>(UserService);
     dataSources = moduleFixture.get<DataSource>(DataSource);
     jwtService = moduleFixture.get<JwtService>(JwtService);
-    userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
-    userTitleRepository = moduleFixture.get<Repository<UserTitle>>(getRepositoryToken(UserTitle));
-    userAchievementRepository = moduleFixture.get<Repository<UserAchievement>>(getRepositoryToken(UserAchievement));
-    userEmojiRepository = moduleFixture.get<Repository<UserEmoji>>(getRepositoryToken(UserEmoji));
+    userRepository = moduleFixture.get<Repository<User>>(
+      getRepositoryToken(User),
+    );
+    userTitleRepository = moduleFixture.get<Repository<UserTitle>>(
+      getRepositoryToken(UserTitle),
+    );
+    userAchievementRepository = moduleFixture.get<Repository<UserAchievement>>(
+      getRepositoryToken(UserAchievement),
+    );
+    userEmojiRepository = moduleFixture.get<Repository<UserEmoji>>(
+      getRepositoryToken(UserEmoji),
+    );
     await dataSources.synchronize(true);
   });
 
   beforeEach(async () => {
     await testService.createProfileImages();
     await testService.createBasicCollectable();
-  })
+  });
 
   afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
     await app.close();
-  })
+  });
 
   afterEach(async () => {
     testService.clear();
