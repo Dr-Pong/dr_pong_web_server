@@ -434,18 +434,16 @@ export class TestService {
 
   /**생성된 유저의 게임 데이터 생성 1시즌당 3개의 겜데이터 생성  */
   async createBasicUserGames(): Promise<UserGame[]> {
-    for (let i = 0; i < this.users.length; i++) {
-      for (let j = 0; j < 3; j++) {
-        this.userGames.push(
-          await this.userGameRepository.save({
-            user: this.users[i],
-            game: this.games[j / 2],
-            result: i % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
-            score: i % 2 === 0 ? 10 : 0,
-            lpChange: 0,
-          }),
-        );
-      }
+    for (let j = 0; j < 6; j++) {
+      this.userGames.push(
+        await this.userGameRepository.save({
+          user: j % 2 === 0 ? this.users[0] : this.users[1],
+          game: this.games[j / 2],
+          result: j % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
+          score: j % 2 === 0 ? 10 : 0,
+          lpChange: 0,
+        }),
+      );
     }
     return this.userGames;
   }
