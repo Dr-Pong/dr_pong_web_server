@@ -90,8 +90,7 @@ describe('UserController', () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/detail',
         );
-        // console.log('없는경우user', user);
-        // console.log('없는경우', response.body);
+
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
         expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
@@ -122,8 +121,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/ranks/season',
         );
 
-        // console.log('없는경우user', user);
-        // console.log('없는경우', response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('rank');
         expect(response.body).toHaveProperty('tier');
