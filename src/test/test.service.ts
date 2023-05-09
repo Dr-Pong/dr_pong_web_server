@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Achievement } from 'src/achievement/achievement.entity';
-import { Emoji } from 'src/emoji/emoji.entity';
-import { Game } from 'src/game/game.entity';
+import { Achievement } from 'src/domain/achievement/achievement.entity';
+import { Emoji } from 'src/domain/emoji/emoji.entity';
+import { Game } from 'src/domain/game/game.entity';
 import { GAMETYPE_NORMAL, GAMETYPE_RANK } from 'src/global/type/type.game';
 import {
   GAMERESULT_LOSE,
   GAMERESULT_WIN,
 } from 'src/global/type/type.game.result';
 import { ROLETYPE_MEMBER } from 'src/global/type/type.user.roletype';
-import { ProfileImage } from 'src/profile-image/profile-image.entity';
-import { Rank } from 'src/rank/rank.entity';
-import { Season } from 'src/season/season.entity';
-import { Title } from 'src/title/title.entity';
-import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
-import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
-import { UserGame } from 'src/user-game/user-game.entity';
-import { UserTitle } from 'src/user-title/user-title.entity';
-import { User } from 'src/user/user.entity';
+import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
+import { Rank } from 'src/domain/rank/rank.entity';
+import { Season } from 'src/domain/season/season.entity';
+import { Title } from 'src/domain/title/title.entity';
+import { UserAchievement } from 'src/domain/user-achievement/user-achievement.entity';
+import { UserEmoji } from 'src/domain/user-emoji/user-emoji.entity';
+import { UserGame } from 'src/domain/user-game/user-game.entity';
+import { UserTitle } from 'src/domain/user-title/user-title.entity';
+import { User } from 'src/domain/user/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
