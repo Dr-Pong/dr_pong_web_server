@@ -5,7 +5,7 @@ import { Rank } from './rank.entity';
 import { Season } from 'src/season/season.entity';
 import { GetUserRankStatDto } from './dto/get.user.rank.stat.dto';
 import { UserRankStatDto } from './dto/user.rank.stat.dto';
-import { GetUserBestRankStatDto } from './dto/get.user.best.rnak.stat.dto';
+import { GetUserBestRankStatDto } from './dto/get.user.best.rank.stat.dto';
 import { RankRepository } from './rank.repository';
 import { SeasonRepository } from 'src/season/season.repository';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
