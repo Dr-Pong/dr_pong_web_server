@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseBoolPipe,
+  ParseIntPipe,
   Patch,
   Query,
   UseGuards,
@@ -54,6 +55,9 @@ import { UserGameSeasonStatResponseDto } from '../user-game/dto/user-game.season
 import { GetUserGameSeasonStatDto } from '../user-game/dto/get.user-game.season.stat.dto';
 import { UserGameSeasonStatDto } from '../user-game/dto/user-game.season.stat.dto';
 import { UserGame } from '../user-game/user-game.entity';
+import { UserGameRecordsResponseDto } from '../user-game/dto/user-game.record.response.dto';
+import { GetUserGameRecordsDto } from '../user-game/dto/get.user-game.records.dto';
+import { UserGameRecordsDto } from '../user-game/dto/user-game.records.dto';
 
 @Controller('users')
 export class UserController {
@@ -237,6 +241,34 @@ export class UserController {
       UserGameSeasonStatResponseDto.forUserGameSeasonStatResponse(
         userSeasonStat,
       );
+
+    return responseDto;
+  }
+
+  //** GET User Game Record List */
+  @Get('/:nickname/records')
+  async userGameRecordsByNicknameGet(
+    @Param('nickname') nickname: string,
+    @Query('coount', new DefaultValuePipe(10), ParseIntPipe) count: number,
+    @Query('lastGameId', new DefaultValuePipe(0), ParseIntPipe)
+    lastGameId: number,
+  ): Promise<UserGameRecordsResponseDto> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const getUserGameRecordsDto: GetUserGameRecordsDto = {
+      userId: userInfoDto.id,
+      count,
+      lastGameId,
+    };
+    const userGameRecords: UserGameRecordsDto =
+      await this.userGameService.getUserGameRecordsByCountAndLastGameId(
+        getUserGameRecordsDto,
+      );
+    const responseDto: UserGameRecordsResponseDto = {
+      records: userGameRecords.records,
+    };
 
     return responseDto;
   }
