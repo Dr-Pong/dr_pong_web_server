@@ -445,6 +445,33 @@ export class TestService {
     }
   }
 
+  //** 2개의 시즌일때 과거의 시즌에 게임데이터 넣기 */
+  async createPastSeasonGames(): Promise<void> {
+    await this.createBasicUser();
+    await this.createBasicUser();
+    for (let i = 0; i < 3; i++) {
+      this.games.push(
+        await this.gameRepository.save({
+          season: this.seasons[0],
+          startTime: '2021-01-01',
+          playTime: 10,
+          type: GAMETYPE_NORMAL,
+        }),
+      );
+    }
+    for (let j = 0; j < 6; j++) {
+      this.userGames.push(
+        await this.userGameRepository.save({
+          user: j % 2 === 0 ? this.users[0] : this.users[1],
+          game: this.games[j / 2],
+          result: j % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
+          score: j % 2 === 0 ? 10 : 0,
+          lpChange: 0,
+        }),
+      );
+    }
+  }
+
   /** 유저 2명이 진행한 게임 n개 만들기 (노말, 랭크 섞어서) */
   async createMixedTypeGames(n: number): Promise<void> {
     const winner: User = await this.createBasicUser();
