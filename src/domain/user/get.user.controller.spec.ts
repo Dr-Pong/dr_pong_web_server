@@ -114,7 +114,37 @@ describe('UserController', () => {
       });
     });
 
-    describe('GET /users/{nickname}/ranks/season', () => {
+    describe('/users/{nickname}/stats/total', () => {
+      it('유저의 승률, 승, 무, 패 반환', async () => {
+        const user = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/total',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('winRate');
+        expect(response.body).toHaveProperty('wins');
+        expect(response.body).toHaveProperty('ties');
+        expect(response.body).toHaveProperty('loses');
+      });
+    });
+
+    describe('/users/{nickname}/stats/season', () => {
+      it('유저의 승률, 승, 무, 패 반환', async () => {
+        const user = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/season',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('winRate');
+        expect(response.body).toHaveProperty('wins');
+        expect(response.body).toHaveProperty('ties');
+        expect(response.body).toHaveProperty('loses');
+      });
+    });
+
+    describe('/users/{nickname}/ranks/season', () => {
       it('유저 현시즌 record rank tier반환', async () => {
         const user: User = await testService.createBasicUser();
         const response = await request(app.getHttpServer()).get(
@@ -128,7 +158,7 @@ describe('UserController', () => {
       });
     });
 
-    describe('GET /users/{nickname}/ranks/total', () => {
+    describe('/users/{nickname}/ranks/total', () => {
       it('역대 최고 랭크 요청', async () => {
         const user: User = await testService.createBasicUser();
         const response = await request(app.getHttpServer()).get(
