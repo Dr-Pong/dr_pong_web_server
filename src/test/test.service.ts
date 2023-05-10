@@ -511,6 +511,12 @@ export class TestService {
     tie: number,
     lose: number,
   ): Promise<void> {
+    this.currentSeason = await this.seasonRepository.save({
+      name: 'currentSeason',
+      startTime: '2021-01-01',
+      endTime: '2022-01-01',
+      imageUrl: 'SeasonImage',
+    });
     const totalGame = win + tie + lose;
     const user: User = await this.createBasicUser();
     for (let i = 0; i < totalGame; i++) {
