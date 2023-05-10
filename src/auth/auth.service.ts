@@ -1,18 +1,51 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { User } from 'src/domain/user/user.entity';
-import { Repository } from 'typeorm';
 import { AuthDto } from './dto/auth.dto';
+import { authenticator } from 'otplib';
+import { toDataURL } from 'qrcode';
+import { SignUpDto } from './dto/auth.signup.dto';
+import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
+import { IsolationLevel, Transactional } from 'typeorm-transactional';
+import { UserRepository } from './user.repository';
+import { ProfileImageRepository } from './profile-image.repository';
 
 @Injectable()
 export class AuthService {
 	constructor(
-		@InjectRepository(User)
-		private userRepository: Repository<User>,
+		private readonly userRepository: UserRepository,
+		private readonly imageRepository: ProfileImageRepository,
 		private jwtService: JwtService,
 	) { }
+	optSecret: Map<number, string> = new Map();
+
+	async generateOtp(userId: number) {
+		const secretKey = authenticator.generateSecret();
+		const url = authenticator.keyuri(String(userId), 'Dr.Pong', secretKey);
+		const qrCode = await toDataURL(url);
+		this.optSecret.set(userId, secretKey);
+
+		return {
+			secretKey,
+			url,
+			qrCode,
+		}
+	}
+
+	verifyOtp(userId: number, token: string): boolean {
+		const secret = this.optSecret.get(userId);
+		const isValid: boolean = authenticator.verify({ token, secret });
+		if (isValid)
+			this.optSecret.delete(userId);
+		return isValid;
+	}
+
+	@Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
+	async signUp(signUpDto: SignUpDto) {
+		const { user, profileImage } = await this.validateSignUp(signUpDto);
+		await this.userRepository.signUp({ user, profileImage, nickname: signUpDto.nickname });
+	}
 
 	async getFTAccessToken(authCode: string): Promise<string> {
 		console.log(process.env.FT_TOKEN_URI)
@@ -36,23 +69,23 @@ export class AuthService {
 		if (response.status !== 200)
 			throw new UnauthorizedException();
 		const email = response.data.email;
-		const existUser = await this.userRepository.findOne({ where: { email } });
+		const existUser: User = await this.userRepository.findByEmail(email);
 
 		let authdto: AuthDto;
 		if (!existUser) {
-			const newUser = await this.userRepository.save({
-				email,
-			})
+			const newUser = await this.userRepository.createUser(email)
 			authdto = {
 				id: newUser.id,
-				nickname: newUser.nickname,
+				nickname: null,
 				roleType: newUser.roleType,
+				secondAuthRequired: false,
 			};
 		} else {
 			authdto = {
 				id: existUser.id,
 				nickname: existUser.nickname,
 				roleType: existUser.roleType,
+				secondAuthRequired: existUser.isSecondAuthOn,
 			};
 		}
 		return authdto;
@@ -63,7 +96,26 @@ export class AuthService {
 			id: user.id,
 			nickname: user.nickname,
 			roleType: user.roleType,
+			secondAuthRequired: user.secondAuthRequired,
 		})
 		return token;
+	}
+
+	async validateSignUp(signUpDto: SignUpDto): Promise<{ user: User, profileImage: ProfileImage }> {
+		const user = await this.userRepository.findById(signUpDto.userId);
+		if (!user) {
+			throw new UnauthorizedException();
+		}
+		if (user.nickname !== null) {
+			throw new BadRequestException();
+		}
+		if (await this.userRepository.findByNickname(signUpDto.nickname)) {
+			throw new ConflictException();
+		}
+		const profileImage: ProfileImage = await this.imageRepository.findById(signUpDto.imageId);
+		if (!profileImage) {
+			throw new BadRequestException();
+		}
+		return { user, profileImage };
 	}
 }
