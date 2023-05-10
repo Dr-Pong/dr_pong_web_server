@@ -519,7 +519,7 @@ export class TestService {
           season: this.currentSeason,
           startTime: '2021-01-01',
           playTime: 10,
-          type: GAMETYPE_NORMAL,
+          type: GAMETYPE_RANK,
         }),
       );
     }
@@ -529,22 +529,22 @@ export class TestService {
         game: this.games[i],
         result: GAMERESULT_WIN,
         score: 10,
-        lpChange: 0,
+        lpChange: 10,
       });
     }
     for (let i = 0; i < lose; i++) {
       await this.userGameRepository.save({
         user: user,
-        game: this.games[i],
+        game: this.games[i + win],
         result: GAMERESULT_LOSE,
         score: 0,
-        lpChange: 0,
+        lpChange: -10,
       });
     }
     for (let i = 0; i < tie; i++) {
       await this.userGameRepository.save({
         user: user,
-        game: this.games[i],
+        game: this.games[i + win + lose],
         result: GAMERESULT_TIE,
         score: 5,
         lpChange: 0,
