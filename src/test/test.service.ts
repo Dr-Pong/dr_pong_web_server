@@ -6,6 +6,7 @@ import { Game } from 'src/domain/game/game.entity';
 import { GAMETYPE_NORMAL, GAMETYPE_RANK } from 'src/global/type/type.game';
 import {
   GAMERESULT_LOSE,
+  GAMERESULT_TIE,
   GAMERESULT_WIN,
 } from 'src/global/type/type.game.result';
 import { ROLETYPE_MEMBER } from 'src/global/type/type.user.roletype';
@@ -47,7 +48,7 @@ export class TestService {
     private gameRepository: Repository<Game>,
     @InjectRepository(UserGame)
     private userGameRepository: Repository<UserGame>,
-  ) { }
+  ) {}
   users: User[] = [];
   profileImages: ProfileImage[] = [];
   emojis: Emoji[] = [];
@@ -466,14 +467,61 @@ export class TestService {
         result: GAMERESULT_WIN,
         score: 10,
         lpChange: this.games[i].type === GAMETYPE_RANK ? 10 : 0,
-      })
+      });
       await this.userGameRepository.save({
         user: users[1],
         game: this.games[i],
         result: GAMERESULT_LOSE,
         score: 0,
         lpChange: this.games[i].type === GAMETYPE_RANK ? -10 : 0,
-      })
+      });
+    }
+  }
+
+  //** 유저 한명의 인자로 받은 승 ,무, 패 데이터 만들기 */
+  async createMixedResultUser(
+    win: number,
+    tie: number,
+    lose: number,
+  ): Promise<void> {
+    const totalGame = win + tie + lose;
+    const user: User = await this.createBasicUser();
+    for (let i = 0; i < totalGame; i++) {
+      this.games.push(
+        await this.gameRepository.save({
+          season: this.currentSeason,
+          startTime: '2021-01-01',
+          playTime: 10,
+          type: GAMETYPE_NORMAL,
+        }),
+      );
+    }
+    for (let i = 0; i < win; i++) {
+      await this.userGameRepository.save({
+        user: user,
+        game: this.games[i],
+        result: GAMERESULT_WIN,
+        score: 10,
+        lpChange: 0,
+      });
+    }
+    for (let i = 0; i < lose; i++) {
+      await this.userGameRepository.save({
+        user: user,
+        game: this.games[i],
+        result: GAMERESULT_LOSE,
+        score: 0,
+        lpChange: 0,
+      });
+    }
+    for (let i = 0; i < tie; i++) {
+      await this.userGameRepository.save({
+        user: user,
+        game: this.games[i],
+        result: GAMERESULT_TIE,
+        score: 5,
+        lpChange: 0,
+      });
     }
   }
 }
