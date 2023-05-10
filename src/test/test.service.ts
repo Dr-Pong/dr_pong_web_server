@@ -551,4 +551,52 @@ export class TestService {
       });
     }
   }
+
+  //** 10개의 시즌중 유저 한명의 인자로 받은 승 ,무, 패 데이터 만들기 */
+  async createCustomResultUserBySeasons(
+    win: number,
+    tie: number,
+    lose: number,
+  ): Promise<void> {
+    await this.createBasicSeasons(10);
+    const totalGame = win + tie + lose;
+    const user: User = await this.createBasicUser();
+    for (let i = 0; i < totalGame; i++) {
+      this.games.push(
+        await this.gameRepository.save({
+          season: this.currentSeason,
+          startTime: '2021-01-01',
+          playTime: 10,
+          type: GAMETYPE_RANK,
+        }),
+      );
+    }
+    for (let i = 0; i < win; i++) {
+      await this.userGameRepository.save({
+        user: user,
+        game: this.games[i],
+        result: GAMERESULT_WIN,
+        score: 10,
+        lpChange: 10,
+      });
+    }
+    for (let i = 0; i < lose; i++) {
+      await this.userGameRepository.save({
+        user: user,
+        game: this.games[i + win],
+        result: GAMERESULT_LOSE,
+        score: 0,
+        lpChange: -10,
+      });
+    }
+    for (let i = 0; i < tie; i++) {
+      await this.userGameRepository.save({
+        user: user,
+        game: this.games[i + win + lose],
+        result: GAMERESULT_TIE,
+        score: 5,
+        lpChange: 0,
+      });
+    }
+  }
 }
