@@ -2,20 +2,20 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { TitleModule } from './title/title.module';
-import { UsertitleModule } from './user-title/user-title.module';
+import { UserModule } from './domain/user/user.module';
+import { TitleModule } from './domain/title/title.module';
+import { UsertitleModule } from './domain/user-title/user-title.module';
 import { typeORMConfig } from './configs/typeorm.config';
 import { addTransactionalDataSource } from 'typeorm-transactional';
-import { UserAchievementModule } from './user-achievement/user-achievement.module';
+import { UserAchievementModule } from './domain/user-achievement/user-achievement.module';
 import { AuthModule } from './auth/auth.module';
 import { TestModule } from './test/test.module';
-import { RankModule } from './rank/rank.module';
-import { SeasonModule } from './season/season.module';
-import { AchievementModule } from './achievement/achievement.module';
+import { RankModule } from './domain/rank/rank.module';
+import { SeasonModule } from './domain/season/season.module';
+import { AchievementModule } from './domain/achievement/achievement.module';
 import { DataSource } from 'typeorm';
-import { ProfileImageModule } from './profile-image/profile-image.module';
-import { UserGameModule } from './user-game/user-game.module';
+import { ProfileImageModule } from './domain/profile-image/profile-image.module';
+import { UserGameModule } from './domain/user-game/user-game.module';
 
 @Module({
   imports: [

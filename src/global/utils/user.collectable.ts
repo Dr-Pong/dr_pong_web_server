@@ -1,5 +1,5 @@
-import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
-import { UserEmoji } from 'src/user-emoji/user-emoji.entity';
+import { UserAchievement } from 'src/domain/user-achievement/user-achievement.entity';
+import { UserEmoji } from 'src/domain/user-emoji/user-emoji.entity';
 import { CollectableStatus, COLLECTABLE_ACHIEVED, COLLECTABLE_SELECTED, COLLECTABLE_UNACHIEVED } from '../type/type.collectable.status';
 
 export class UserCollectablesStatus {
