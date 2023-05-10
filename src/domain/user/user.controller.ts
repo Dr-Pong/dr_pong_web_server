@@ -53,6 +53,7 @@ import { UserGameTotalStatDto } from '../user-game/dto/user-game.total.stat.dto'
 import { UserGameSeasonStatResponseDto } from '../user-game/dto/user-game.season.stat.response.dto';
 import { GetUserGameSeasonStatDto } from '../user-game/dto/get.user-game.season.stat.dto';
 import { UserGameSeasonStatDto } from '../user-game/dto/user-game.season.stat.dto';
+import { UserGame } from '../user-game/user-game.entity';
 
 @Controller('users')
 export class UserController {
@@ -71,22 +72,18 @@ export class UserController {
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
     );
-    // console.log(userInfoDto);
+
     const getUserTitleDto: GetUserTitlesDto = { userId: userInfoDto.id };
 
-    const user = await this.userService.getUsersDetail(getUsersDetailDto);
-    // console.log(user);
+    const user: UserDetailDto = await this.userService.getUsersDetail(
+      getUsersDetailDto,
+    );
+
     const title: UserTitleSelectedDto =
       await this.userTitleService.getUserTitleSelected(getUserTitleDto);
-    // console.log(user);
 
-    const responseDto: UserDetailResponseDto = {
-      nickname: user.nickname,
-      imgUrl: user.imgUrl,
-      level: user.level,
-      statusMessage: user.statusMessage,
-      title: title,
-    };
+    const responseDto: UserDetailResponseDto =
+      UserDetailResponseDto.forUserDetailResponse(user, title);
     return responseDto;
   }
 
@@ -176,11 +173,8 @@ export class UserController {
     };
     const userTotalRank: RankBestStatDto =
       await this.rankService.getUserBestRank(getUserTotalRankDto);
-    const responseDto: UserTotalRankResponseDto = {
-      record: userTotalRank.record,
-      rank: userTotalRank.rank,
-      tier: userTotalRank.tier,
-    };
+    const responseDto: UserTotalRankResponseDto =
+      UserTotalRankResponseDto.forUserTotalRankResponse(userTotalRank);
     return responseDto;
   }
 
@@ -198,11 +192,8 @@ export class UserController {
     };
     const userSeasonRank: RankBestStatDto =
       await this.rankService.getUserBestRank(getUserSeasonRankDto);
-    const responseDto: UserSeasonRankResponseDto = {
-      record: userSeasonRank.record,
-      rank: userSeasonRank.rank,
-      tier: userSeasonRank.tier,
-    };
+    const responseDto: UserSeasonRankResponseDto =
+      UserSeasonRankResponseDto.forUserSeasonRankResponse(userSeasonRank);
     return responseDto;
   }
 
@@ -221,12 +212,10 @@ export class UserController {
 
     const userTotalStat: UserGameTotalStatDto =
       await this.userGameService.getUserGameTotalStat(getUserTotalStatDto);
-    const responseDto: UserGameTotalStatResponseDto = {
-      winRate: userTotalStat.winRate,
-      wins: userTotalStat.wins,
-      ties: userTotalStat.ties,
-      loses: userTotalStat.loses,
-    };
+    const responseDto: UserGameTotalStatResponseDto =
+      await UserGameTotalStatResponseDto.forUserGameTotalStatResponse(
+        userTotalStat,
+      );
     return responseDto;
   }
 
@@ -244,12 +233,11 @@ export class UserController {
     };
     const userSeasonStat: UserGameSeasonStatDto =
       await this.userGameService.getUserGameSeasonStat(getUserSeasonStatDto);
-    const responseDto: UserGameSeasonStatResponseDto = {
-      winRate: userSeasonStat.winRate,
-      wins: userSeasonStat.wins,
-      ties: userSeasonStat.ties,
-      loses: userSeasonStat.loses,
-    };
+    const responseDto: UserGameSeasonStatResponseDto =
+      UserGameSeasonStatResponseDto.forUserGameSeasonStatResponse(
+        userSeasonStat,
+      );
+
     return responseDto;
   }
 
@@ -265,10 +253,8 @@ export class UserController {
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
     );
-    const patchUserTitleDto: PatchUserTitleDto = {
-      userId: userInfoDto.id,
-      titleId: patchRequestDto.id,
-    };
+    const patchUserTitleDto: PatchUserTitleDto =
+      PatchUserTitleDto.forPatchUserTitleDto(userInfoDto, patchRequestDto);
     await this.userTitleService.patchUserTitle(patchUserTitleDto);
   }
 
@@ -284,10 +270,8 @@ export class UserController {
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
     );
-    const patchUserImageDto: PatchUserImageDto = {
-      userId: userInfoDto.id,
-      imageId: patchRequestDto.id,
-    };
+    const patchUserImageDto: PatchUserImageDto =
+      PatchUserImageDto.forPatchUserImageDto(userInfoDto, patchRequestDto);
     await this.userService.patchUserImage(patchUserImageDto);
   }
 
@@ -303,10 +287,8 @@ export class UserController {
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
     );
-    const patchUserMessageDto: PatchUserMessageDto = {
-      userId: userInfoDto.id,
-      message: patchRequestDto.message,
-    };
+    const patchUserMessageDto: PatchUserMessageDto =
+      PatchUserMessageDto.forPatchUserMessageDto(userInfoDto, patchRequestDto);
     await this.userService.patchUserStatusMessage(patchUserMessageDto);
   }
 
@@ -322,10 +304,12 @@ export class UserController {
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
     );
-    const patchUserAchievementsDto: PatchUserAchievementsDto = {
-      userId: userInfoDto.id,
-      achievementsId: patchRequestDto.ids,
-    };
+    const patchUserAchievementsDto: PatchUserAchievementsDto =
+      PatchUserAchievementsDto.forPatchUserAchievementsDto(
+        userInfoDto,
+        patchRequestDto,
+      );
+
     await this.userAchievementService.patchUserAchievements(
       patchUserAchievementsDto,
     );
@@ -344,10 +328,8 @@ export class UserController {
       getUsersDetailDto,
     );
 
-    const patchUserAchievementsDto: PatchUserEmojisDto = {
-      userId: userInfoDto.id,
-      emojisId: patchRequestDto.ids,
-    };
+    const patchUserAchievementsDto: PatchUserEmojisDto =
+      PatchUserEmojisDto.forPatchUserEmojisDto(userInfoDto, patchRequestDto);
 
     await this.userEmojiService.patchUseremojis(patchUserAchievementsDto);
   }
