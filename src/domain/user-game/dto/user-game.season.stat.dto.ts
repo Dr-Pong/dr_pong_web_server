@@ -21,9 +21,10 @@ export class UserGameSeasonStatDto {
     const ties = userGames.filter(
       (status) => status.result === GAMERESULT_TIE,
     ).length;
+    const winRate = wins + loses !== 0 ? (wins / (wins + loses)) * 100 : 0;
 
     return {
-      winRate: wins + loses !== 0 ? (wins / (wins + loses)) * 100 : 0,
+      winRate: Number(winRate.toFixed(1)),
       wins,
       ties,
       loses,
