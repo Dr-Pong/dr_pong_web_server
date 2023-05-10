@@ -23,7 +23,7 @@ export class UserGameSeasonStatDto {
     ).length;
 
     return {
-      winRate: userGames.length !== 0 ? (wins / (wins + loses)) * 100 : 0,
+      winRate: wins + loses !== 0 ? (wins / (wins + loses)) * 100 : 0,
       wins,
       ties,
       loses,
