@@ -245,7 +245,7 @@ export class UserController {
     return responseDto;
   }
 
-  //** GET User Game Record */
+  //** GET User Game Record List */
   @Get('/:nickname/records')
   async userGameRecordsByNicknameGet(
     @Param('nickname') nickname: string,
