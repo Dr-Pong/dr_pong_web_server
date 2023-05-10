@@ -6,12 +6,13 @@ import { User } from "src/domain/user/user.entity"
 import { Repository } from "typeorm"
 import { AuthDto } from "../dto/auth.dto"
 import { TokenInterface } from "./jwt.token.interface"
+import { UserRepository } from "../user.repository"
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor(
 		@InjectRepository(User)
-		private userRepository: Repository<User>,
+		private userRepository: UserRepository,
 	) {
 		super({
 			secretOrKey: 'jwtSecret',
@@ -32,20 +33,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		if (userFromMemory)
 			return userFromMemory;
 
-		const userFromDb = await this.userRepository.findOne({ where: { nickname: token['nickname'] } });
+		const userFromDb = await this.userRepository.findByNickname(token['nickname']);
 		if (!userFromDb)
 			throw (new UnauthorizedException());
 		const existUser: AuthDto = {
 			id: userFromDb.id,
 			nickname: userFromDb.nickname,
 			roleType: userFromDb.roleType,
+			secondAuthRequired: token.secondAuthRequierd,
 		};
 		return existUser;
 	}
 
+	/** 닉네임 설정이 안되어 있거나 2차 인증이 필요하면 에러 반환 */
 	validateUser(token: TokenInterface, user: AuthDto): void {
-		if (token.id !== user.id || token.nickname !== user.nickname
-			|| token.roleType !== user.roleType)
-			throw (new UnauthorizedException('invalid token'));
+		if (token.nickname === null || token.secondAuthRequierd === true)
+			throw (new UnauthorizedException());
 	}
 }
