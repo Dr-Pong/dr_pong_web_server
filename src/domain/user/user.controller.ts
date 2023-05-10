@@ -35,7 +35,6 @@ import { UserTitlesDto } from 'src/domain/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from 'src/domain/user-title/dto/get.user.titles.dto';
 import { UserInfoDto } from './dto/user.info.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { userInfo } from 'os';
 import { UserTitleSelectedDto } from 'src/domain/user-title/dto/user.title.selected.dto';
 import { PatchUserImageRequestDto } from './dto/patch.user.image.request.dto';
 import { PatchUserTitleRequestDto } from '../user-title/dto/patch.user.title.request.dto';
@@ -47,6 +46,13 @@ import { RankService } from 'src/domain/rank/rank.service';
 import { RankBestStatDto } from 'src/domain/rank/dto/rank.best.stat.dto';
 import { GetUserBestRankStatDto } from 'src/domain/rank/dto/get.user.best.rank.stat.dto';
 import { UserSeasonRankResponseDto } from 'src/domain/rank/dto/user.season.rank.response.dto';
+import { UserGameTotalStatResponseDto } from '../user-game/dto/user-game.total.stat.response.dto';
+import { GetUserGameTotalStatDto } from '../user-game/dto/get.user-game.total.stat.dto';
+import { UserGameService } from '../user-game/user-game.service';
+import { UserGameTotalStatDto } from '../user-game/dto/user-game.total.stat.dto';
+import { UserGameSeasonStatResponseDto } from '../user-game/dto/user-game.season.stat.response.dto';
+import { GetUserGameSeasonStatDto } from '../user-game/dto/get.user-game.season.stat.dto';
+import { UserGameSeasonStatDto } from '../user-game/dto/user-game.season.stat.dto';
 
 @Controller('users')
 export class UserController {
@@ -56,7 +62,8 @@ export class UserController {
     private userEmojiService: UserEmojiService,
     private userTitleService: UserTitleService,
     private rankService: RankService,
-  ) { }
+    private userGameService: UserGameService,
+  ) {}
 
   @Get('/:nickname/detail')
   async userDetailByNicknameGet(@Param('nickname') nickname: string) {
@@ -99,11 +106,11 @@ export class UserController {
     };
     const achievements = selected
       ? await this.userAchievementService.getUserAchievementsSelected(
-        getUserAchievementDto,
-      )
+          getUserAchievementDto,
+        )
       : await this.userAchievementService.getUserAchievementsAll(
-        getUserAchievementDto,
-      );
+          getUserAchievementDto,
+        );
     const responseDto: UserAchievementsResponseDto = {
       achievements: achievements.achievements,
     };
@@ -195,6 +202,53 @@ export class UserController {
       record: userSeasonRank.record,
       rank: userSeasonRank.rank,
       tier: userSeasonRank.tier,
+    };
+    return responseDto;
+  }
+
+  //** Get stat's total*/
+  @Get('/:nickname/stats/total')
+  async userTotalStatByNicknameGet(
+    @Param('nickname') nickname: string,
+  ): Promise<UserGameTotalStatResponseDto> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const getUserTotalStatDto: GetUserGameTotalStatDto = {
+      userId: userInfoDto.id,
+    };
+
+    const userTotalStat: UserGameTotalStatDto =
+      await this.userGameService.getUserGameTotalStat(getUserTotalStatDto);
+    const responseDto: UserGameTotalStatResponseDto = {
+      winRate: userTotalStat.winRate,
+      wins: userTotalStat.wins,
+      ties: userTotalStat.ties,
+      loses: userTotalStat.loses,
+    };
+    return responseDto;
+  }
+
+  //** Get stat's season*/
+  @Get('/:nickname/stats/season')
+  async userSeasonStatByNicknameGet(
+    @Param('nickname') nickname: string,
+  ): Promise<UserGameSeasonStatResponseDto> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const getUserSeasonStatDto: GetUserGameSeasonStatDto = {
+      userId: userInfoDto.id,
+    };
+    const userSeasonStat: UserGameSeasonStatDto =
+      await this.userGameService.getUserGameSeasonStat(getUserSeasonStatDto);
+    const responseDto: UserGameSeasonStatResponseDto = {
+      winRate: userSeasonStat.winRate,
+      wins: userSeasonStat.wins,
+      ties: userSeasonStat.ties,
+      loses: userSeasonStat.loses,
     };
     return responseDto;
   }

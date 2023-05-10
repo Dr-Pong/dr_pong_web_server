@@ -14,7 +14,10 @@ import {
   GAMERESULT_TIE,
   GAMERESULT_WIN,
 } from 'src/global/type/type.game.result';
-import { addTransactionalDataSource, initializeTransactionalContext } from 'typeorm-transactional';
+import {
+  addTransactionalDataSource,
+  initializeTransactionalContext,
+} from 'typeorm-transactional';
 import { User } from 'src/domain/user/user.entity';
 import { UserGameRecordsDto } from './dto/user-game.records.dto';
 import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
@@ -100,7 +103,7 @@ describe('UserGameService', () => {
       (userGame) => userGame.result === GAMERESULT_TIE,
     ).length;
 
-    const testWinRate = testWin / (testWin + testLose);
+    const testWinRate = (testWin / (testWin + testLose)) * 100;
 
     expect(allGameResult.winRate).toBe(testWinRate);
     expect(allGameResult.wins).toBe(testWin);
@@ -136,7 +139,7 @@ describe('UserGameService', () => {
       (userGame) => userGame.result === GAMERESULT_TIE,
     ).length;
 
-    const seasonWinRate = seasonWin / (seasonWin + seasonLose);
+    const seasonWinRate = (seasonWin / (seasonWin + seasonLose)) * 100;
 
     expect(seasonGameResult.winRate).toBe(seasonWinRate);
     expect(seasonGameResult.wins).toBe(seasonWin);
@@ -152,37 +155,58 @@ describe('UserGameService', () => {
       userId: testData.users[0].id,
       count: 10,
       lastGameId: 2147483647,
-    }
+    };
 
     const countEqualGamesRequest: GetUserGameRecordsDto = {
       userId: testData.users[0].id,
       count: 15,
       lastGameId: 2147483647,
-    }
+    };
 
     const countLargerThanGamesRequest: GetUserGameRecordsDto = {
       userId: testData.users[0].id,
       count: 20,
       lastGameId: 2147483647,
-    }
+    };
 
-    const countLowerThanGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(countLowerThanGamesRequest);
-    const countEqualGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(countEqualGamesRequest);
-    const countLargerThanGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(countLargerThanGamesRequest);
+    const countLowerThanGames: UserGameRecordsDto =
+      await service.getUserGameRecordsByCountAndLastGameId(
+        countLowerThanGamesRequest,
+      );
+    const countEqualGames: UserGameRecordsDto =
+      await service.getUserGameRecordsByCountAndLastGameId(
+        countEqualGamesRequest,
+      );
+    const countLargerThanGames: UserGameRecordsDto =
+      await service.getUserGameRecordsByCountAndLastGameId(
+        countLargerThanGamesRequest,
+      );
 
     expect(countLowerThanGames.records.length).toBe(10);
-    expect(countLowerThanGames.records[0].me.nickname).toBe(testData.users[0].nickname);
-    expect(countLowerThanGames.records[0].you.nickname).toBe(testData.users[1].nickname);
+    expect(countLowerThanGames.records[0].me.nickname).toBe(
+      testData.users[0].nickname,
+    );
+    expect(countLowerThanGames.records[0].you.nickname).toBe(
+      testData.users[1].nickname,
+    );
     expect(countLowerThanGames.isLastPage).toBe(false);
 
     expect(countEqualGames.records.length).toBe(testData.games.length);
-    expect(countEqualGames.records[0].me.nickname).toBe(testData.users[0].nickname);
-    expect(countEqualGames.records[0].you.nickname).toBe(testData.users[1].nickname);
+    expect(countEqualGames.records[0].me.nickname).toBe(
+      testData.users[0].nickname,
+    );
+    expect(countEqualGames.records[0].you.nickname).toBe(
+      testData.users[1].nickname,
+    );
     expect(countEqualGames.isLastPage).toBe(true);
 
     expect(countLargerThanGames.records.length).toBe(testData.games.length);
-    expect(countLargerThanGames.records[0].me.nickname).toBe(testData.users[0].nickname);
-    expect(countLargerThanGames.records[0].you.nickname).toBe(testData.users[1].nickname);
+    expect(countLargerThanGames.records[0].me.nickname).toBe(
+      testData.users[0].nickname,
+    );
+    expect(countLargerThanGames.records[0].you.nickname).toBe(
+      testData.users[1].nickname,
+    );
     expect(countLargerThanGames.isLastPage).toBe(true);
   });
 
@@ -193,23 +217,26 @@ describe('UserGameService', () => {
       userId: testData.users[0].id,
       count: 10,
       lastGameId: 2147483647,
-    }
+    };
 
     const splitedGamesRequest: GetUserGameRecordsDto = {
       userId: testData.users[0].id,
       count: 10,
       lastGameId: testData.games[4].id,
-    }
+    };
 
     const noGamesRequest: GetUserGameRecordsDto = {
       userId: testData.users[0].id,
       count: 10,
       lastGameId: testData.games[0].id,
-    }
+    };
 
-    const allGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(allGamesRequest);
-    const splitedGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(splitedGamesRequest);
-    const noGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(noGamesRequest);
+    const allGames: UserGameRecordsDto =
+      await service.getUserGameRecordsByCountAndLastGameId(allGamesRequest);
+    const splitedGames: UserGameRecordsDto =
+      await service.getUserGameRecordsByCountAndLastGameId(splitedGamesRequest);
+    const noGames: UserGameRecordsDto =
+      await service.getUserGameRecordsByCountAndLastGameId(noGamesRequest);
 
     expect(allGames.records.length).toBe(10);
     expect(allGames.records[0].me.nickname).toBe(testData.users[0].nickname);
@@ -217,8 +244,12 @@ describe('UserGameService', () => {
     expect(allGames.isLastPage).toBe(false);
 
     expect(splitedGames.records.length).toBe(4);
-    expect(splitedGames.records[0].me.nickname).toBe(testData.users[0].nickname);
-    expect(splitedGames.records[0].you.nickname).toBe(testData.users[1].nickname);
+    expect(splitedGames.records[0].me.nickname).toBe(
+      testData.users[0].nickname,
+    );
+    expect(splitedGames.records[0].you.nickname).toBe(
+      testData.users[1].nickname,
+    );
     expect(splitedGames.isLastPage).toBe(true);
 
     expect(noGames.records.length).toBe(0);
@@ -232,11 +263,12 @@ describe('UserGameService', () => {
       userId: noGameUser.id,
       count: 10,
       lastGameId: 2147483647,
-    }
+    };
 
-    const noGames: UserGameRecordsDto = await service.getUserGameRecordsByCountAndLastGameId(noGamesRequest);
+    const noGames: UserGameRecordsDto =
+      await service.getUserGameRecordsByCountAndLastGameId(noGamesRequest);
 
     expect(noGames.records.length).toBe(0);
     expect(noGames.isLastPage).toBe(true);
-  })
+  });
 });

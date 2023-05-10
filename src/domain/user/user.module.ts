@@ -14,6 +14,7 @@ import { UserRepository } from './user.repository';
 import { ProfileImageRepository } from 'src/domain/profile-image/profile-image.repository';
 import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
 import { RankModule } from 'src/domain/rank/rank.module';
+import { UserGameModule } from '../user-game/user-game.module';
 
 @Module({
   imports: [
@@ -24,9 +25,10 @@ import { RankModule } from 'src/domain/rank/rank.module';
     UsertitleModule,
     AuthModule,
     RankModule,
+    UserGameModule,
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository, ProfileImageRepository],
   exports: [UserService],
 })
-export class UserModule { }
+export class UserModule {}
