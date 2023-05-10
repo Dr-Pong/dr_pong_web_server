@@ -136,10 +136,6 @@ describe('UserController', () => {
         );
 
         expect(response.statusCode).toBe(200);
-        expect(response.body).toHaveProperty('winRate');
-        expect(response.body).toHaveProperty('wins');
-        expect(response.body).toHaveProperty('ties');
-        expect(response.body).toHaveProperty('loses');
 
         expect(response.body.winRate).toBe(0.25);
         expect(response.body.wins).toBe(1);
@@ -155,10 +151,20 @@ describe('UserController', () => {
         );
 
         expect(response.statusCode).toBe(200);
-        expect(response.body).toHaveProperty('winRate');
-        expect(response.body).toHaveProperty('wins');
-        expect(response.body).toHaveProperty('ties');
-        expect(response.body).toHaveProperty('loses');
+
+        expect(response.body.winRate).toBe(0);
+        expect(response.body.wins).toBe(0);
+        expect(response.body.ties).toBe(0);
+        expect(response.body.loses).toBe(0);
+      });
+
+      it('뉴비라 경기기록이 없는 경우 유저 데이터 반환', async () => {
+        const user = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/total',
+        );
+
+        expect(response.statusCode).toBe(200);
 
         expect(response.body.winRate).toBe(0);
         expect(response.body.wins).toBe(0);
@@ -189,10 +195,6 @@ describe('UserController', () => {
         );
 
         expect(response.statusCode).toBe(200);
-        expect(response.body).toHaveProperty('winRate');
-        expect(response.body).toHaveProperty('wins');
-        expect(response.body).toHaveProperty('ties');
-        expect(response.body).toHaveProperty('loses');
 
         expect(response.body.winRate).toBe(0.25);
         expect(response.body.wins).toBe(1);
@@ -208,10 +210,22 @@ describe('UserController', () => {
         );
 
         expect(response.statusCode).toBe(200);
-        expect(response.body).toHaveProperty('winRate');
-        expect(response.body).toHaveProperty('wins');
-        expect(response.body).toHaveProperty('ties');
-        expect(response.body).toHaveProperty('loses');
+
+        expect(response.body.winRate).toBe(0);
+        expect(response.body.wins).toBe(0);
+        expect(response.body.ties).toBe(0);
+        expect(response.body.loses).toBe(0);
+      });
+
+      it('과겨 시즌에 기록이 있으나 현재시즌 경기기록이 없는경우', async () => {
+        await testService.createBasicSeasons(2);
+        await testService.createPastSeasonGames();
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/season',
+        );
+
+        expect(response.statusCode).toBe(200);
 
         expect(response.body.winRate).toBe(0);
         expect(response.body.wins).toBe(0);
