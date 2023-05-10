@@ -105,7 +105,7 @@ describe('UserGameService', () => {
 
     const testWinRate = (testWin / (testWin + testLose)) * 100;
 
-    expect(allGameResult.winRate).toBe(testWinRate.toFixed(1));
+    expect(allGameResult.winRate).toBe(testWinRate);
     expect(allGameResult.wins).toBe(testWin);
     expect(allGameResult.ties).toBe(testTies);
     expect(allGameResult.loses).toBe(testLose);
@@ -141,7 +141,7 @@ describe('UserGameService', () => {
 
     const seasonWinRate = (seasonWin / (seasonWin + seasonLose)) * 100;
 
-    expect(seasonGameResult.winRate).toBe(seasonWinRate.toFixed(1));
+    expect(seasonGameResult.winRate).toBe(seasonWinRate);
     expect(seasonGameResult.wins).toBe(seasonWin);
     expect(seasonGameResult.ties).toBe(seasonTies);
     expect(seasonGameResult.loses).toBe(seasonLose);
