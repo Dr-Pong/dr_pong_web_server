@@ -66,8 +66,6 @@ describe('UserController', () => {
       // const response = (await request(app.getHttpServer()).get('/users/me')).header(
       //   // jwt token init
       // );
-      // console.log(response.body);
-      // console.log(response.statusCode);
       // expect(response.statusCode).toBe(200);
     });
 
@@ -78,7 +76,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/detail',
         );
 
-        // console.log('타이틀 있는경우', response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
         expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
@@ -104,8 +101,6 @@ describe('UserController', () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/detail',
         );
-        // console.log('없는경우user', user);
-        // console.log('없는경우', response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
         expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
@@ -137,7 +132,7 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(200);
 
-        expect(response.body.winRate).toBe(0.25);
+        expect(response.body.winRate).toBe(25);
         expect(response.body.wins).toBe(1);
         expect(response.body.ties).toBe(2);
         expect(response.body.loses).toBe(3);
@@ -182,8 +177,8 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(200);
 
-        expect(response.body.winRate).toBe(0);
-        expect(response.body.wins).toBe(0);
+        expect(response.body.winRate).toBe(100);
+        expect(response.body.wins).toBe(3);
         expect(response.body.ties).toBe(0);
         expect(response.body.loses).toBe(0);
       });
@@ -191,6 +186,7 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/stats/season', () => {
       it('유저의 승률, 승, 무, 패 반환', async () => {
+        await testService.createBasicSeasons(1);
         const user = await testService.createBasicUser();
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/stats/season',
@@ -212,13 +208,14 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(200);
 
-        expect(response.body.winRate).toBe(0.25);
+        expect(response.body.winRate).toBe(25);
         expect(response.body.wins).toBe(1);
         expect(response.body.ties).toBe(2);
         expect(response.body.loses).toBe(3);
       });
 
       it('유저의 승률, 0승, 0무, 0패 데이터 반환', async () => {
+        await testService.createBasicSeasons(1);
         await testService.createCustomResultUser(0, 0, 0);
         const user = testService.users[0];
         const response = await request(app.getHttpServer()).get(
@@ -271,8 +268,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/ranks/total',
         );
 
-        // console.log('없는경우user', user);
-        // console.log('없는경우', response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('rank');
         expect(response.body).toHaveProperty('tier');
@@ -288,9 +283,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/achievements?selected=true',
         );
 
-        // console.log('없는경우user', user);
-        // console.log('없는경우', response.body.achievements);
-
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('achievements');
         expect(response.body.achievements[0]).toBe(null);
@@ -303,9 +295,6 @@ describe('UserController', () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/achievements?selected=true',
         );
-
-        // console.log('user', user);
-        // console.log('body', response.body.achievements);
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('achievements');
@@ -323,7 +312,6 @@ describe('UserController', () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/achievements?selected=true',
         );
-        // console.log('임의의순서',response.body.achievements);
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('achievements');
@@ -341,7 +329,6 @@ describe('UserController', () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/achievements?selected=true',
         );
-        // console.log('빵꾸',response.body.achievements);
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('achievements');
@@ -423,9 +410,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/emojis?selected=true',
         );
 
-        // console.log('없는경우user', user);
-        // console.log('없는경우', response.body.emojis);
-
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
         expect(response.body.emojis[0]).toBe(null);
@@ -438,9 +422,6 @@ describe('UserController', () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/emojis?selected=true',
         );
-
-        // console.log('user', user);
-        // console.log('body', response.body.emojis);
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
@@ -457,7 +438,6 @@ describe('UserController', () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/emojis?selected=true',
         );
-        // console.log('임의의순서',response.body.emojis);
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
@@ -474,7 +454,6 @@ describe('UserController', () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/emojis?selected=true',
         );
-        // console.log('빵꾸',response.body.emojis);
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
@@ -511,7 +490,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/emojis?selected=false',
         );
 
-        // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
         expect(response.body.emojis[0].status).toBe(COLLECTABLE_ACHIEVED);
@@ -525,7 +503,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/emojis?selected=false',
         );
 
-        // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('emojis');
         expect(response.body.emojis[0].status).toBe(COLLECTABLE_SELECTED);
@@ -541,7 +518,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/titles',
         );
 
-        // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('titles');
         expect(response.body.titles.length).toBe(0);
@@ -552,7 +528,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/titles',
         );
 
-        // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('titles');
         expect(response.body.titles.length).toBe(5);
@@ -563,7 +538,6 @@ describe('UserController', () => {
           '/users/' + user.nickname + '/titles',
         );
 
-        // console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('titles');
         expect(response.body.titles.length).toBe(5);
