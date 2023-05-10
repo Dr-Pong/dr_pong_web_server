@@ -114,7 +114,143 @@ describe('UserController', () => {
       });
     });
 
-    describe('GET /users/{nickname}/ranks/season', () => {
+    describe('/users/{nickname}/stats/total', () => {
+      it('유저의 승률, 승, 무, 패 반환', async () => {
+        const user = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/total',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('winRate');
+        expect(response.body).toHaveProperty('wins');
+        expect(response.body).toHaveProperty('ties');
+        expect(response.body).toHaveProperty('loses');
+      });
+
+      it('유저의 승률, 1승, 2무, 3패 데이터 반환', async () => {
+        await testService.createCustomResultUserBySeasons(1, 2, 3);
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/total',
+        );
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.winRate).toBe(0.25);
+        expect(response.body.wins).toBe(1);
+        expect(response.body.ties).toBe(2);
+        expect(response.body.loses).toBe(3);
+      });
+
+      it('유저의 승률, 0승, 0무, 0패 데이터 반환', async () => {
+        await testService.createCustomResultUserBySeasons(0, 0, 0);
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/total',
+        );
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.winRate).toBe(0);
+        expect(response.body.wins).toBe(0);
+        expect(response.body.ties).toBe(0);
+        expect(response.body.loses).toBe(0);
+      });
+
+      it('뉴비라 경기기록이 없는 경우 유저 데이터 반환', async () => {
+        const user = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/total',
+        );
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.winRate).toBe(0);
+        expect(response.body.wins).toBe(0);
+        expect(response.body.ties).toBe(0);
+        expect(response.body.loses).toBe(0);
+      });
+
+      it('과겨 시즌에 기록이 있으나 현재시즌 경기기록이 없는경우', async () => {
+        await testService.createBasicSeasons(2);
+        await testService.createPastSeasonGames();
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/total',
+        );
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.winRate).toBe(0);
+        expect(response.body.wins).toBe(0);
+        expect(response.body.ties).toBe(0);
+        expect(response.body.loses).toBe(0);
+      });
+    });
+
+    describe('/users/{nickname}/stats/season', () => {
+      it('유저의 승률, 승, 무, 패 반환', async () => {
+        const user = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/season',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('winRate');
+        expect(response.body).toHaveProperty('wins');
+        expect(response.body).toHaveProperty('ties');
+        expect(response.body).toHaveProperty('loses');
+      });
+
+      it('유저의 승률, 1승, 2무, 3패 데이터 반환', async () => {
+        await testService.createCustomResultUser(1, 2, 3);
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/season',
+        );
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.winRate).toBe(0.25);
+        expect(response.body.wins).toBe(1);
+        expect(response.body.ties).toBe(2);
+        expect(response.body.loses).toBe(3);
+      });
+
+      it('유저의 승률, 0승, 0무, 0패 데이터 반환', async () => {
+        await testService.createCustomResultUser(0, 0, 0);
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/season',
+        );
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.winRate).toBe(0);
+        expect(response.body.wins).toBe(0);
+        expect(response.body.ties).toBe(0);
+        expect(response.body.loses).toBe(0);
+      });
+
+      it('과겨 시즌에 기록이 있으나 현재시즌 경기기록이 없는경우', async () => {
+        await testService.createBasicSeasons(2);
+        await testService.createPastSeasonGames();
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/season',
+        );
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.winRate).toBe(0);
+        expect(response.body.wins).toBe(0);
+        expect(response.body.ties).toBe(0);
+        expect(response.body.loses).toBe(0);
+      });
+    });
+
+    describe('/users/{nickname}/ranks/season', () => {
       it('유저 현시즌 record rank tier반환', async () => {
         const user: User = await testService.createBasicUser();
         const response = await request(app.getHttpServer()).get(
@@ -128,7 +264,7 @@ describe('UserController', () => {
       });
     });
 
-    describe('GET /users/{nickname}/ranks/total', () => {
+    describe('/users/{nickname}/ranks/total', () => {
       it('역대 최고 랭크 요청', async () => {
         const user: User = await testService.createBasicUser();
         const response = await request(app.getHttpServer()).get(
