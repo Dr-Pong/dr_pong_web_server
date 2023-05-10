@@ -479,7 +479,7 @@ export class TestService {
   }
 
   //** 유저 한명의 인자로 받은 승 ,무, 패 데이터 만들기 */
-  async createMixedResultUser(
+  async createCustomResultUser(
     win: number,
     tie: number,
     lose: number,
