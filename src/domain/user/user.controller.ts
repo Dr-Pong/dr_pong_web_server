@@ -266,8 +266,10 @@ export class UserController {
       await this.userGameService.getUserGameRecordsByCountAndLastGameId(
         getUserGameRecordsDto,
       );
-    const responseDto: UserGameRecordsResponseDto =
-      UserGameRecordsResponseDto.fromUserGameRecordResponse(userGameRecords);
+    const responseDto: UserGameRecordsResponseDto = {
+      records: userGameRecords.records,
+    };
+
     return responseDto;
   }
 
