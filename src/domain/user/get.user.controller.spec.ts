@@ -275,6 +275,60 @@ describe('UserController', () => {
       });
     });
 
+    describe('/users/{nickname}/records?count={count}&lastGameId={lastGameId}', () => {
+      it('count 가 없는 경우 디폴트 작동확인', async () => {
+        const lastGameId = 4242;
+        const user: User = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/records?lastGameId=' + lastGameId,
+        );
+
+        expect(response.statusCode).toBe(200);
+      });
+
+      it('lastGameId 가 없는 경우 디폴트 작동확인', async () => {
+        const count = 11;
+        const user: User = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/records?count=' + count,
+        );
+
+        expect(response.statusCode).toBe(200);
+      });
+
+      it('count 가 INT_MAX 인 경우', async () => {
+        const lastGameId = 4242;
+        const count = 2147483648;
+        const user: User = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            user.nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
+        );
+
+        expect(response.statusCode).toBe(200);
+      });
+
+      it('lastGameId 가  INT_MAX인 경우', async () => {
+        const lastGameId = 2147483647;
+        const count = 11;
+        const user: User = await testService.createBasicUser();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            user.nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
+        );
+
+        expect(response.statusCode).toBe(200);
+      });
+    });
+
     describe('/users/{nickname}/achievements?selected=true', () => {
       it('선택된 업적이 없는경우', async () => {
         const user: User =
@@ -563,6 +617,21 @@ describe('UserController', () => {
           '/users/' + 'notExistNickname' + '/achievement?selected=true',
         );
         expect(response.statusCode).toBe(404);
+      });
+
+      it('GET /users/{nickname}/records?count={count}&lastGameId={lastGameId} ', async () => {
+        const count = 10;
+        const lastGameId = 4242;
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            'nononon' +
+            '/records?count=' +
+            count +
+            '/lastGameId=' +
+            lastGameId,
+        );
+
+        expect(response.statusCode).toBe(400);
       });
 
       it('GET /users/{nickname}/achievement?selected=false', async () => {
