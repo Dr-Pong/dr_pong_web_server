@@ -127,6 +127,44 @@ describe('UserController', () => {
         expect(response.body).toHaveProperty('ties');
         expect(response.body).toHaveProperty('loses');
       });
+
+      it('유저의 승률, 1승, 2무, 3패 데이터 반환', async () => {
+        await testService.createCustomResultUser(1, 2, 3);
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/total',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('winRate');
+        expect(response.body).toHaveProperty('wins');
+        expect(response.body).toHaveProperty('ties');
+        expect(response.body).toHaveProperty('loses');
+
+        expect(response.body.winRate).toBe(0.25);
+        expect(response.body.wins).toBe(1);
+        expect(response.body.ties).toBe(2);
+        expect(response.body.loses).toBe(3);
+      });
+
+      it('유저의 승률, 0승, 0무, 0패 데이터 반환', async () => {
+        await testService.createCustomResultUser(0, 0, 0);
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/total',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('winRate');
+        expect(response.body).toHaveProperty('wins');
+        expect(response.body).toHaveProperty('ties');
+        expect(response.body).toHaveProperty('loses');
+
+        expect(response.body.winRate).toBe(0);
+        expect(response.body.wins).toBe(0);
+        expect(response.body.ties).toBe(0);
+        expect(response.body.loses).toBe(0);
+      });
     });
 
     describe('/users/{nickname}/stats/season', () => {
@@ -141,6 +179,44 @@ describe('UserController', () => {
         expect(response.body).toHaveProperty('wins');
         expect(response.body).toHaveProperty('ties');
         expect(response.body).toHaveProperty('loses');
+      });
+
+      it('유저의 승률, 1승, 2무, 3패 데이터 반환', async () => {
+        await testService.createCustomResultUser(1, 2, 3);
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/season',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('winRate');
+        expect(response.body).toHaveProperty('wins');
+        expect(response.body).toHaveProperty('ties');
+        expect(response.body).toHaveProperty('loses');
+
+        expect(response.body.winRate).toBe(0.25);
+        expect(response.body.wins).toBe(1);
+        expect(response.body.ties).toBe(2);
+        expect(response.body.loses).toBe(3);
+      });
+
+      it('유저의 승률, 0승, 0무, 0패 데이터 반환', async () => {
+        await testService.createCustomResultUser(0, 0, 0);
+        const user = testService.users[0];
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + user.nickname + '/stats/season',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('winRate');
+        expect(response.body).toHaveProperty('wins');
+        expect(response.body).toHaveProperty('ties');
+        expect(response.body).toHaveProperty('loses');
+
+        expect(response.body.winRate).toBe(0);
+        expect(response.body.wins).toBe(0);
+        expect(response.body.ties).toBe(0);
+        expect(response.body.loses).toBe(0);
       });
     });
 
