@@ -17,7 +17,7 @@ export class UserGameService {
   constructor(
     private readonly userGameRepository: UserGameRepository,
     private readonly seasonRepository: SeasonRepository,
-  ) {}
+  ) { }
 
   async getUserGameTotalStat(
     getDto: GetUserGameTotalStatDto,
@@ -69,5 +69,9 @@ export class UserGameService {
     };
 
     return responseDto;
+  }
+
+  async getUserGameDetailRecordGameId() {
+
   }
 }

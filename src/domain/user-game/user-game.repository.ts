@@ -12,7 +12,7 @@ export class UserGameRepository {
   constructor(
     @InjectRepository(UserGame)
     private readonly repository: Repository<UserGame>,
-  ) {}
+  ) { }
 
   async findAllByUserId(userId: number): Promise<UserGame[]> {
     return await this.repository.find({
@@ -43,6 +43,7 @@ export class UserGameRepository {
         'user_game.user_id = :userId and user_game.game_id < :lastGameId',
         { userId: getDto.userId, lastGameId: getDto.lastGameId },
       )
+      .orderBy({ 'user_game.game.id': 'DESC' })
       .limit(getDto.count + 1);
 
     const userGames: UserGame[] = await this.repository
@@ -52,6 +53,7 @@ export class UserGameRepository {
       .leftJoinAndSelect('user.image', 'image')
       .where(`user_game.game_id IN (${gameIds.getQuery()})`)
       .setParameters(gameIds.getParameters())
+      .orderBy({ 'user_game.game.id': 'DESC' })
       .getMany();
 
     return userGames;
