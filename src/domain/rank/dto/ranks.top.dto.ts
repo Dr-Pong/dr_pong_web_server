@@ -2,7 +2,7 @@ export class RankTopDataDto {
   id: number;
   rank: number;
   nickname: string;
-  ladderPoint: number;
+  lp: number;
   imageUrl: string;
 }
 
