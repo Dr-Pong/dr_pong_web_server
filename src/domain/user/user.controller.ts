@@ -250,7 +250,7 @@ export class UserController {
   async userGameRecordsByNicknameGet(
     @Param('nickname') nickname: string,
     @Query('count', new DefaultValuePipe(10), ParseIntPipe) count: number,
-    @Query('lastGameId', new DefaultValuePipe(0), ParseIntPipe)
+    @Query('lastGameId', new DefaultValuePipe(2147483647), ParseIntPipe)
     lastGameId: number,
   ): Promise<UserGameRecordsResponseDto> {
     const getUsersDetailDto: GetUserDetailDto = { nickname };
