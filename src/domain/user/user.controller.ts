@@ -58,6 +58,7 @@ import { UserGame } from '../user-game/user-game.entity';
 import { UserGameRecordsResponseDto } from '../user-game/dto/user-game.record.response.dto';
 import { GetUserGameRecordsDto } from '../user-game/dto/get.user-game.records.dto';
 import { UserGameRecordsDto } from '../user-game/dto/user-game.records.dto';
+import { randomInt } from 'crypto';
 
 @Controller('users')
 export class UserController {
@@ -68,7 +69,7 @@ export class UserController {
     private userTitleService: UserTitleService,
     private rankService: RankService,
     private userGameService: UserGameService,
-  ) {}
+  ) { }
 
   @Get('/:nickname/detail')
   async userDetailByNicknameGet(@Param('nickname') nickname: string) {
@@ -107,11 +108,11 @@ export class UserController {
     };
     const achievements = selected
       ? await this.userAchievementService.getUserAchievementsSelected(
-          getUserAchievementDto,
-        )
+        getUserAchievementDto,
+      )
       : await this.userAchievementService.getUserAchievementsAll(
-          getUserAchievementDto,
-        );
+        getUserAchievementDto,
+      );
     const responseDto: UserAchievementsResponseDto = {
       achievements: achievements.achievements,
     };
@@ -148,7 +149,6 @@ export class UserController {
   async usersTitlesByNicknameGet(
     @Param('nickname') nickname: string,
   ): Promise<UserTitlesResponseDto> {
-    // console.log(nickname);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -245,12 +245,11 @@ export class UserController {
     return responseDto;
   }
 
-  //** GET User Game Record List */
   @Get('/:nickname/records')
   async userGameRecordsByNicknameGet(
     @Param('nickname') nickname: string,
     @Query('count', new DefaultValuePipe(10), ParseIntPipe) count: number,
-    @Query('lastGameId', new DefaultValuePipe(2147483647), ParseIntPipe)
+    @Query('lastGameId', new DefaultValuePipe(0), ParseIntPipe)
     lastGameId: number,
   ): Promise<UserGameRecordsResponseDto> {
     const getUsersDetailDto: GetUserDetailDto = { nickname };
@@ -260,7 +259,7 @@ export class UserController {
     const getUserGameRecordsDto: GetUserGameRecordsDto = {
       userId: userInfoDto.id,
       count,
-      lastGameId,
+      lastGameId: lastGameId || 2147483647,
     };
     const userGameRecords: UserGameRecordsDto =
       await this.userGameService.getUserGameRecordsByCountAndLastGameId(
@@ -274,21 +273,100 @@ export class UserController {
     return responseDto;
   }
 
-  /** Patch Users title*/
-  @UseGuards(AuthGuard('jwt'))
-  @Patch('/:nickname/title')
-  async usersDetailByNicknamePatch(
+  @Get('/:nickname/records/:gameId')
+  async userGameRecordDetail(
     @Param('nickname') nickname: string,
-    @Body()
-    patchRequestDto: PatchUserTitleRequestDto,
-  ): Promise<void> {
-    const getUsersDetailDto: GetUserDetailDto = { nickname };
-    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
-      getUsersDetailDto,
-    );
-    const patchUserTitleDto: PatchUserTitleDto =
-      PatchUserTitleDto.forPatchUserTitleDto(userInfoDto, patchRequestDto);
-    await this.userTitleService.patchUserTitle(patchUserTitleDto);
+    @Param('gameId', ParseIntPipe) count: number,
+  ) {
+    return {
+      duration: 214,
+      me: {
+        lp: 4242,
+        lpChange: 42,
+      },
+      you: {
+        lp: 4158,
+        lpChange: -42,
+      },
+      rounds: [
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: false,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: false,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: false,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: false,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: false,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: false,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: false,
+        },
+        {
+          bounces: randomInt(1, 42),
+          meWin: true,
+        },
+      ],
+    }
   }
 
   /** Patch User Image*/
@@ -332,7 +410,6 @@ export class UserController {
     @Body()
     patchRequestDto: PatchUserAchievementsRequestDto,
   ): Promise<void> {
-    // console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -355,7 +432,6 @@ export class UserController {
     @Body()
     patchRequestDto: PatchUserEmojisRequestDto,
   ): Promise<void> {
-    // console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,

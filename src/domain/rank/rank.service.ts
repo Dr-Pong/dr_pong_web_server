@@ -90,7 +90,7 @@ export class RankService {
         id: rank.user.id,
         rank: i + 1, // 1을 더해서 순위를 계산
         nickname: rank.user.nickname,
-        ladderPoint: rank.ladderPoint,
+        lp: rank.ladderPoint,
         imageUrl: rank.user.image.url,
       });
     }
@@ -116,9 +116,9 @@ export class RankService {
       const rank = ranks[i];
       bottomRankData.push({
         id: rank.user.id,
-        rank: getDto.offset + i + 1,
+        rank: getDto.offset + i,
         nickname: rank.user.nickname,
-        ladderPoint: rank.ladderPoint,
+        lp: rank.ladderPoint,
       });
     }
 

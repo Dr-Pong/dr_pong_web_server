@@ -29,6 +29,6 @@ export class UserGame extends BaseTimeEntity {
   @Column()
   score: number;
 
-  @Column()
+  @Column({ name: 'lp_change', type: 'int' })
   lpChange: number;
 }

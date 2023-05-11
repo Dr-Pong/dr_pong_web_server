@@ -2,7 +2,7 @@ export class RankBottomDataDto {
   id: number;
   rank: number;
   nickname: string;
-  ladderPoint: number;
+  lp: number;
 }
 
 export class RanksBottomDto {

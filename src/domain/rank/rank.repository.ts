@@ -51,7 +51,7 @@ export class RankRepository {
     return await this.repository.find({
       where: { season: { id: nowSeason.id } },
       take: getDto.count,
-      skip: getDto.offset,
+      skip: getDto.offset - 1,
       order: { ladderPoint: 'DESC' },
     });
   }

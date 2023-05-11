@@ -228,7 +228,7 @@ describe('RankService', () => {
     expect(topRankResult.top[0].nickname).toEqual(
       testData.ranks[0].user.nickname,
     );
-    expect(topRankResult.top[0].ladderPoint).toEqual(
+    expect(topRankResult.top[0].lp).toEqual(
       testData.ranks[0].ladderPoint,
     );
     expect(topRankResult.top[0].imageUrl).toEqual(
@@ -239,7 +239,7 @@ describe('RankService', () => {
     expect(topRankResult.top[2].nickname).toEqual(
       testData.ranks[2].user.nickname,
     );
-    expect(topRankResult.top[2].ladderPoint).toEqual(
+    expect(topRankResult.top[2].lp).toEqual(
       testData.ranks[2].ladderPoint,
     );
     expect(topRankResult.top[2].imageUrl).toEqual(
@@ -250,7 +250,7 @@ describe('RankService', () => {
     expect(topRankResult.top[9].nickname).toEqual(
       testData.ranks[9].user.nickname,
     );
-    expect(topRankResult.top[9].ladderPoint).toEqual(
+    expect(topRankResult.top[9].lp).toEqual(
       testData.ranks[9].ladderPoint,
     );
     expect(topRankResult.top[9].imageUrl).toEqual(
@@ -270,7 +270,7 @@ describe('RankService', () => {
     expect(bottomRankResult.bottom[0].nickname).toEqual(
       testData.currentSeasonRanks[4].user.nickname,
     );
-    expect(bottomRankResult.bottom[0].ladderPoint).toEqual(
+    expect(bottomRankResult.bottom[0].lp).toEqual(
       testData.currentSeasonRanks[4].ladderPoint,
     );
 
@@ -278,7 +278,7 @@ describe('RankService', () => {
     expect(bottomRankResult.bottom[2].nickname).toEqual(
       testData.currentSeasonRanks[6].user.nickname,
     );
-    expect(bottomRankResult.bottom[2].ladderPoint).toEqual(
+    expect(bottomRankResult.bottom[2].lp).toEqual(
       testData.currentSeasonRanks[6].ladderPoint,
     );
 
@@ -286,7 +286,7 @@ describe('RankService', () => {
     expect(bottomRankResult.bottom[4].nickname).toEqual(
       testData.currentSeasonRanks[8].user.nickname,
     );
-    expect(bottomRankResult.bottom[4].ladderPoint).toEqual(
+    expect(bottomRankResult.bottom[4].lp).toEqual(
       testData.currentSeasonRanks[8].ladderPoint,
     );
   });
