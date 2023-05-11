@@ -122,7 +122,7 @@ export class UserService {
     const responseDto: UserMeDto = {
       nickname: user.nickname,
       imgUrl: user.image.url,
-      isSecondAuthOn: user.isSecondAuthOn,
+      isSecondAuthOn: user.secondAuthSecret !== null,
       roleType: user.roleType,
     };
     return responseDto;
