@@ -504,7 +504,6 @@ export class TestService {
       });
     }
   }
-
   //** 유저 한명의 인자로 받은 승 ,무, 패 데이터 만들기 */
   async createCustomResultUser(
     win: number,
@@ -518,7 +517,8 @@ export class TestService {
       imageUrl: 'SeasonImage',
     });
     const totalGame = win + tie + lose;
-    const user: User = await this.createBasicUser();
+    const user1: User = await this.createBasicUser();
+    const user2: User = await this.createBasicUser();
     for (let i = 0; i < totalGame; i++) {
       this.games.push(
         await this.gameRepository.save({
@@ -529,31 +529,53 @@ export class TestService {
         }),
       );
     }
-    for (let i = 0; i < win; i++) {
+    let i = 0;
+    for (; i < win; i++) {
       await this.userGameRepository.save({
-        user: user,
+        user: user1,
         game: this.games[i],
         result: GAMERESULT_WIN,
         score: 10,
         lpChange: 10,
       });
-    }
-    for (let i = 0; i < lose; i++) {
       await this.userGameRepository.save({
-        user: user,
-        game: this.games[i + win],
+        user: user2,
+        game: this.games[i],
         result: GAMERESULT_LOSE,
         score: 0,
         lpChange: -10,
       });
     }
-    for (let i = 0; i < tie; i++) {
+    for (; i < win + tie; i++) {
       await this.userGameRepository.save({
-        user: user,
-        game: this.games[i + win + lose],
+        user: user1,
+        game: this.games[i],
         result: GAMERESULT_TIE,
         score: 5,
         lpChange: 0,
+      });
+      await this.userGameRepository.save({
+        user: user2,
+        game: this.games[i],
+        result: GAMERESULT_TIE,
+        score: 5,
+        lpChange: 0,
+      });
+    }
+    for (; i < totalGame; i++) {
+      await this.userGameRepository.save({
+        user: user1,
+        game: this.games[i],
+        result: GAMERESULT_LOSE,
+        score: 0,
+        lpChange: -10,
+      });
+      await this.userGameRepository.save({
+        user: user2,
+        game: this.games[i],
+        result: GAMERESULT_WIN,
+        score: 10,
+        lpChange: 10,
       });
     }
   }
