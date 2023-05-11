@@ -38,6 +38,6 @@ export class User extends BaseTimeEntity {
   @Column({ name: 'status_maessage', default: '' })
   statusMessage: string;
 
-  @Column({ name: 'is_second_auth_on', default: false })
-  isSecondAuthOn: boolean;
+  @Column({ name: 'second_auth_secret', default: null })
+  secondAuthSecret: string;
 }
