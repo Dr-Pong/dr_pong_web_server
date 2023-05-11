@@ -13,6 +13,11 @@ import {
 } from 'src/global/type/type.collectable.status';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { UserService } from './user.service';
+import {
+  GAMERESULT_LOSE,
+  GAMERESULT_TIE,
+  GAMERESULT_WIN,
+} from 'src/global/type/type.game.result';
 
 describe('UserController', () => {
   let app: INestApplication;
@@ -277,48 +282,48 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/records?count={count}&lastGameId={lastGameId}', () => {
       it('count 가 없는 경우 디폴트 작동확인', async () => {
+        await testService.createCustomResultUser(1, 2, 3);
         const lastGameId = 4242;
-        const user: User = await testService.createBasicUser();
         const response = await request(app.getHttpServer()).get(
-          '/users/' + user.nickname + '/records?lastGameId=' + lastGameId,
+          '/users/' +
+            testService.users[0].nickname +
+            '/records?lastGameId=' +
+            lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
+
+        expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
+        expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[3].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
       });
 
       it('lastGameId 가 없는 경우 디폴트 작동확인', async () => {
         const count = 11;
-        const user: User = await testService.createBasicUser();
+        await testService.createCustomResultUser(1, 2, 3);
         const response = await request(app.getHttpServer()).get(
-          '/users/' + user.nickname + '/records?count=' + count,
+          '/users/' + testService.users[0].nickname + '/records?count=' + count,
         );
 
         expect(response.statusCode).toBe(200);
+        expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
+        expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[3].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
       });
 
-      it('count 가 INT_MAX 인 경우', async () => {
+      it('count 가 11 인 경우', async () => {
         const lastGameId = 4242;
-        const count = 2147483648;
-        const user: User = await testService.createBasicUser();
-        const response = await request(app.getHttpServer()).get(
-          '/users/' +
-            user.nickname +
-            '/records?count=' +
-            count +
-            '&lastGameId=' +
-            lastGameId,
-        );
-
-        expect(response.statusCode).toBe(200);
-      });
-
-      it('lastGameId 가  INT_MAX인 경우', async () => {
-        const lastGameId = 2147483647;
         const count = 11;
-        const user: User = await testService.createBasicUser();
+        await testService.createCustomResultUser(1, 2, 3);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-            user.nickname +
+            testService.users[0].nickname +
             '/records?count=' +
             count +
             '&lastGameId=' +
@@ -326,6 +331,75 @@ describe('UserController', () => {
         );
 
         expect(response.statusCode).toBe(200);
+        expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
+        expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[3].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
+      });
+      it('count 가 111 인 경우', async () => {
+        const lastGameId = 4242;
+        const count = 111;
+        await testService.createCustomResultUser(1, 2, 3);
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            testService.users[0].nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
+        expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[3].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
+      });
+      it('lastGameId 가  11인 경우', async () => {
+        const lastGameId = 11;
+        const count = 111;
+        await testService.createCustomResultUser(1, 2, 3);
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            testService.users[0].nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
+        expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[3].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
+      });
+      it('lastGameId 가  111인 경우', async () => {
+        const lastGameId = 111;
+        const count = 111;
+        await testService.createCustomResultUser(1, 2, 3);
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            testService.users[0].nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
+        expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
+        expect(response.body.records[3].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
+        expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
       });
     });
 
