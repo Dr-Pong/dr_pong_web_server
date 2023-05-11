@@ -21,7 +21,6 @@ export class RankController {
   async rankTopGet(
     @Query('count', new DefaultValuePipe(10), ParseIntPipe) count: number,
   ): Promise<RanksTopResponseDto> {
-    console.log(count);
     const getRanksTopDto: GetRanksTopDto = { count };
     const topRanks: RanksTopDto = await this.rankService.getTopRanksByCount(
       getRanksTopDto,
@@ -29,7 +28,6 @@ export class RankController {
     const responseDto: RanksTopResponseDto = {
       top: topRanks.top,
     };
-    console.log(responseDto);
     return responseDto;
   }
 
@@ -38,14 +36,12 @@ export class RankController {
     @Query('count', new DefaultValuePipe(10), ParseIntPipe) count: number,
     @Query('offset', new DefaultValuePipe(4), ParseIntPipe) offset: number,
   ): Promise<RanksBottomResponseDto> {
-    console.log(count, offset);
     const getRanksBottomDto: GetRanksBottomDto = { count, offset };
     const bottomRanks: RanksBottomDto =
       await this.rankService.getBottomRanksByCount(getRanksBottomDto);
     const responseDto: RanksBottomResponseDto = {
       bottom: bottomRanks.bottom,
     };
-    console.log(responseDto);
     return responseDto;
   }
 }

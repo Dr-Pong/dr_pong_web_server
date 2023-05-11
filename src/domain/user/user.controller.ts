@@ -149,7 +149,6 @@ export class UserController {
   async usersTitlesByNicknameGet(
     @Param('nickname') nickname: string,
   ): Promise<UserTitlesResponseDto> {
-    // console.log(nickname);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -253,8 +252,6 @@ export class UserController {
     @Query('lastGameId', new DefaultValuePipe(0), ParseIntPipe)
     lastGameId: number,
   ): Promise<UserGameRecordsResponseDto> {
-    console.log(nickname, count, lastGameId);
-
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -413,7 +410,6 @@ export class UserController {
     @Body()
     patchRequestDto: PatchUserAchievementsRequestDto,
   ): Promise<void> {
-    // console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
@@ -436,7 +432,6 @@ export class UserController {
     @Body()
     patchRequestDto: PatchUserEmojisRequestDto,
   ): Promise<void> {
-    // console.log('patchDto', patchRequestDto);
     const getUsersDetailDto: GetUserDetailDto = { nickname };
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
