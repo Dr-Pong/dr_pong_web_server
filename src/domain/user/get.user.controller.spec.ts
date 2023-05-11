@@ -67,13 +67,6 @@ describe('UserController', () => {
   });
 
   describe('GET tests', () => {
-    it('GET /users/me', async () => {
-      // const response = (await request(app.getHttpServer()).get('/users/me')).header(
-      //   // jwt token init
-      // );
-      // expect(response.statusCode).toBe(200);
-    });
-
     describe('/users/{nickname}/detil', () => {
       it('타이틀이 없는 경우', async () => {
         const user: User = await testService.createBasicUser();
