@@ -310,10 +310,10 @@ describe('UserController', () => {
         expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
       });
 
-      it('count 가 11 인 경우', async () => {
+      it('count 가 진행 게임보다 적은경우', async () => {
         const lastGameId = 4242;
         const count = 11;
-        await testService.createCustomResultUser(1, 2, 3);
+        await testService.createCustomResultUser(1, 2, 300);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
             testService.users[0].nickname +
@@ -324,6 +324,7 @@ describe('UserController', () => {
         );
 
         expect(response.statusCode).toBe(200);
+        expect(response.body.records.length).toBe(count);
         expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
         expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
         expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
@@ -331,10 +332,10 @@ describe('UserController', () => {
         expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
         expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
       });
-      it('count 가 111 인 경우', async () => {
+      it('count 가 진행 게임보다 많은경우', async () => {
         const lastGameId = 4242;
         const count = 111;
-        await testService.createCustomResultUser(1, 2, 3);
+        await testService.createCustomResultUser(1, 2, 108);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
             testService.users[0].nickname +
@@ -345,6 +346,7 @@ describe('UserController', () => {
         );
 
         expect(response.statusCode).toBe(200);
+        expect(response.body.records.length).toBe(count);
         expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
         expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
         expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
@@ -352,9 +354,9 @@ describe('UserController', () => {
         expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
         expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
       });
-      it('lastGameId 가  11인 경우', async () => {
-        const lastGameId = 11;
-        const count = 111;
+      it('lastGameId 가  진행 게임보다 많은경우', async () => {
+        const lastGameId = 10;
+        const count = 10;
         await testService.createCustomResultUser(1, 2, 3);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
@@ -364,8 +366,9 @@ describe('UserController', () => {
             '&lastGameId=' +
             lastGameId,
         );
-
+        console.log(response.body);
         expect(response.statusCode).toBe(200);
+        expect(response.body.isLastPage).toBe(true);
         expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
         expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
         expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
@@ -373,9 +376,10 @@ describe('UserController', () => {
         expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
         expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
       });
-      it('lastGameId 가  111인 경우', async () => {
-        const lastGameId = 111;
-        const count = 111;
+
+      it('lastGameId 가  진행 게임보다 적은경우 ', async () => {
+        const lastGameId = 3;
+        const count = 10;
         await testService.createCustomResultUser(1, 2, 3);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
@@ -387,6 +391,25 @@ describe('UserController', () => {
         );
 
         expect(response.statusCode).toBe(200);
+        expect(response.body.isLastPage).toBe(true);
+        expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
+        expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
+      });
+      it('isLastPage가 false 가 되는지 ', async () => {
+        const lastGameId = 30;
+        const count = 10;
+        await testService.createCustomResultUser(1, 2, 30);
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            testService.users[0].nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.isLastPage).toBe(false);
         expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
         expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
         expect(response.body.records[2].result).toBe(GAMERESULT_TIE);

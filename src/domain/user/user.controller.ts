@@ -268,6 +268,7 @@ export class UserController {
       );
     const responseDto: UserGameRecordsResponseDto = {
       records: userGameRecords.records,
+      isLastPage: userGameRecords.isLastPage,
     };
 
     return responseDto;
