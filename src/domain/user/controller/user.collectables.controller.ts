@@ -5,7 +5,6 @@ import {
   Get,
   Param,
   ParseBoolPipe,
-  ParseIntPipe,
   Patch,
   Query,
 } from '@nestjs/common';
@@ -32,10 +31,6 @@ import { PatchUserTitleRequestDto } from '../../user-title/dto/patch.user.title.
 import { PatchUserImageDto } from '../dto/patch.user.image.dto';
 import { PatchUserMessageRequestDto } from '../dto/patch.user.message.request.dto';
 import { PatchUserMessageDto } from '../dto/patch.user.message.dto';
-import { RankService } from 'src/domain/rank/rank.service';
-import { UserGameService } from '../../user-game/user-game.service';
-import { GetUserGameRecordsDto } from '../../user-game/dto/get.user-game.records.dto';
-import { UserGameRecordsDto } from '../../user-game/dto/user-game.records.dto';
 
 @Controller('users')
 export class UserController {
@@ -44,8 +39,6 @@ export class UserController {
     private userAchievementService: UserAchievementService,
     private userEmojiService: UserEmojiService,
     private userTitleService: UserTitleService,
-    private rankService: RankService,
-    private userGameService: UserGameService,
   ) {}
 
   @Get('/:nickname/achievements')
@@ -116,32 +109,6 @@ export class UserController {
     const responseDto: UserTitlesResponseDto = {
       titles: titles.titles,
     };
-    return responseDto;
-  }
-
-    @Param('nickname') nickname: string,
-    @Query('count', new DefaultValuePipe(10), ParseIntPipe) count: number,
-    @Query('lastGameId', new DefaultValuePipe(0), ParseIntPipe)
-    lastGameId: number,
-  ): Promise<UserGameRecordsResponseDto> {
-    const getUsersDetailDto: GetUserDetailDto = { nickname };
-    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
-      getUsersDetailDto,
-    );
-    const getUserGameRecordsDto: GetUserGameRecordsDto = {
-      userId: userInfoDto.id,
-      count,
-      lastGameId: lastGameId || 2147483647,
-    };
-    const userGameRecords: UserGameRecordsDto =
-      await this.userGameService.getUserGameRecordsByCountAndLastGameId(
-        getUserGameRecordsDto,
-      );
-    const responseDto: UserGameRecordsResponseDto = {
-      records: userGameRecords.records,
-      isLastPage: userGameRecords.isLastPage,
-    };
-
     return responseDto;
   }
 
