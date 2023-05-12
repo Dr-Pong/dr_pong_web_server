@@ -51,7 +51,7 @@ export class UserGameRepository {
       .leftJoinAndSelect('user.image', 'image')
       .where(`user_game.game_id IN (${gameIds.getQuery()})`)
       .setParameters(gameIds.getParameters())
-      .orderBy({ 'user_game.game.id': 'DESC' })
+      .orderBy({ 'user_game.game.start_time': 'DESC' })
       .getMany();
 
     return userGames;
