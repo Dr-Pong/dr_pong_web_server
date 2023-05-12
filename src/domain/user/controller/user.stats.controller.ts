@@ -8,6 +8,7 @@ import { UserGameTotalStatDto } from '../../user-game/dto/user-game.total.stat.d
 import { UserGameSeasonStatResponseDto } from '../../user-game/dto/user-game.season.stat.response.dto';
 import { GetUserGameSeasonStatDto } from '../../user-game/dto/get.user-game.season.stat.dto';
 import { UserGameSeasonStatDto } from '../../user-game/dto/user-game.season.stat.dto';
+import { UserInfoDto } from '../dto/user.info.dto';
 
 @Controller('users')
 export class UserStatsController {
