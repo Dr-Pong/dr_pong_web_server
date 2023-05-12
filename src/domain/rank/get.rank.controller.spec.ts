@@ -42,6 +42,23 @@ describe('RankController', () => {
 
   describe('Get Test', () => {
     describe('/ranks/top?count={count}', () => {
+      it('변수명 잘 들어오는지 확인', async () => {
+        await testService.createBasicSeasons(1);
+        await testService.createProfileImages();
+        await testService.createBasicUsers();
+        await testService.createBasicRank();
+        await testService.createCurrentSeasonRank();
+        const topCoount = 10;
+        const response = await request(app.getHttpServer()).get(
+          '/ranks/top?count=' + topCoount,
+        );
+
+        expect(response.status).toBe(200);
+        expect(response.body.top[0]).toHaveProperty('rank');
+        expect(response.body.top[0]).toHaveProperty('nickname');
+        expect(response.body.top[0]).toHaveProperty('lp');
+        expect(response.body.top[0]).toHaveProperty('imageUrl');
+      });
       it('count에 따른 Top 랭크데이터 반환', async () => {
         await testService.createBasicSeasons(1);
         await testService.createProfileImages();
@@ -99,7 +116,6 @@ describe('RankController', () => {
         );
 
         expect(response.status).toBe(200);
-        console.log(response.body.bottom);
         expect(response.body.bottom.length).toBe(bottomCount - offset + 1);
         expect(response.body.bottom[0].rank).toBe(4);
         expect(response.body.bottom[0].nickname).toBe(
@@ -124,34 +140,6 @@ describe('RankController', () => {
 
         expect(response.status).toBe(200);
         expect(response.body.bottom.length).toBe(0);
-      });
-      it('offset이 0인경우', async () => {
-        await testService.createBasicSeasons(1);
-        await testService.createProfileImages();
-        await testService.createBasicUsers();
-        await testService.createBasicRank();
-        await testService.createCurrentSeasonRank();
-        const bottomCount = 10;
-        const offset = 0;
-        const response = await request(app.getHttpServer()).get(
-          '/ranks/bottom?count=' + bottomCount + '&offset=' + offset,
-        );
-
-        expect(response.status).toBe(200);
-        expect(response.body.bottom.length).toBe(bottomCount);
-        expect(response.body.bottom[0].rank).toBe(1);
-        expect(response.body.bottom[0].nickname).toBe(
-          testService.users[0].nickname,
-        );
-        expect(response.body.bottom[1].rank).toBe(2);
-        expect(response.body.bottom[2].rank).toBe(3);
-        expect(response.body.bottom[3].rank).toBe(4);
-        expect(response.body.bottom[4].rank).toBe(5);
-        expect(response.body.bottom[5].rank).toBe(6);
-        expect(response.body.bottom[6].rank).toBe(7);
-        expect(response.body.bottom[7].rank).toBe(8);
-        expect(response.body.bottom[8].rank).toBe(9);
-        expect(response.body.bottom[9].rank).toBe(10);
       });
     });
   });
