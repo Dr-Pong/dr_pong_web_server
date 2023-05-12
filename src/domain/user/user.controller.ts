@@ -17,8 +17,6 @@ import { PatchUserTitleDto } from '../user-title/dto/patch.user.title.dto';
 import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 import { GetUserAchievementsDto } from 'src/domain/user-achievement/dto/get.user.achievements.dto';
 import { UserAchievementService } from 'src/domain/user-achievement/user-achievement.service';
-import { AuthService } from 'src/auth/auth.service';
-import { AuthDto } from 'src/auth/dto/auth.dto';
 import { UserAchievementsDto } from 'src/domain/user-achievement/dto/user.achievements.dto';
 import { UserDetailDto } from './dto/user.detail.dto';
 import { UserAchievementsResponseDto } from 'src/domain/user-achievement/dto/user-achievements.response.dto';

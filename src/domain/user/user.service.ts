@@ -8,13 +8,10 @@ import { UserDetailDto } from './dto/user.detail.dto';
 import { PatchUserImageDto } from './dto/patch.user.image.dto';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserInfoDto } from './dto/user.info.dto';
-import { GetUserMeDto } from './dto/get.user.me.dto';
-import { TokenInterface } from 'src/auth/jwt/jwt.token.interface';
 import {
   ROLETYPE_GUEST,
   ROLETYPE_NONAME,
 } from 'src/global/type/type.user.roletype';
-import { UserMeDto } from './dto/user.me.dto';
 import { UserRepository } from './user.repository';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 import { ProfileImageRepository } from 'src/domain/profile-image/profile-image.repository';

@@ -15,7 +15,7 @@ import {
   ROLETYPE_MEMBER,
   ROLETYPE_NONAME,
 } from 'src/global/type/type.user.roletype';
-import { GetUserMeDto } from './dto/get.user.me.dto';
+import { GetUserMeDto } from '../../auth/dto/get.user.me.dto';
 import { AuthModule } from 'src/auth/auth.module';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 import { addTransactionalDataSource, initializeTransactionalContext } from 'typeorm-transactional';
