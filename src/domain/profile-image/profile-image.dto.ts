@@ -1,9 +1,9 @@
 export class ProfileImageDto {
-	id: number;
+  id: number;
 
-	url: string;
+  url: string;
 }
 
 export class ProfileImagesDto {
-	images: ProfileImageDto[];
+  images: ProfileImageDto[];
 }

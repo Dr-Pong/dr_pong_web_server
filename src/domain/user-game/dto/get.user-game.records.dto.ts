@@ -1,7 +1,7 @@
 export class GetUserGameRecordsDto {
-	userId: number;
+  userId: number;
 
-	count: number;
+  count: number;
 
-	lastGameId: number;
+  lastGameId: number;
 }

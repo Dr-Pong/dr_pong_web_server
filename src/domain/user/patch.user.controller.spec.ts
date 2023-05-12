@@ -11,7 +11,6 @@ import { UserAchievement } from 'src/domain/user-achievement/user-achievement.en
 import { UserEmoji } from 'src/domain/user-emoji/user-emoji.entity';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { UserService } from './user.service';
-import { UserRepository } from './user.repository';
 
 describe('UserController', () => {
   let app: INestApplication;
@@ -278,8 +277,6 @@ describe('UserController', () => {
   describe('patch Error Cases Test', () => {
     describe('/users/{nickname}/messages', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/message')
           .send({
@@ -292,8 +289,6 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/image', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/image')
           .send({
@@ -318,8 +313,6 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/titles', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/title')
           .send({
@@ -344,8 +337,6 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/achievements', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/achievements')
           .send({
@@ -370,8 +361,6 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/emojis', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const basicUser = await testService.createBasicUser();
-
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/emojis')
           .send({

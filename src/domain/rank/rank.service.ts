@@ -1,34 +1,22 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Rank } from './rank.entity';
+import { Injectable } from '@nestjs/common';
 import { Season } from 'src/domain/season/season.entity';
 import { GetUserRankStatDto } from './dto/get.user.rank.stat.dto';
-import { UserRankStatDto } from './dto/user.rank.stat.dto';
 import { GetUserBestRankStatDto } from './dto/get.user.best.rank.stat.dto';
 import { RankRepository } from './rank.repository';
 import { SeasonRepository } from 'src/domain/season/season.repository';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { RankTopDataDto, RanksTopDto } from './dto/ranks.top.dto';
-import { GetRanksTopImageDto } from './dto/get.ranks.top.image.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
 import { RankBottomDataDto, RanksBottomDto } from './dto/ranks.bottom.dto';
 import { RankSeasonStatDto } from './dto/rank.season.stat.dto';
 import { RankBestStatDto } from './dto/rank.best.stat.dto';
-import dotenv from 'dotenv';
-import {
-  TIER_BACHELOR,
-  TIER_DOCTOR,
-  TIER_MASTER,
-  TIER_STUDENT,
-} from 'src/global/type/type.tier';
 
 @Injectable()
 export class RankService {
   constructor(
     private rankRepository: RankRepository,
     private seasonRepository: SeasonRepository,
-  ) { }
+  ) {}
 
   //get 유저 현시즌 랭크 데이터
   async getUserRankBySeason(

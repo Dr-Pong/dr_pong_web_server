@@ -31,7 +31,9 @@ describe('UserEmojiService', () => {
             if (!options) {
               throw new Error('Invalid options passed');
             }
-            return addTransactionalDataSource({ dataSource: new DataSource(options) });
+            return addTransactionalDataSource({
+              dataSource: new DataSource(options),
+            });
           },
         }),
         UserEmojiModule,
@@ -42,10 +44,12 @@ describe('UserEmojiService', () => {
           provide: getRepositoryToken(UserEmoji),
           useClass: Repository,
         },
-      ]
+      ],
     }).compile();
 
-    userEmojiRepository = module.get<Repository<UserEmoji>>(getRepositoryToken(UserEmoji));
+    userEmojiRepository = module.get<Repository<UserEmoji>>(
+      getRepositoryToken(UserEmoji),
+    );
     service = module.get<UserEmojiService>(UserEmojiService);
     testData = module.get<TestService>(TestService);
     dataSources = module.get<DataSource>(DataSource);
@@ -54,13 +58,13 @@ describe('UserEmojiService', () => {
   beforeEach(async () => {
     await testData.createProfileImages();
     await testData.createBasicCollectable();
-  })
+  });
 
   afterEach(async () => {
     testData.clear();
     jest.resetAllMocks();
     await dataSources.synchronize(true);
-  })
+  });
 
   afterAll(async () => {
     await dataSources.dropDatabase();
@@ -71,7 +75,8 @@ describe('UserEmojiService', () => {
     //given
     //false로 들어온 경우
     const emojiSelectedWithUser = await testData.createUserWithCollectables();
-    const nonEmojiSelectedWithUser = await testData.createUserWithUnSelectedEmojis();
+    const nonEmojiSelectedWithUser =
+      await testData.createUserWithUnSelectedEmojis();
     const userWithOutEmoji = await testData.createBasicUser();
 
     //user[0]친구가 : selected와 acheieved, unacheieved가 전부 있음
@@ -95,25 +100,45 @@ describe('UserEmojiService', () => {
 
     //then
     expect(selectedCase.emojis.length).toBe(testData.emojis.length);
-    expect(selectedCase.emojis.some(item => item.status === "selected")).toBe(true);
-    expect(selectedCase.emojis.some(item => item.status === "achieved")).toBe(true);
-    expect(selectedCase.emojis.some(item => item.status === "unachieved")).toBe(true);
+    expect(selectedCase.emojis.some((item) => item.status === 'selected')).toBe(
+      true,
+    );
+    expect(selectedCase.emojis.some((item) => item.status === 'achieved')).toBe(
+      true,
+    );
+    expect(
+      selectedCase.emojis.some((item) => item.status === 'unachieved'),
+    ).toBe(true);
     expect(nonSelectedCase.emojis.length).toBe(testData.emojis.length);
-    expect(nonSelectedCase.emojis.some(item => item.status === "selected")).toBe(false);
-    expect(nonSelectedCase.emojis.some(item => item.status === "achieved")).toBe(true);
-    expect(nonSelectedCase.emojis.some(item => item.status === "unachieved")).toBe(true);
+    expect(
+      nonSelectedCase.emojis.some((item) => item.status === 'selected'),
+    ).toBe(false);
+    expect(
+      nonSelectedCase.emojis.some((item) => item.status === 'achieved'),
+    ).toBe(true);
+    expect(
+      nonSelectedCase.emojis.some((item) => item.status === 'unachieved'),
+    ).toBe(true);
     expect(noEmojiCase.emojis.length).toBe(testData.emojis.length);
-    expect(noEmojiCase.emojis.some(item => item.status === "selected")).toBe(false);
-    expect(noEmojiCase.emojis.some(item => item.status === "achieved")).toBe(false);
-    expect(noEmojiCase.emojis.some(item => item.status === "unachieved")).toBe(true);
+    expect(noEmojiCase.emojis.some((item) => item.status === 'selected')).toBe(
+      false,
+    );
+    expect(noEmojiCase.emojis.some((item) => item.status === 'achieved')).toBe(
+      false,
+    );
+    expect(
+      noEmojiCase.emojis.some((item) => item.status === 'unachieved'),
+    ).toBe(true);
   });
 
   it('유저 선택 이모지 Get (selected=true, valid case)', async () => {
     //given
     const emojiSelectedWithUser = await testData.createUserWithCollectables();
-    const nonEmojiSelectedWithUser = await testData.createUserWithUnSelectedEmojis();
+    const nonEmojiSelectedWithUser =
+      await testData.createUserWithUnSelectedEmojis();
     const userWithOutEmoji = await testData.createBasicUser();
-    const userWithReversedEmoji = await testData.createReverseSelectedEmojiUser();
+    const userWithReversedEmoji =
+      await testData.createReverseSelectedEmojiUser();
     const userWithMixedEmoji = await testData.createMixedSelectedEmojiUser();
 
     //when
@@ -132,14 +157,18 @@ describe('UserEmojiService', () => {
 
     const reverseSelectedRequest: GetUserEmojisDto = {
       userId: userWithReversedEmoji.id,
-    }
+    };
     const mixedSelectedRequest: GetUserEmojisDto = {
       userId: userWithMixedEmoji.id,
-    }
+    };
     const selectedCase = await service.getUseremojisSelected(selectedRequest);
-    const unSelectedCase = await service.getUseremojisSelected(unSelectedRequest);
+    const unSelectedCase = await service.getUseremojisSelected(
+      unSelectedRequest,
+    );
     const noEmojiCase = await service.getUseremojisSelected(nonSelectedRequest);
-    const reversedCase = await service.getUseremojisSelected(reverseSelectedRequest);
+    const reversedCase = await service.getUseremojisSelected(
+      reverseSelectedRequest,
+    );
     const mixedCase = await service.getUseremojisSelected(mixedSelectedRequest);
 
     //then
@@ -209,12 +238,7 @@ describe('UserEmojiService', () => {
 
     const mixedWithNullRequest: PatchUserEmojisDto = {
       userId: mixedWithNullUser.id,
-      emojisId: [
-        null,
-        testData.emojis[3].id,
-        null,
-        testData.emojis[1].id,
-      ],
+      emojisId: [null, testData.emojis[3].id, null, testData.emojis[1].id],
     };
 
     //when
@@ -233,9 +257,12 @@ describe('UserEmojiService', () => {
       order: { selectedOrder: 'ASC' },
     });
     const mixeWithNullCase: UserEmoji[] = await userEmojiRepository.find({
-      where: { user: { id: mixedWithNullUser.id }, selectedOrder: Not(IsNull()) },
+      where: {
+        user: { id: mixedWithNullUser.id },
+        selectedOrder: Not(IsNull()),
+      },
       order: { selectedOrder: 'ASC' },
-    })
+    });
 
     expect(orderedCase.length).toBe(4);
     expect(orderedCase[0].selectedOrder).toBe(0);
@@ -266,38 +293,29 @@ describe('UserEmojiService', () => {
 
   it('유저 이모지 Patch (invalid case)', async () => {
     //given
-    const oneValidTwoInvalidUser = await testData.createUserWithUnSelectedEmojis();
+    const oneValidTwoInvalidUser =
+      await testData.createUserWithUnSelectedEmojis();
     const allInvalidUser = await testData.createUserWithUnSelectedEmojis();
 
     // isSelected가 다 false인경우
     const oneValidTwoInvalidRequest: PatchUserEmojisDto = {
       userId: oneValidTwoInvalidUser.id,
-      emojisId: [
-        testData.emojis[0].id,
-        null,
-        10000000,
-        -100,
-      ],
+      emojisId: [testData.emojis[0].id, null, 10000000, -100],
     };
 
     const allInvalidRequest: PatchUserEmojisDto = {
       userId: allInvalidUser.id,
-      emojisId: [
-        -1,
-        -2,
-        -3,
-        -4,
-      ],
+      emojisId: [-1, -2, -3, -4],
     };
 
     //when
     //validUpdateDto1 에대한 실행
     await expect(
-      service.patchUseremojis(oneValidTwoInvalidRequest)
-      ,).rejects.toThrow(new BadRequestException());
+      service.patchUseremojis(oneValidTwoInvalidRequest),
+    ).rejects.toThrow(new BadRequestException());
     //validUpdateDto2 에대한 실행
-    await expect(
-      service.patchUseremojis(allInvalidRequest)
-      ,).rejects.toThrow(new BadRequestException());
+    await expect(service.patchUseremojis(allInvalidRequest)).rejects.toThrow(
+      new BadRequestException(),
+    );
   });
 });

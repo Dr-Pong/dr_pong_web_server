@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserGame } from './user-game.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Game } from 'src/domain/game/game.entity';
 import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
-import { GetUserGameSeasonStatDto } from './dto/get.user-game.season.stat.dto';
 import { FindUserGameSeasonStatDto } from './dto/find.user-game.season.stat.dto';
 
 @Injectable()
@@ -12,7 +10,7 @@ export class UserGameRepository {
   constructor(
     @InjectRepository(UserGame)
     private readonly repository: Repository<UserGame>,
-  ) { }
+  ) {}
 
   async findAllByUserId(userId: number): Promise<UserGame[]> {
     return await this.repository.find({

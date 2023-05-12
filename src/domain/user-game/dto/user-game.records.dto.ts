@@ -1,7 +1,6 @@
 import { GameResultType } from 'src/global/type/type.game.result';
 import { GamePlayerDto } from './game.player.dto';
 import { GameType } from 'src/global/type/type.game';
-import { User } from 'src/domain/user/user.entity';
 import { UserGame } from '../user-game.entity';
 
 export class UserGameRecordDto {

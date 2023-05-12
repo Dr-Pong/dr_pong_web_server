@@ -5,7 +5,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -15,7 +14,12 @@ export class UserEmoji extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true, name: 'selected_order', type: 'int', default: null })
+  @Column({
+    nullable: true,
+    name: 'selected_order',
+    type: 'int',
+    default: null,
+  })
   selectedOrder: number;
 
   @ManyToOne(() => User, { eager: true })

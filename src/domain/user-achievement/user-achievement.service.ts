@@ -18,7 +18,7 @@ export class UserAchievementService {
   constructor(
     private userAchievementRepository: UserAchievementRepository,
     private achievementRepository: AchievementRepository,
-  ) { }
+  ) {}
 
   async getUserAchievementsAll(
     getDto: GetUserAchievementsDto,

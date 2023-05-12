@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, MoreThan, Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Rank } from './rank.entity';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
@@ -11,7 +11,7 @@ export class RankRepository {
   constructor(
     @InjectRepository(Rank)
     private readonly repository: Repository<Rank>,
-  ) { }
+  ) {}
 
   //**유저 시즌 랭크 조회 */
   async findByUserIdAndSeasonId(

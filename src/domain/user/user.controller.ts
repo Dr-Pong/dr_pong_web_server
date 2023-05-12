@@ -14,14 +14,11 @@ import { UserService } from './user.service';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserDetailResponseDto } from './dto/user.detail.response.dto';
 import { PatchUserTitleDto } from '../user-title/dto/patch.user.title.dto';
-import { GetUserSelectedTitleDto } from './dto/get.user.selected.title.dto';
 import { GetUserAchievementsDto } from 'src/domain/user-achievement/dto/get.user.achievements.dto';
 import { UserAchievementService } from 'src/domain/user-achievement/user-achievement.service';
-import { UserAchievementsDto } from 'src/domain/user-achievement/dto/user.achievements.dto';
 import { UserDetailDto } from './dto/user.detail.dto';
 import { UserAchievementsResponseDto } from 'src/domain/user-achievement/dto/user-achievements.response.dto';
 import { GetUserEmojisDto } from 'src/domain/user-emoji/dto/get.user.emojis.dto';
-import { UseremojisDto } from 'src/domain/user-emoji/dto/user.emojis.dto';
 import { UserEmojiService } from 'src/domain/user-emoji/user-emoji.service';
 import { UserTitleService } from 'src/domain/user-title/user-title.service';
 import { UserEmojisResponseDto } from 'src/domain/user-emoji/dto/user.emojis.response.dto';
@@ -33,7 +30,6 @@ import { PatchUserEmojisRequestDto } from 'src/domain/user-emoji/dto/patch.user.
 import { UserTitlesDto } from 'src/domain/user-title/dto/user.titles.dto';
 import { GetUserTitlesDto } from 'src/domain/user-title/dto/get.user.titles.dto';
 import { UserInfoDto } from './dto/user.info.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { UserTitleSelectedDto } from 'src/domain/user-title/dto/user.title.selected.dto';
 import { PatchUserImageRequestDto } from './dto/patch.user.image.request.dto';
 import { PatchUserTitleRequestDto } from '../user-title/dto/patch.user.title.request.dto';
@@ -52,7 +48,6 @@ import { UserGameTotalStatDto } from '../user-game/dto/user-game.total.stat.dto'
 import { UserGameSeasonStatResponseDto } from '../user-game/dto/user-game.season.stat.response.dto';
 import { GetUserGameSeasonStatDto } from '../user-game/dto/get.user-game.season.stat.dto';
 import { UserGameSeasonStatDto } from '../user-game/dto/user-game.season.stat.dto';
-import { UserGame } from '../user-game/user-game.entity';
 import { UserGameRecordsResponseDto } from '../user-game/dto/user-game.record.response.dto';
 import { GetUserGameRecordsDto } from '../user-game/dto/get.user-game.records.dto';
 import { UserGameRecordsDto } from '../user-game/dto/user-game.records.dto';
@@ -67,7 +62,7 @@ export class UserController {
     private userTitleService: UserTitleService,
     private rankService: RankService,
     private userGameService: UserGameService,
-  ) { }
+  ) {}
 
   @Get('/:nickname/detail')
   async userDetailByNicknameGet(@Param('nickname') nickname: string) {
@@ -106,11 +101,11 @@ export class UserController {
     };
     const achievements = selected
       ? await this.userAchievementService.getUserAchievementsSelected(
-        getUserAchievementDto,
-      )
+          getUserAchievementDto,
+        )
       : await this.userAchievementService.getUserAchievementsAll(
-        getUserAchievementDto,
-      );
+          getUserAchievementDto,
+        );
     const responseDto: UserAchievementsResponseDto = {
       achievements: achievements.achievements,
     };
@@ -364,7 +359,7 @@ export class UserController {
           meWin: true,
         },
       ],
-    }
+    };
   }
 
   @Patch('/:nickname/title')
