@@ -131,54 +131,6 @@ describe('UserService', () => {
     expect(result.statusMessage).toBe(patchUserMessageRequest.message);
   });
 
-  // it('User Me Get Service 테스트', async () => {
-  //   await testData.createProfileImages();
-  //   const basicUser: User = await testData.createBasicUser();
-
-  //   const validToken: string = jwtService.sign({
-  //     id: basicUser.id,
-  //     nickname: basicUser.nickname,
-  //     roleType: basicUser.roleType,
-  //   });
-
-  //   const nonameToken: string = jwtService.sign({
-  //     id: null,
-  //     nickname: '',
-  //     roleType: ROLETYPE_NONAME,
-  //   });
-
-  //   const basicDto: GetUserMeDto = {
-  //     token: validToken,
-  //   };
-
-  //   const nonameDto: GetUserMeDto = {
-  //     token: nonameToken,
-  //   };
-
-  //   const guestDto: GetUserMeDto = {
-  //     token: null,
-  //   };
-
-  //   const basicCase = await service.getUserMe(basicDto);
-  //   const nonameCase = await service.getUserMe(nonameDto);
-  //   const guestCase = await service.getUserMe(guestDto);
-
-  //   expect(basicCase.nickname).toBe(basicUser.nickname);
-  //   expect(basicCase.imgUrl).toBe(basicUser.image.url);
-  //   expect(basicCase.isSecondAuthOn).toBe(false);
-  //   expect(basicCase.roleType).toBe(ROLETYPE_MEMBER);
-
-  //   expect(nonameCase.nickname).toBe('');
-  //   expect(nonameCase.imgUrl).toBe('');
-  //   expect(nonameCase.isSecondAuthOn).toBe(false);
-  //   expect(nonameCase.roleType).toBe(ROLETYPE_NONAME);
-
-  //   expect(guestCase.nickname).toBe('');
-  //   expect(guestCase.imgUrl).toBe('');
-  //   expect(guestCase.isSecondAuthOn).toBe(false);
-  //   expect(guestCase.roleType).toBe(ROLETYPE_GUEST);
-  // });
-
   it('User Image Get Service 테스트', async () => {
     await testData.createProfileImages();
     const basicCase = await service.getUserImages();
