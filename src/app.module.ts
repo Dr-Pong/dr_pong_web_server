@@ -8,7 +8,6 @@ import { UsertitleModule } from './domain/user-title/user-title.module';
 import { typeORMConfig } from './configs/typeorm.config';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { UserAchievementModule } from './domain/user-achievement/user-achievement.module';
-import { AuthModule } from './auth/auth.module';
 import { TestModule } from './test/test.module';
 import { RankModule } from './domain/rank/rank.module';
 import { SeasonModule } from './domain/season/season.module';
@@ -39,12 +38,11 @@ import { UserGameModule } from './domain/user-game/user-game.module';
     UsertitleModule,
     AchievementModule,
     UserAchievementModule,
-    AuthModule,
     TestModule,
     ProfileImageModule,
-    UserGameModule
+    UserGameModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

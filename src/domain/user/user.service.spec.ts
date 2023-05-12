@@ -15,10 +15,11 @@ import {
   ROLETYPE_MEMBER,
   ROLETYPE_NONAME,
 } from 'src/global/type/type.user.roletype';
-import { GetUserMeDto } from '../../auth/dto/get.user.me.dto';
-import { AuthModule } from 'src/auth/auth.module';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
-import { addTransactionalDataSource, initializeTransactionalContext } from 'typeorm-transactional';
+import {
+  addTransactionalDataSource,
+  initializeTransactionalContext,
+} from 'typeorm-transactional';
 
 describe('UserService', () => {
   let service: UserService;
@@ -38,7 +39,9 @@ describe('UserService', () => {
             if (!options) {
               throw new Error('Invalid options passed');
             }
-            return addTransactionalDataSource({ dataSource: new DataSource(options) });
+            return addTransactionalDataSource({
+              dataSource: new DataSource(options),
+            });
           },
         }),
         UserModule,
@@ -61,7 +64,7 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     await testData.createProfileImages();
-  })
+  });
 
   afterEach(async () => {
     testData.clear();
@@ -73,7 +76,7 @@ describe('UserService', () => {
   afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
-  })
+  });
 
   it('User Detail Get 정보 테스트 ', async () => {
     await testData.createProfileImages();
