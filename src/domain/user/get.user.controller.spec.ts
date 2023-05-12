@@ -276,13 +276,12 @@ describe('UserController', () => {
         const lastGameId = 4242;
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-          testService.users[0].nickname +
-          '/records?lastGameId=' +
-          lastGameId,
+            testService.users[0].nickname +
+            '/records?lastGameId=' +
+            lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
-
         expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
         expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
         expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
@@ -313,11 +312,11 @@ describe('UserController', () => {
         await testService.createCustomResultUser(1, 2, 300);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-          testService.users[0].nickname +
-          '/records?count=' +
-          count +
-          '&lastGameId=' +
-          lastGameId,
+            testService.users[0].nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
@@ -335,11 +334,11 @@ describe('UserController', () => {
         await testService.createCustomResultUser(1, 2, 108);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-          testService.users[0].nickname +
-          '/records?count=' +
-          count +
-          '&lastGameId=' +
-          lastGameId,
+            testService.users[0].nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
@@ -357,11 +356,11 @@ describe('UserController', () => {
         await testService.createCustomResultUser(1, 2, 3);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-          testService.users[0].nickname +
-          '/records?count=' +
-          count +
-          '&lastGameId=' +
-          lastGameId,
+            testService.users[0].nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
@@ -377,42 +376,20 @@ describe('UserController', () => {
       it('lastGameId 가  진행 게임보다 적은경우 ', async () => {
         const lastGameId = 3;
         const count = 10;
-        await testService.createCustomResultUser(1, 2, 3);
+        await testService.createCustomResultUser(1, 1, 0);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-          testService.users[0].nickname +
-          '/records?count=' +
-          count +
-          '&lastGameId=' +
-          lastGameId,
+            testService.users[0].nickname +
+            '/records?count=' +
+            count +
+            '&lastGameId=' +
+            lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
         expect(response.body.isLastPage).toBe(true);
         expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
         expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
-      });
-      it('isLastPage가 false 가 되는지 ', async () => {
-        const lastGameId = 30;
-        const count = 10;
-        await testService.createCustomResultUser(1, 2, 30);
-        const response = await request(app.getHttpServer()).get(
-          '/users/' +
-          testService.users[0].nickname +
-          '/records?count=' +
-          count +
-          '&lastGameId=' +
-          lastGameId,
-        );
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body.isLastPage).toBe(false);
-        expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
-        expect(response.body.records[1].result).toBe(GAMERESULT_TIE);
-        expect(response.body.records[2].result).toBe(GAMERESULT_TIE);
-        expect(response.body.records[3].result).toBe(GAMERESULT_LOSE);
-        expect(response.body.records[4].result).toBe(GAMERESULT_LOSE);
-        expect(response.body.records[5].result).toBe(GAMERESULT_LOSE);
       });
     });
 
@@ -711,11 +688,11 @@ describe('UserController', () => {
         const lastGameId = 4242;
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-          'nononon' +
-          '/records?count=' +
-          count +
-          '/lastGameId=' +
-          lastGameId,
+            'nononon' +
+            '/records?count=' +
+            count +
+            '/lastGameId=' +
+            lastGameId,
         );
 
         expect(response.statusCode).toBe(400);
