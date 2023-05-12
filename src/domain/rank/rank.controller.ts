@@ -15,7 +15,7 @@ import { RanksBottomDto } from './dto/ranks.bottom.dto';
 
 @Controller('ranks')
 export class RankController {
-  constructor(private rankService: RankService) { }
+  constructor(private rankService: RankService) {}
 
   @Get('/top')
   async rankTopGet(

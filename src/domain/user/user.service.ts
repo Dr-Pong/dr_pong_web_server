@@ -1,22 +1,17 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './user.entity';
 import { UserDetailDto } from './dto/user.detail.dto';
 import { PatchUserImageDto } from './dto/patch.user.image.dto';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserInfoDto } from './dto/user.info.dto';
-import {
-  ROLETYPE_GUEST,
-  ROLETYPE_NONAME,
-} from 'src/global/type/type.user.roletype';
 import { UserRepository } from './user.repository';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 import { ProfileImageRepository } from 'src/domain/profile-image/profile-image.repository';
 import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
-import { ProfileImageDto, ProfileImagesDto } from 'src/domain/profile-image/profile-image.dto';
+import {
+  ProfileImageDto,
+  ProfileImagesDto,
+} from 'src/domain/profile-image/profile-image.dto';
 import { IsolationLevel, Transactional } from 'typeorm-transactional';
 
 @Injectable()
@@ -24,7 +19,7 @@ export class UserService {
   constructor(
     private userRepository: UserRepository,
     private profileImageRepository: ProfileImageRepository,
-  ) { }
+  ) {}
   users: Map<string, User> = new Map();
 
   //get detail service
@@ -86,13 +81,14 @@ export class UserService {
   }
 
   async getUserImages(): Promise<ProfileImagesDto> {
-    const profileImages: ProfileImage[] = await this.profileImageRepository.findAll();
+    const profileImages: ProfileImage[] =
+      await this.profileImageRepository.findAll();
     const imageDtos: ProfileImageDto[] = profileImages.map((profileImages) => {
       return { id: profileImages.id, url: profileImages.url };
     });
     const responseDto: ProfileImagesDto = {
       images: imageDtos,
-    }
+    };
     return responseDto;
   }
 }
