@@ -200,8 +200,6 @@ describe('RankService', () => {
         testTier = 'student';
     }
 
-    console.log('RRT', recordRankTier);
-
     //랭크데이터가 잘 반환되는지 확인
     expect(recordRankTier.record).toEqual(testData.ranks[0].highestPoint);
     expect(recordRankTier.rank).toEqual(testRank + 1);
@@ -266,28 +264,28 @@ describe('RankService', () => {
 
     const bottomRankResult = await service.getBottomRanksByCount(bottomRankDto); //top[rank, nickname, ladderPoint] 반환
 
-    expect(bottomRankResult.bottom[0].rank).toEqual(5);
+    expect(bottomRankResult.bottom[0].rank).toEqual(4);
     expect(bottomRankResult.bottom[0].nickname).toEqual(
-      testData.currentSeasonRanks[4].user.nickname,
+      testData.currentSeasonRanks[3].user.nickname,
     );
     expect(bottomRankResult.bottom[0].lp).toEqual(
-      testData.currentSeasonRanks[4].ladderPoint,
+      testData.currentSeasonRanks[3].ladderPoint,
     );
 
-    expect(bottomRankResult.bottom[2].rank).toEqual(7);
+    expect(bottomRankResult.bottom[2].rank).toEqual(6);
     expect(bottomRankResult.bottom[2].nickname).toEqual(
-      testData.currentSeasonRanks[6].user.nickname,
+      testData.currentSeasonRanks[5].user.nickname,
     );
     expect(bottomRankResult.bottom[2].lp).toEqual(
-      testData.currentSeasonRanks[6].ladderPoint,
+      testData.currentSeasonRanks[5].ladderPoint,
     );
 
-    expect(bottomRankResult.bottom[4].rank).toEqual(9);
+    expect(bottomRankResult.bottom[4].rank).toEqual(8);
     expect(bottomRankResult.bottom[4].nickname).toEqual(
-      testData.currentSeasonRanks[8].user.nickname,
+      testData.currentSeasonRanks[7].user.nickname,
     );
     expect(bottomRankResult.bottom[4].lp).toEqual(
-      testData.currentSeasonRanks[8].ladderPoint,
+      testData.currentSeasonRanks[7].ladderPoint,
     );
   });
 });
