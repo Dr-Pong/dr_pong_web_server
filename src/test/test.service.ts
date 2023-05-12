@@ -533,14 +533,14 @@ export class TestService {
     for (; i < win; i++) {
       await this.userGameRepository.save({
         user: user1,
-        game: this.games[i],
+        game: this.games[totalGame - 1 - i],
         result: GAMERESULT_WIN,
         score: 10,
         lpChange: 10,
       });
       await this.userGameRepository.save({
         user: user2,
-        game: this.games[i],
+        game: this.games[totalGame - 1 - i],
         result: GAMERESULT_LOSE,
         score: 0,
         lpChange: -10,
@@ -549,14 +549,14 @@ export class TestService {
     for (; i < win + tie; i++) {
       await this.userGameRepository.save({
         user: user1,
-        game: this.games[i],
+        game: this.games[totalGame - 1 - i],
         result: GAMERESULT_TIE,
         score: 5,
         lpChange: 0,
       });
       await this.userGameRepository.save({
         user: user2,
-        game: this.games[i],
+        game: this.games[totalGame - 1 - i],
         result: GAMERESULT_TIE,
         score: 5,
         lpChange: 0,
@@ -565,14 +565,14 @@ export class TestService {
     for (; i < totalGame; i++) {
       await this.userGameRepository.save({
         user: user1,
-        game: this.games[i],
+        game: this.games[totalGame - 1 - i],
         result: GAMERESULT_LOSE,
         score: 0,
         lpChange: -10,
       });
       await this.userGameRepository.save({
         user: user2,
-        game: this.games[i],
+        game: this.games[totalGame - 1 - i],
         result: GAMERESULT_WIN,
         score: 10,
         lpChange: 10,
