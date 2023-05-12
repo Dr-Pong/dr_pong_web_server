@@ -3,14 +3,14 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
-import { User } from './user.entity';
 import { TestService } from 'src/test/test.service';
 import { UserTitle } from 'src/domain/user-title/user-title.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserAchievement } from 'src/domain/user-achievement/user-achievement.entity';
 import { UserEmoji } from 'src/domain/user-emoji/user-emoji.entity';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import { UserService } from './user.service';
+import { User } from '../user.entity';
+import { UserService } from '../user.service';
 
 describe('UserController', () => {
   let app: INestApplication;

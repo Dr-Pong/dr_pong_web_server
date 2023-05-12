@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { UsertitleModule } from 'src/domain/user-title/user-title.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
-import { UserController } from './user.controller';
 import { User } from './user.entity';
 import { UserEmojiModule } from 'src/domain/user-emoji/user-emoji.module';
 import { UserAchievementModule } from 'src/domain/user-achievement/user-achievement.module';
@@ -11,6 +10,11 @@ import { ProfileImageRepository } from 'src/domain/profile-image/profile-image.r
 import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
 import { RankModule } from 'src/domain/rank/rank.module';
 import { UserGameModule } from '../user-game/user-game.module';
+import { UserDetailsController } from './controller/user.details.controller';
+import { UserRanksController } from './controller/user.ranks.controller';
+import { UserRecordsController } from './controller/user.records.controller';
+import { UserStatsController } from './controller/user.stats.controller';
+import { UserCollectablesController } from './controller/user.collectables.controller';
 
 @Module({
   imports: [
@@ -22,7 +26,13 @@ import { UserGameModule } from '../user-game/user-game.module';
     RankModule,
     UserGameModule,
   ],
-  controllers: [UserController],
+  controllers: [
+    UserCollectablesController,
+    UserDetailsController,
+    UserRanksController,
+    UserRecordsController,
+    UserStatsController,
+  ],
   providers: [UserService, UserRepository, ProfileImageRepository],
   exports: [UserService],
 })
