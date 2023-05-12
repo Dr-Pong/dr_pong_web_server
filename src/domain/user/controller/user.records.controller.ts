@@ -15,7 +15,7 @@ import { GetUserGameRecordsDto } from '../../user-game/dto/get.user-game.records
 import { UserGameRecordsDto } from '../../user-game/dto/user-game.records.dto';
 
 @Controller('users')
-export class UserController {
+export class UserRecordsController {
   constructor(
     private userService: UserService,
     private userGameService: UserGameService,

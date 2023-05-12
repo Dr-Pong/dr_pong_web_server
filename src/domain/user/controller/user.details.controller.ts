@@ -9,7 +9,7 @@ import { UserInfoDto } from '../dto/user.info.dto';
 import { UserTitleSelectedDto } from 'src/domain/user-title/dto/user.title.selected.dto';
 
 @Controller('users')
-export class UserController {
+export class UserDetailsController {
   constructor(
     private userService: UserService,
     private userTitleService: UserTitleService,

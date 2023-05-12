@@ -33,7 +33,7 @@ import { PatchUserMessageRequestDto } from '../dto/patch.user.message.request.dt
 import { PatchUserMessageDto } from '../dto/patch.user.message.dto';
 
 @Controller('users')
-export class UserController {
+export class UserCollectablesController {
   constructor(
     private userService: UserService,
     private userAchievementService: UserAchievementService,

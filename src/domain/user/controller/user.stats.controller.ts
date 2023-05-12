@@ -10,7 +10,7 @@ import { GetUserGameSeasonStatDto } from '../../user-game/dto/get.user-game.seas
 import { UserGameSeasonStatDto } from '../../user-game/dto/user-game.season.stat.dto';
 
 @Controller('users')
-export class UserController {
+export class UserStatsController {
   constructor(
     private userService: UserService,
     private userGameService: UserGameService,

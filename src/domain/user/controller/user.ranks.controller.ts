@@ -10,7 +10,7 @@ import { GetUserBestRankStatDto } from 'src/domain/rank/dto/get.user.best.rank.s
 import { UserSeasonRankResponseDto } from 'src/domain/rank/dto/user.season.rank.response.dto';
 
 @Controller('users')
-export class UserController {
+export class UserRanksController {
   constructor(
     private userService: UserService,
     private rankService: RankService,
