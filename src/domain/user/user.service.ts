@@ -8,14 +8,10 @@ import { UserDetailDto } from './dto/user.detail.dto';
 import { PatchUserImageDto } from './dto/patch.user.image.dto';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserInfoDto } from './dto/user.info.dto';
-import { JwtService } from '@nestjs/jwt';
-import { GetUserMeDto } from './dto/get.user.me.dto';
-import { TokenInterface } from 'src/auth/jwt/jwt.token.interface';
 import {
   ROLETYPE_GUEST,
   ROLETYPE_NONAME,
 } from 'src/global/type/type.user.roletype';
-import { UserMeDto } from './dto/user.me.dto';
 import { UserRepository } from './user.repository';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 import { ProfileImageRepository } from 'src/domain/profile-image/profile-image.repository';
@@ -28,7 +24,6 @@ export class UserService {
   constructor(
     private userRepository: UserRepository,
     private profileImageRepository: ProfileImageRepository,
-    private jwtService: JwtService,
   ) { }
   users: Map<string, User> = new Map();
 
@@ -88,44 +83,6 @@ export class UserService {
     if (!user) throw new NotFoundException('No such User');
 
     await this.userRepository.updateUserStatusMessage(user, patchDto);
-  }
-
-  async getUserMe(getDto: GetUserMeDto): Promise<UserMeDto> {
-    const guestUserMeDto: UserMeDto = {
-      nickname: '',
-      imgUrl: '',
-      isSecondAuthOn: false,
-      roleType: ROLETYPE_GUEST,
-    };
-
-    const nonameUserMeDto: UserMeDto = {
-      nickname: '',
-      imgUrl: '',
-      isSecondAuthOn: false,
-      roleType: ROLETYPE_NONAME,
-    };
-
-    if (!getDto.token) {
-      return guestUserMeDto;
-    }
-
-    const jwt: TokenInterface = this.jwtService.verify(getDto.token);
-    if (jwt.roleType === ROLETYPE_NONAME) {
-      return nonameUserMeDto;
-    }
-
-    const user = await this.userRepository.findById(jwt.id);
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-
-    const responseDto: UserMeDto = {
-      nickname: user.nickname,
-      imgUrl: user.image.url,
-      isSecondAuthOn: user.secondAuthSecret !== null,
-      roleType: user.roleType,
-    };
-    return responseDto;
   }
 
   async getUserImages(): Promise<ProfileImagesDto> {
