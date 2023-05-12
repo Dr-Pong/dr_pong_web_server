@@ -311,7 +311,7 @@ export class TestService {
       image: this.profileImages[0],
     });
     this.users.push(user);
-    for (let i: number = 0; i < this.emojis.length; i++) {
+    for (let i = 0; i < this.emojis.length; i++) {
       if (5 < i) break;
       await this.userEmojiRepository.save({
         user: user,
