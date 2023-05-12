@@ -8,7 +8,6 @@ import { UserDetailDto } from './dto/user.detail.dto';
 import { PatchUserImageDto } from './dto/patch.user.image.dto';
 import { GetUserDetailDto } from './dto/get.user.detail.dto';
 import { UserInfoDto } from './dto/user.info.dto';
-import { JwtService } from '@nestjs/jwt';
 import { GetUserMeDto } from './dto/get.user.me.dto';
 import { TokenInterface } from 'src/auth/jwt/jwt.token.interface';
 import {
@@ -28,7 +27,6 @@ export class UserService {
   constructor(
     private userRepository: UserRepository,
     private profileImageRepository: ProfileImageRepository,
-    private jwtService: JwtService,
   ) { }
   users: Map<string, User> = new Map();
 
@@ -90,43 +88,43 @@ export class UserService {
     await this.userRepository.updateUserStatusMessage(user, patchDto);
   }
 
-  async getUserMe(getDto: GetUserMeDto): Promise<UserMeDto> {
-    const guestUserMeDto: UserMeDto = {
-      nickname: '',
-      imgUrl: '',
-      isSecondAuthOn: false,
-      roleType: ROLETYPE_GUEST,
-    };
+  // async getUserMe(getDto: GetUserMeDto): Promise<UserMeDto> {
+  //   const guestUserMeDto: UserMeDto = {
+  //     nickname: '',
+  //     imgUrl: '',
+  //     isSecondAuthOn: false,
+  //     roleType: ROLETYPE_GUEST,
+  //   };
 
-    const nonameUserMeDto: UserMeDto = {
-      nickname: '',
-      imgUrl: '',
-      isSecondAuthOn: false,
-      roleType: ROLETYPE_NONAME,
-    };
+  //   const nonameUserMeDto: UserMeDto = {
+  //     nickname: '',
+  //     imgUrl: '',
+  //     isSecondAuthOn: false,
+  //     roleType: ROLETYPE_NONAME,
+  //   };
 
-    if (!getDto.token) {
-      return guestUserMeDto;
-    }
+  //   if (!getDto.token) {
+  //     return guestUserMeDto;
+  //   }
 
-    const jwt: TokenInterface = this.jwtService.verify(getDto.token);
-    if (jwt.roleType === ROLETYPE_NONAME) {
-      return nonameUserMeDto;
-    }
+  //   const jwt: TokenInterface = this.jwtService.verify(getDto.token);
+  //   if (jwt.roleType === ROLETYPE_NONAME) {
+  //     return nonameUserMeDto;
+  //   }
 
-    const user = await this.userRepository.findById(jwt.id);
-    if (!user) {
-      throw new UnauthorizedException();
-    }
+  //   const user = await this.userRepository.findById(jwt.id);
+  //   if (!user) {
+  //     throw new UnauthorizedException();
+  //   }
 
-    const responseDto: UserMeDto = {
-      nickname: user.nickname,
-      imgUrl: user.image.url,
-      isSecondAuthOn: user.secondAuthSecret !== null,
-      roleType: user.roleType,
-    };
-    return responseDto;
-  }
+  //   const responseDto: UserMeDto = {
+  //     nickname: user.nickname,
+  //     imgUrl: user.image.url,
+  //     isSecondAuthOn: user.secondAuthSecret !== null,
+  //     roleType: user.roleType,
+  //   };
+  //   return responseDto;
+  // }
 
   async getUserImages(): Promise<ProfileImagesDto> {
     const profileImages: ProfileImage[] = await this.profileImageRepository.findAll();

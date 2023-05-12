@@ -369,8 +369,22 @@ export class UserController {
     }
   }
 
+  @Patch('/:nickname/title')
+  async usersDetailByNicknamePatch(
+    @Param('nickname') nickname: string,
+    @Body()
+    patchRequestDto: PatchUserTitleRequestDto,
+  ): Promise<void> {
+    const getUsersDetailDto: GetUserDetailDto = { nickname };
+    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
+      getUsersDetailDto,
+    );
+    const patchUserTitleDto: PatchUserTitleDto =
+      PatchUserTitleDto.forPatchUserTitleDto(userInfoDto, patchRequestDto);
+    await this.userTitleService.patchUserTitle(patchUserTitleDto);
+  }
+
   /** Patch User Image*/
-  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/image')
   async usersImageByNicknamePatch(
     @Param('nickname') nickname: string,
@@ -387,7 +401,6 @@ export class UserController {
   }
 
   /** Patch User StatusMessage*/
-  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/message')
   async usersMessageByNicknamePatch(
     @Param('nickname') nickname: string,
@@ -403,7 +416,6 @@ export class UserController {
     await this.userService.patchUserStatusMessage(patchUserMessageDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/achievements')
   async userAchievementsByNicknamePatch(
     @Param('nickname') nickname: string,
@@ -425,7 +437,6 @@ export class UserController {
     );
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Patch('/:nickname/emojis')
   async userEmojisByNicknamePatch(
     @Param('nickname') nickname: string,

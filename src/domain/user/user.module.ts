@@ -23,7 +23,6 @@ import { UserGameModule } from '../user-game/user-game.module';
     UserAchievementModule,
     UserEmojiModule,
     UsertitleModule,
-    AuthModule,
     RankModule,
     UserGameModule,
   ],
@@ -31,4 +30,4 @@ import { UserGameModule } from '../user-game/user-game.module';
   providers: [UserService, UserRepository, ProfileImageRepository],
   exports: [UserService],
 })
-export class UserModule {}
+export class UserModule { }

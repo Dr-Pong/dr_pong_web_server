@@ -5,7 +5,6 @@ import { AppModule } from 'src/app.module';
 import { DataSource } from 'typeorm';
 import { User } from './user.entity';
 import { TestService } from 'src/test/test.service';
-import { JwtService } from '@nestjs/jwt';
 import {
   COLLECTABLE_ACHIEVED,
   COLLECTABLE_SELECTED,
@@ -24,7 +23,6 @@ describe('UserController', () => {
   let dataSources: DataSource;
   let testService: TestService;
   let userService: UserService;
-  let jwtService: JwtService;
   initializeTransactionalContext();
 
   beforeAll(async () => {
@@ -37,7 +35,6 @@ describe('UserController', () => {
     testService = moduleFixture.get<TestService>(TestService);
     userService = moduleFixture.get<UserService>(UserService);
     dataSources = moduleFixture.get<DataSource>(DataSource);
-    jwtService = moduleFixture.get<JwtService>(JwtService);
     await dataSources.synchronize(true);
   });
 
@@ -279,9 +276,9 @@ describe('UserController', () => {
         const lastGameId = 4242;
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-            testService.users[0].nickname +
-            '/records?lastGameId=' +
-            lastGameId,
+          testService.users[0].nickname +
+          '/records?lastGameId=' +
+          lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
@@ -316,11 +313,11 @@ describe('UserController', () => {
         await testService.createCustomResultUser(1, 2, 300);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-            testService.users[0].nickname +
-            '/records?count=' +
-            count +
-            '&lastGameId=' +
-            lastGameId,
+          testService.users[0].nickname +
+          '/records?count=' +
+          count +
+          '&lastGameId=' +
+          lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
@@ -338,11 +335,11 @@ describe('UserController', () => {
         await testService.createCustomResultUser(1, 2, 108);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-            testService.users[0].nickname +
-            '/records?count=' +
-            count +
-            '&lastGameId=' +
-            lastGameId,
+          testService.users[0].nickname +
+          '/records?count=' +
+          count +
+          '&lastGameId=' +
+          lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
@@ -360,13 +357,13 @@ describe('UserController', () => {
         await testService.createCustomResultUser(1, 2, 3);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-            testService.users[0].nickname +
-            '/records?count=' +
-            count +
-            '&lastGameId=' +
-            lastGameId,
+          testService.users[0].nickname +
+          '/records?count=' +
+          count +
+          '&lastGameId=' +
+          lastGameId,
         );
-        console.log(response.body);
+
         expect(response.statusCode).toBe(200);
         expect(response.body.isLastPage).toBe(true);
         expect(response.body.records[0].result).toBe(GAMERESULT_WIN);
@@ -383,11 +380,11 @@ describe('UserController', () => {
         await testService.createCustomResultUser(1, 2, 3);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-            testService.users[0].nickname +
-            '/records?count=' +
-            count +
-            '&lastGameId=' +
-            lastGameId,
+          testService.users[0].nickname +
+          '/records?count=' +
+          count +
+          '&lastGameId=' +
+          lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
@@ -401,11 +398,11 @@ describe('UserController', () => {
         await testService.createCustomResultUser(1, 2, 30);
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-            testService.users[0].nickname +
-            '/records?count=' +
-            count +
-            '&lastGameId=' +
-            lastGameId,
+          testService.users[0].nickname +
+          '/records?count=' +
+          count +
+          '&lastGameId=' +
+          lastGameId,
         );
 
         expect(response.statusCode).toBe(200);
@@ -714,11 +711,11 @@ describe('UserController', () => {
         const lastGameId = 4242;
         const response = await request(app.getHttpServer()).get(
           '/users/' +
-            'nononon' +
-            '/records?count=' +
-            count +
-            '/lastGameId=' +
-            lastGameId,
+          'nononon' +
+          '/records?count=' +
+          count +
+          '/lastGameId=' +
+          lastGameId,
         );
 
         expect(response.statusCode).toBe(400);

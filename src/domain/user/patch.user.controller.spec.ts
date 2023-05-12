@@ -5,7 +5,6 @@ import { AppModule } from 'src/app.module';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { TestService } from 'src/test/test.service';
-import { JwtService } from '@nestjs/jwt';
 import { UserTitle } from 'src/domain/user-title/user-title.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserAchievement } from 'src/domain/user-achievement/user-achievement.entity';
@@ -22,7 +21,6 @@ describe('UserController', () => {
   let userEmojiRepository: Repository<UserEmoji>;
   let dataSources: DataSource;
   let testService: TestService;
-  let jwtService: JwtService;
   let userService: UserService;
   initializeTransactionalContext();
 
@@ -54,7 +52,6 @@ describe('UserController', () => {
     testService = moduleFixture.get<TestService>(TestService);
     userService = moduleFixture.get<UserService>(UserService);
     dataSources = moduleFixture.get<DataSource>(DataSource);
-    jwtService = moduleFixture.get<JwtService>(JwtService);
     userRepository = moduleFixture.get<Repository<User>>(
       getRepositoryToken(User),
     );
@@ -92,14 +89,8 @@ describe('UserController', () => {
     describe('/users/{nickname}/message', () => {
       it('message를 변경한 경우', async () => {
         const user: User = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/message')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             message: 'Patch change message',
           });
@@ -115,14 +106,9 @@ describe('UserController', () => {
     describe('users/{nickname}/image', () => {
       it('image를 변경한 경우', async () => {
         const user: User = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/image')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             id: testService.profileImages[1].id,
           });
@@ -140,20 +126,14 @@ describe('UserController', () => {
     describe('/users/{nickname}/titles', () => {
       it('title을 선택한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
 
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/title')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             id: testService.titles[1].id,
           });
 
-        // console.log(response.statusCode);
         const result = await userTitleRepository.findOne({
           where: { user: { id: user.id }, isSelected: true },
         });
@@ -165,15 +145,10 @@ describe('UserController', () => {
     describe('/users/{nickname}/achievements', () => {
       it('achievements를 순서대로 선택한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
 
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/achievements')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [
               testService.achievements[0].id,
@@ -196,14 +171,9 @@ describe('UserController', () => {
       it('achievement을 임의의 순서대로 선택한경우', async () => {
         const user: User =
           await testService.createMixedSelectedAchievementUser();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/achievements')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [
               testService.achievements[2].id,
@@ -227,14 +197,9 @@ describe('UserController', () => {
       it('achievement을 선택하지 않은 경우 (전부 null)', async () => {
         const user: User =
           await testService.createUserWithUnSelectedAchievements();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/achievements')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [null, null, null],
           });
@@ -251,15 +216,10 @@ describe('UserController', () => {
     describe('/users/{nickname}/emojis', () => {
       it('emoji를 순서대로 선택한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
 
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/emojis')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [
               testService.emojis[0].id,
@@ -285,14 +245,9 @@ describe('UserController', () => {
 
       it('emoji를 임의의 순서대로 선택한경우', async () => {
         const user: User = await testService.createMixedSelectedEmojiUser();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/emojis')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [testService.emojis[2].id, null, testService.emojis[3].id],
           });
@@ -310,14 +265,9 @@ describe('UserController', () => {
 
       it('emoji를 선택하지 않은 경우 (전부 null)', async () => {
         const user: User = await testService.createUserWithUnSelectedEmojis();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/emojis')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [null, null, null],
           });
@@ -335,15 +285,9 @@ describe('UserController', () => {
     describe('/users/{nickname}/messages', () => {
       it('존재하지 않는 유저의 경우', async () => {
         const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
 
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/message')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             messgae: 'testMessage',
           });
@@ -355,15 +299,10 @@ describe('UserController', () => {
     describe('/users/{nickname}/image', () => {
       it('존재하지 않는 유저의 경우', async () => {
         const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
+
 
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/image')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             id: testService.profileImages[0].id,
           });
@@ -373,14 +312,9 @@ describe('UserController', () => {
 
       it('유저에게 없는 image를 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/image')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             id: 1000, // testdptj images[] 선언후  testservice에 있는 이미지 아이디가 아니라서 400이 나와야함
           });
@@ -393,15 +327,10 @@ describe('UserController', () => {
     describe('/users/{nickname}/titles', () => {
       it('존재하지 않는 유저의 경우', async () => {
         const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
+
 
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/title')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             id: testService.titles[0].id,
           });
@@ -411,19 +340,13 @@ describe('UserController', () => {
 
       it('유저에게 없는 title을 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/title')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             id: testService.titles[9].id,
           });
 
-        // console.log(response.body);
         expect(response.statusCode).toBe(400);
       });
     });
@@ -431,15 +354,10 @@ describe('UserController', () => {
     describe('/users/{nickname}/achievements', () => {
       it('존재하지 않는 유저의 경우', async () => {
         const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
+
 
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/achievements')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [null, null, null],
           });
@@ -449,14 +367,9 @@ describe('UserController', () => {
 
       it('유저에게 없는 achievement를 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/achievements')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [testService.achievements[9].id, null, null],
           });
@@ -468,15 +381,10 @@ describe('UserController', () => {
     describe('/users/{nickname}/emojis', () => {
       it('존재하지 않는 유저의 경우', async () => {
         const basicUser = await testService.createBasicUser();
-        const token = jwtService.sign({
-          id: basicUser.id,
-          nickname: basicUser.nickname,
-          roleType: basicUser.roleType,
-        });
+
 
         const response = await request(app.getHttpServer())
           .patch('/users/' + 'nonono' + '/emojis')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [null, null, null],
           });
@@ -486,14 +394,9 @@ describe('UserController', () => {
 
       it('유저에게 없는 emoji를 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
-        const token = jwtService.sign({
-          id: user.id,
-          nickname: user.nickname,
-          roleType: user.roleType,
-        });
+
         const response = await request(app.getHttpServer())
           .patch('/users/' + user.nickname + '/emojis')
-          .set({ Authorization: 'Bearer ' + token })
           .send({
             ids: [testService.emojis[9].id, null, null],
           });

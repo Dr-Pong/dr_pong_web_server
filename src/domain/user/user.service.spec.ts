@@ -10,7 +10,6 @@ import { TestModule } from 'src/test/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserDetailDto } from './dto/user.detail.dto';
 import { UserModule } from './user.module';
-import { JwtModule, JwtService } from '@nestjs/jwt';
 import {
   ROLETYPE_GUEST,
   ROLETYPE_MEMBER,
@@ -26,7 +25,6 @@ describe('UserService', () => {
   let userRepository: Repository<User>;
   let dataSources: DataSource;
   let testData: TestService;
-  let jwtService: JwtService;
 
   beforeAll(async () => {
     initializeTransactionalContext();
@@ -47,7 +45,6 @@ describe('UserService', () => {
         TestModule,
       ],
       providers: [
-        JwtService,
         {
           provide: getRepositoryToken(User),
           useClass: Repository,
@@ -59,7 +56,6 @@ describe('UserService', () => {
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     dataSources = module.get<DataSource>(DataSource);
     testData = module.get<TestService>(TestService);
-    jwtService = module.get<JwtService>(JwtService);
     await dataSources.synchronize(true);
   });
 
@@ -135,53 +131,53 @@ describe('UserService', () => {
     expect(result.statusMessage).toBe(patchUserMessageRequest.message);
   });
 
-  it('User Me Get Service 테스트', async () => {
-    await testData.createProfileImages();
-    const basicUser: User = await testData.createBasicUser();
+  // it('User Me Get Service 테스트', async () => {
+  //   await testData.createProfileImages();
+  //   const basicUser: User = await testData.createBasicUser();
 
-    const validToken: string = jwtService.sign({
-      id: basicUser.id,
-      nickname: basicUser.nickname,
-      roleType: basicUser.roleType,
-    });
+  //   const validToken: string = jwtService.sign({
+  //     id: basicUser.id,
+  //     nickname: basicUser.nickname,
+  //     roleType: basicUser.roleType,
+  //   });
 
-    const nonameToken: string = jwtService.sign({
-      id: null,
-      nickname: '',
-      roleType: ROLETYPE_NONAME,
-    });
+  //   const nonameToken: string = jwtService.sign({
+  //     id: null,
+  //     nickname: '',
+  //     roleType: ROLETYPE_NONAME,
+  //   });
 
-    const basicDto: GetUserMeDto = {
-      token: validToken,
-    };
+  //   const basicDto: GetUserMeDto = {
+  //     token: validToken,
+  //   };
 
-    const nonameDto: GetUserMeDto = {
-      token: nonameToken,
-    };
+  //   const nonameDto: GetUserMeDto = {
+  //     token: nonameToken,
+  //   };
 
-    const guestDto: GetUserMeDto = {
-      token: null,
-    };
+  //   const guestDto: GetUserMeDto = {
+  //     token: null,
+  //   };
 
-    const basicCase = await service.getUserMe(basicDto);
-    const nonameCase = await service.getUserMe(nonameDto);
-    const guestCase = await service.getUserMe(guestDto);
+  //   const basicCase = await service.getUserMe(basicDto);
+  //   const nonameCase = await service.getUserMe(nonameDto);
+  //   const guestCase = await service.getUserMe(guestDto);
 
-    expect(basicCase.nickname).toBe(basicUser.nickname);
-    expect(basicCase.imgUrl).toBe(basicUser.image.url);
-    expect(basicCase.isSecondAuthOn).toBe(false);
-    expect(basicCase.roleType).toBe(ROLETYPE_MEMBER);
+  //   expect(basicCase.nickname).toBe(basicUser.nickname);
+  //   expect(basicCase.imgUrl).toBe(basicUser.image.url);
+  //   expect(basicCase.isSecondAuthOn).toBe(false);
+  //   expect(basicCase.roleType).toBe(ROLETYPE_MEMBER);
 
-    expect(nonameCase.nickname).toBe('');
-    expect(nonameCase.imgUrl).toBe('');
-    expect(nonameCase.isSecondAuthOn).toBe(false);
-    expect(nonameCase.roleType).toBe(ROLETYPE_NONAME);
+  //   expect(nonameCase.nickname).toBe('');
+  //   expect(nonameCase.imgUrl).toBe('');
+  //   expect(nonameCase.isSecondAuthOn).toBe(false);
+  //   expect(nonameCase.roleType).toBe(ROLETYPE_NONAME);
 
-    expect(guestCase.nickname).toBe('');
-    expect(guestCase.imgUrl).toBe('');
-    expect(guestCase.isSecondAuthOn).toBe(false);
-    expect(guestCase.roleType).toBe(ROLETYPE_GUEST);
-  });
+  //   expect(guestCase.nickname).toBe('');
+  //   expect(guestCase.imgUrl).toBe('');
+  //   expect(guestCase.isSecondAuthOn).toBe(false);
+  //   expect(guestCase.roleType).toBe(ROLETYPE_GUEST);
+  // });
 
   it('User Image Get Service 테스트', async () => {
     await testData.createProfileImages();
