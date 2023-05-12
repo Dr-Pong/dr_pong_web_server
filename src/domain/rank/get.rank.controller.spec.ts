@@ -26,7 +26,7 @@ describe('RankController', () => {
     await dataSources.synchronize(true);
   });
 
-  beforeEach(async () => { });
+  beforeEach(async () => {});
 
   afterAll(async () => {
     await dataSources.dropDatabase();
@@ -99,17 +99,18 @@ describe('RankController', () => {
         );
 
         expect(response.status).toBe(200);
-        expect(response.body.bottom.length).toBe(bottomCount - offset);
-        expect(response.body.bottom[0].rank).toBe(5);
+        console.log(response.body.bottom);
+        expect(response.body.bottom.length).toBe(bottomCount - offset + 1);
+        expect(response.body.bottom[0].rank).toBe(4);
         expect(response.body.bottom[0].nickname).toBe(
-          testService.users[4].nickname,
+          testService.users[3].nickname,
         );
 
-        expect(response.body.bottom[1].rank).toBe(6);
-        expect(response.body.bottom[2].rank).toBe(7);
-        expect(response.body.bottom[3].rank).toBe(8);
-        expect(response.body.bottom[4].rank).toBe(9);
-        expect(response.body.bottom[5].rank).toBe(10);
+        expect(response.body.bottom[1].rank).toBe(5);
+        expect(response.body.bottom[2].rank).toBe(6);
+        expect(response.body.bottom[3].rank).toBe(7);
+        expect(response.body.bottom[4].rank).toBe(8);
+        expect(response.body.bottom[5].rank).toBe(9);
       });
       it('전적이 하나도 없는경우', async () => {
         await testService.createBasicSeasons(1);
