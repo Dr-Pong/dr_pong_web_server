@@ -50,4 +50,4 @@ import { UserGame } from 'src/domain/user-game/user-game.entity';
     ]),
   ],
 })
-export class TestModule { }
+export class TestModule {}

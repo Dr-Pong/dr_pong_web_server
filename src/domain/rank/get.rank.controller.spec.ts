@@ -3,10 +3,8 @@ import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { RankService } from './rank.service';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { TestService } from 'src/test/test.service';
-import { User } from 'src/domain/user/user.entity';
 
 describe('RankController', () => {
   let app: INestApplication;
@@ -25,8 +23,6 @@ describe('RankController', () => {
     dataSources = moduleFixture.get<DataSource>(DataSource);
     await dataSources.synchronize(true);
   });
-
-  beforeEach(async () => {});
 
   afterAll(async () => {
     await dataSources.dropDatabase();

@@ -1,4 +1,4 @@
 export class FindUserGameSeasonStatDto {
-	userId: number;
-	seasonId: number;
+  userId: number;
+  seasonId: number;
 }

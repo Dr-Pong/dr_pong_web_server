@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserTitle } from './user-title.entity';
 import { UserTitleService } from './user-title.service';
-import { User } from 'src/domain/user/user.entity';
-import { Title } from 'src/domain/title/title.entity';
 import { UserTitleRepository } from './user-title.repository';
 
 @Module({
@@ -11,4 +9,4 @@ import { UserTitleRepository } from './user-title.repository';
   providers: [UserTitleService, UserTitleRepository],
   exports: [UserTitleService],
 })
-export class UsertitleModule { }
+export class UsertitleModule {}

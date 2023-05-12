@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
 import { UserGameRecordDto } from './dto/user-game.records.dto';
 import { UserGameRecordsDto } from './dto/user-game.records.dto';
-import { GamePlayerDto } from './dto/game.player.dto';
 import { UserGame } from './user-game.entity';
 import { UserGameRepository } from './user-game.repository';
 import { GetUserGameTotalStatDto } from './dto/get.user-game.total.stat.dto';
@@ -17,7 +16,7 @@ export class UserGameService {
   constructor(
     private readonly userGameRepository: UserGameRepository,
     private readonly seasonRepository: SeasonRepository,
-  ) { }
+  ) {}
 
   async getUserGameTotalStat(
     getDto: GetUserGameTotalStatDto,
@@ -71,7 +70,5 @@ export class UserGameService {
     return responseDto;
   }
 
-  async getUserGameDetailRecordGameId() {
-
-  }
+  async getUserGameDetailRecordGameId() {}
 }

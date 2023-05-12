@@ -4,8 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User } from './user.entity';
-import { UserEmojiService } from 'src/domain/user-emoji/user-emoji.service';
-import { UserTitleService } from 'src/domain/user-title/user-title.service';
 import { UserEmojiModule } from 'src/domain/user-emoji/user-emoji.module';
 import { UserAchievementModule } from 'src/domain/user-achievement/user-achievement.module';
 import { UserRepository } from './user.repository';
@@ -28,4 +26,4 @@ import { UserGameModule } from '../user-game/user-game.module';
   providers: [UserService, UserRepository, ProfileImageRepository],
   exports: [UserService],
 })
-export class UserModule { }
+export class UserModule {}

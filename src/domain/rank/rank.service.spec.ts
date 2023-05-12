@@ -1,12 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RankService } from './rank.service';
 import { DataSource, Repository } from 'typeorm';
-import { User } from 'src/domain/user/user.entity';
 import { Rank } from './rank.entity';
-import { Season } from 'src/domain/season/season.entity';
-import { AppModule } from 'src/app.module';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { GetUserRankStatDto } from './dto/get.user.rank.stat.dto';
 import { GetUserBestRankStatDto } from './dto/get.user.best.rank.stat.dto';
 import { TestService } from 'src/test/test.service';
@@ -15,14 +11,11 @@ import { typeORMConfig } from 'src/configs/typeorm.config';
 import { RankModule } from './rank.module';
 import { RanksTopDto } from './dto/ranks.top.dto';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
-import { RanksBottomDto } from './dto/ranks.bottom.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
 import {
   addTransactionalDataSource,
   initializeTransactionalContext,
 } from 'typeorm-transactional';
-import dotenv from 'dotenv';
-import { resolve } from 'path';
 
 describe('RankService', () => {
   let service: RankService;
@@ -121,10 +114,6 @@ describe('RankService', () => {
         ladderPoint: 'ASC',
       },
     });
-
-    const testRank = userRankInDb.findIndex(
-      (rank) => rank.id === testData.ranks[0].id,
-    );
 
     let testTier: string;
     switch (true) {
@@ -226,9 +215,7 @@ describe('RankService', () => {
     expect(topRankResult.top[0].nickname).toEqual(
       testData.ranks[0].user.nickname,
     );
-    expect(topRankResult.top[0].lp).toEqual(
-      testData.ranks[0].ladderPoint,
-    );
+    expect(topRankResult.top[0].lp).toEqual(testData.ranks[0].ladderPoint);
     expect(topRankResult.top[0].imageUrl).toEqual(
       testData.ranks[0].user.image.url,
     );
@@ -237,9 +224,7 @@ describe('RankService', () => {
     expect(topRankResult.top[2].nickname).toEqual(
       testData.ranks[2].user.nickname,
     );
-    expect(topRankResult.top[2].lp).toEqual(
-      testData.ranks[2].ladderPoint,
-    );
+    expect(topRankResult.top[2].lp).toEqual(testData.ranks[2].ladderPoint);
     expect(topRankResult.top[2].imageUrl).toEqual(
       testData.ranks[2].user.image.url,
     );
@@ -248,9 +233,7 @@ describe('RankService', () => {
     expect(topRankResult.top[9].nickname).toEqual(
       testData.ranks[9].user.nickname,
     );
-    expect(topRankResult.top[9].lp).toEqual(
-      testData.ranks[9].ladderPoint,
-    );
+    expect(topRankResult.top[9].lp).toEqual(testData.ranks[9].ladderPoint);
     expect(topRankResult.top[9].imageUrl).toEqual(
       testData.ranks[9].user.image.url,
     );

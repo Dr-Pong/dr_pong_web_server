@@ -10,11 +10,6 @@ import { TestModule } from 'src/test/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserDetailDto } from './dto/user.detail.dto';
 import { UserModule } from './user.module';
-import {
-  ROLETYPE_GUEST,
-  ROLETYPE_MEMBER,
-  ROLETYPE_NONAME,
-} from 'src/global/type/type.user.roletype';
 import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 import {
   addTransactionalDataSource,

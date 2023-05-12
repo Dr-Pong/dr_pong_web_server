@@ -1,9 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserEmoji } from './user-emoji.entity';
-import {
-  Transactional,
-  IsolationLevel,
-} from 'typeorm-transactional'
+import { Transactional, IsolationLevel } from 'typeorm-transactional';
 import { Emoji } from 'src/domain/emoji/emoji.entity';
 import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
 import { UserEmojiDto, UseremojisDto } from './dto/user.emojis.dto';
@@ -18,11 +15,12 @@ export class UserEmojiService {
   constructor(
     private readonly userEmojiRepository: UserEmojiRepository,
     private readonly emojiRepository: EmojiRepository,
-  ) { }
+  ) {}
 
   async getUseremojisAll(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
     const allEmoji: Emoji[] = await this.emojiRepository.findAll();
-    const userEmoji: UserEmoji[] = await this.userEmojiRepository.findAllByUserId(getDto.userId);
+    const userEmoji: UserEmoji[] =
+      await this.userEmojiRepository.findAllByUserId(getDto.userId);
 
     const emojis: UserEmojiDto[] = [];
     const status = new UserCollectablesStatus(allEmoji.length);
@@ -47,7 +45,8 @@ export class UserEmojiService {
   async getUseremojisSelected(
     getDto: GetUserEmojisDto,
   ): Promise<UseremojisDto> {
-    const selectedEmoji = await this.userEmojiRepository.findAllByUserIdAndSelected(getDto.userId);
+    const selectedEmoji =
+      await this.userEmojiRepository.findAllByUserIdAndSelected(getDto.userId);
 
     const emojis: UserEmojiDto[] = [null, null, null, null];
     for (const userEmoji of selectedEmoji) {
@@ -68,12 +67,19 @@ export class UserEmojiService {
   @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUseremojis(patchDto: PatchUserEmojisDto): Promise<void> {
     try {
-      const oldEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndSelected(patchDto.userId);
+      const oldEmojis: UserEmoji[] =
+        await this.userEmojiRepository.findAllByUserIdAndSelected(
+          patchDto.userId,
+        );
       for (const c of oldEmojis) {
         await this.userEmojiRepository.updateSelectedOrderNull(c);
       }
 
-      const toChangeEmojis: UserEmoji[] = await this.userEmojiRepository.findAllByUserIdAndEmojiIds(patchDto.userId, patchDto.emojisId);
+      const toChangeEmojis: UserEmoji[] =
+        await this.userEmojiRepository.findAllByUserIdAndEmojiIds(
+          patchDto.userId,
+          patchDto.emojisId,
+        );
 
       const countNumbers = patchDto.emojisId.filter(
         (elem) => typeof elem === 'number',

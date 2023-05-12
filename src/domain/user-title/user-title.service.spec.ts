@@ -14,7 +14,6 @@ import { initializeTransactionalContext } from 'typeorm-transactional';
 describe('UserTitleService', () => {
   let service: UserTitleService;
   let testData: TestService;
-  let userTitleRepository: Repository<UserTitle>;
   let dataSources: DataSource;
 
   initializeTransactionalContext();
@@ -29,7 +28,9 @@ describe('UserTitleService', () => {
             if (!options) {
               throw new Error('Invalid options passed');
             }
-            return addTransactionalDataSource({ dataSource: new DataSource(options) });
+            return addTransactionalDataSource({
+              dataSource: new DataSource(options),
+            });
           },
         }),
         UsertitleModule,
@@ -44,9 +45,6 @@ describe('UserTitleService', () => {
     }).compile();
 
     service = module.get<UserTitleService>(UserTitleService);
-    userTitleRepository = module.get<Repository<UserTitle>>(
-      getRepositoryToken(UserTitle),
-    );
     dataSources = module.get<DataSource>(DataSource);
     testData = module.get<TestService>(TestService);
     await dataSources.synchronize(true);
@@ -55,7 +53,7 @@ describe('UserTitleService', () => {
   beforeEach(async () => {
     await testData.createProfileImages();
     await testData.createBasicCollectable();
-  })
+  });
 
   afterEach(async () => {
     testData.clear();
@@ -66,7 +64,7 @@ describe('UserTitleService', () => {
   afterAll(async () => {
     await dataSources.dropDatabase();
     await dataSources.destroy();
-  })
+  });
 
   it('유저 Get 모든 titles 테스트', async () => {
     const titleSelectedByUser = await testData.createUserWithCollectables();
