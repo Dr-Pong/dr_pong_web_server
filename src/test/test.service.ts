@@ -436,10 +436,11 @@ export class TestService {
       this.userGames.push(
         await this.userGameRepository.save({
           user: j % 2 === 0 ? this.users[0] : this.users[1],
-          game: this.games[j / 2],
+          game: this.games[Math.floor(j / 2)],
           result: j % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
           score: j % 2 === 0 ? 10 : 0,
           lpChange: 0,
+          lpResult: 100,
         }),
       );
     }
@@ -467,6 +468,7 @@ export class TestService {
           result: j % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
           score: j % 2 === 0 ? 10 : 0,
           lpChange: 0,
+          lpResult: 100,
         }),
       );
     }
@@ -494,6 +496,7 @@ export class TestService {
         result: GAMERESULT_WIN,
         score: 10,
         lpChange: this.games[i].type === GAMETYPE_RANK ? 10 : 0,
+        lpResult: 110,
       });
       await this.userGameRepository.save({
         user: users[1],
@@ -501,6 +504,7 @@ export class TestService {
         result: GAMERESULT_LOSE,
         score: 0,
         lpChange: this.games[i].type === GAMETYPE_RANK ? -10 : 0,
+        lpResult: 90,
       });
     }
   }
@@ -537,6 +541,7 @@ export class TestService {
         result: GAMERESULT_WIN,
         score: 10,
         lpChange: 10,
+        lpResult: 110,
       });
       await this.userGameRepository.save({
         user: user2,
@@ -544,6 +549,7 @@ export class TestService {
         result: GAMERESULT_LOSE,
         score: 0,
         lpChange: -10,
+        lpResult: 90,
       });
     }
     for (; i < win + tie; i++) {
@@ -553,6 +559,7 @@ export class TestService {
         result: GAMERESULT_TIE,
         score: 5,
         lpChange: 0,
+        lpResult: 100,
       });
       await this.userGameRepository.save({
         user: user2,
@@ -560,6 +567,7 @@ export class TestService {
         result: GAMERESULT_TIE,
         score: 5,
         lpChange: 0,
+        lpResult: 100,
       });
     }
     for (; i < totalGame; i++) {
@@ -569,6 +577,7 @@ export class TestService {
         result: GAMERESULT_LOSE,
         score: 0,
         lpChange: -10,
+        lpResult: 90,
       });
       await this.userGameRepository.save({
         user: user2,
@@ -576,6 +585,7 @@ export class TestService {
         result: GAMERESULT_WIN,
         score: 10,
         lpChange: 10,
+        lpResult: 110,
       });
     }
   }
@@ -606,6 +616,7 @@ export class TestService {
         result: GAMERESULT_WIN,
         score: 10,
         lpChange: 10,
+        lpResult: 110,
       });
     }
     for (let i = 0; i < lose; i++) {
@@ -615,6 +626,7 @@ export class TestService {
         result: GAMERESULT_LOSE,
         score: 0,
         lpChange: -10,
+        lpResult: 90,
       });
     }
     for (let i = 0; i < tie; i++) {
@@ -624,6 +636,7 @@ export class TestService {
         result: GAMERESULT_TIE,
         score: 5,
         lpChange: 0,
+        lpResult: 100,
       });
     }
   }
