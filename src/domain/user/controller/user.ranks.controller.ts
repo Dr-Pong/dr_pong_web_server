@@ -9,8 +9,6 @@ import { RankBestStatDto } from 'src/domain/rank/dto/rank.best.stat.dto';
 import { GetUserBestRankStatDto } from 'src/domain/rank/dto/get.user.best.rank.stat.dto';
 import { UserSeasonRankResponseDto } from 'src/domain/rank/dto/user.season.rank.response.dto';
 import { GetUserRankSeasonStatDto } from 'src/domain/user-game/dto/get.user.rank.season.stat.dto';
-import { Season } from 'src/domain/season/season.entity';
-import { SeasonRepository } from 'src/domain/season/season.repository';
 import { RankSeasonStatDto } from 'src/domain/rank/dto/rank.season.stat.dto';
 
 @Controller('users')
@@ -18,7 +16,6 @@ export class UserRanksController {
   constructor(
     private userService: UserService,
     private rankService: RankService,
-    private readonly seasonRepository: SeasonRepository,
   ) {}
 
   //** Get stat's best rank*/
@@ -49,11 +46,9 @@ export class UserRanksController {
     const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
       getUsersDetailDto,
     );
-    const currentSeason: Season =
-      await this.seasonRepository.findCurrentSeason();
+
     const getUserSeasonRankDto: GetUserRankSeasonStatDto = {
       userId: userInfoDto.id,
-      seasonId: currentSeason.id,
     };
     const userSeasonRank: RankSeasonStatDto =
       await this.rankService.getUserRankBySeason(getUserSeasonRankDto);
