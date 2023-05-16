@@ -1,5 +1,5 @@
 import { TierType } from 'src/global/type/type.tier';
-import { RankBestStatDto } from './rank.best.stat.dto';
+import { RankSeasonStatDto } from './rank.season.stat.dto';
 
 export class UserSeasonRankResponseDto {
   record: number | null;
@@ -7,7 +7,7 @@ export class UserSeasonRankResponseDto {
   tier: TierType;
 
   static forUserSeasonRankResponse(
-    userSeasonRank: RankBestStatDto,
+    userSeasonRank: RankSeasonStatDto,
   ): UserSeasonRankResponseDto {
     return {
       record: userSeasonRank.record,

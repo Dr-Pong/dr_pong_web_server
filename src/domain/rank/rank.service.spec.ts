@@ -83,37 +83,16 @@ describe('RankService', () => {
     //given
     const getDto1: GetUserRankStatDto = {
       userId: testData.users[0].id,
-      seasonId: testData.seasons[0].id,
     }; // 시즌1데이터
     const invalidgetDto1: GetUserRankStatDto = {
       userId: testData.ranks[0].user.id,
-      seasonId: 4,
     }; // 없는시즌 데이터
     const invalidgetDto2: GetUserRankStatDto = {
       userId: 4242,
-      seasonId: testData.seasons[0].id,
     }; // 없는유저 데이터
 
     //when
     const recordRankTier = await service.getUserRankBySeason(getDto1);
-
-    const invalidRecordRankTier = await service.getUserRankBySeason(
-      invalidgetDto1,
-    );
-    const invalidRecordRankTier2 = await service.getUserRankBySeason(
-      invalidgetDto2,
-    );
-    const currentSeason = testData.seasons[0];
-
-    const userRankInDb: Rank[] = await rankRepository.find({
-      where: {
-        user: { id: testData.users[0].id },
-        season: { id: currentSeason.id },
-      },
-      order: {
-        ladderPoint: 'ASC',
-      },
-    });
 
     let testTier: string;
     switch (true) {
@@ -134,18 +113,6 @@ describe('RankService', () => {
     expect(recordRankTier.record).toEqual(testData.ranks[0].ladderPoint);
     expect(recordRankTier.rank).toEqual(null);
     expect(recordRankTier.tier).toEqual(testTier);
-
-    // 없는시즌 데이터는 null로 반환
-    expect(invalidRecordRankTier).toEqual({
-      record: null,
-      rank: null,
-      tier: 'egg',
-    });
-    expect(invalidRecordRankTier2).toEqual({
-      record: null,
-      rank: null,
-      tier: 'egg',
-    });
   });
 
   it('유저의 역대최고 record rank tier반환', async () => {

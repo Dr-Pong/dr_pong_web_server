@@ -22,9 +22,10 @@ export class RankService {
   async getUserRankBySeason(
     getDto: GetUserRankStatDto,
   ): Promise<RankSeasonStatDto> {
+    const currentseason = await this.seasonRepository.findCurrentSeason();
     const userRanks = await this.rankRepository.findByUserIdAndSeasonId(
       getDto.userId,
-      getDto.seasonId,
+      currentseason.id,
     );
 
     if (!userRanks) {
