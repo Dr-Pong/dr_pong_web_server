@@ -33,7 +33,7 @@ export class UserGameRepository {
 
   async findAllByUserIdAndGameIdLowerThanLastGameId(
     getDto: GetUserGameRecordsDto,
-  ): Promise<any> {
+  ): Promise<UserGame[]> {
     const gameIds = this.repository
       .createQueryBuilder('user_game')
       .select('user_game.game_id')
@@ -41,7 +41,7 @@ export class UserGameRepository {
         'user_game.user_id = :userId and user_game.game_id < :lastGameId',
         { userId: getDto.userId, lastGameId: getDto.lastGameId },
       )
-      .orderBy({ 'user_game.game.id': 'DESC' })
+      .orderBy({ 'game.start_time': 'DESC', 'user_game.game.id': 'DESC' })
       .limit(getDto.count + 1);
 
     const userGames: UserGame[] = await this.repository
@@ -51,9 +51,19 @@ export class UserGameRepository {
       .leftJoinAndSelect('user.image', 'image')
       .where(`user_game.game_id IN (${gameIds.getQuery()})`)
       .setParameters(gameIds.getParameters())
-      .orderBy({ 'user_game.game.start_time': 'DESC' })
+      .orderBy({ 'game.start_time': 'DESC', 'user_game.game.id': 'DESC' })
       .getMany();
 
+    return userGames;
+  }
+
+  async findTwoByUserGameByGameId(gameId: number): Promise<UserGame[]> {
+    const userGames = await this.repository
+      .createQueryBuilder('user_game')
+      .leftJoinAndSelect('user_game.game', 'game')
+      .leftJoinAndSelect('user_game.user', 'user')
+      .where('game.id = :gameId', { gameId: gameId })
+      .getMany();
     return userGames;
   }
 }
