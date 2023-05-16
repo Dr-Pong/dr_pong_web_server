@@ -57,13 +57,13 @@ export class UserGameRepository {
     return userGames;
   }
 
-  async findTwoByUserGameByGameId(gameId: number): Promise<UserGame[]> {
-    const userGames = await this.repository
-      .createQueryBuilder('user_game')
-      .leftJoinAndSelect('user_game.game', 'game')
-      .leftJoinAndSelect('user_game.user', 'user')
-      .where('game.id = :gameId', { gameId: gameId })
-      .getMany();
+  async findTwoUserGameByGameId(gameId: number): Promise<UserGame[]> {
+    const userGames = await this.repository.find({
+      where: {
+        game: { id: gameId },
+      },
+      relations: ['user', 'game'],
+    });
     return userGames;
   }
 }
