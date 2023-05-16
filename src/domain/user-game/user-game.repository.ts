@@ -62,7 +62,6 @@ export class UserGameRepository {
       where: {
         game: { id: gameId },
       },
-      relations: ['user', 'game'],
     });
     return userGames;
   }
