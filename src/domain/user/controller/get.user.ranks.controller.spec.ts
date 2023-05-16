@@ -57,6 +57,7 @@ describe('UserController', () => {
     describe('/users/{nickname}/ranks/season', () => {
       it('유저 현시즌 record rank tier반환', async () => {
         const user: User = await testService.createBasicUser();
+        await testService.createBasicSeasons(1);
         const response = await request(app.getHttpServer()).get(
           '/users/' + user.nickname + '/ranks/season',
         );
