@@ -83,12 +83,10 @@ export class UserGameService {
     if (userGames[0].user.nickname === getDto.nickname) {
       meUserGame = userGames[0];
       youUserGame = userGames[1];
-    } else {
-      if (userGames[1].user.nickname !== getDto.nickname)
-        throw new NotFoundException('유저가 게임에 참여하지 않았습니다.');
+    } else if (userGames[1].user.nickname === getDto.nickname) {
       youUserGame = userGames[0];
       meUserGame = userGames[1];
-    }
+    } else throw new NotFoundException('유저가 게임에 참여하지 않았습니다.');
     const responseMeDto = new UserGameLpDto(
       meUserGame.lpResult,
       meUserGame.lpChange,
