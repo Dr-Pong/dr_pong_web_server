@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
 import { UserGameRecordDto } from './dto/user-game.records.dto';
 import { UserGameRecordsDto } from './dto/user-game.records.dto';
@@ -76,15 +76,16 @@ export class UserGameService {
   async getUserGameByNicknameAndGameId(
     getDto: GetUserGameByNicknameAndGameIdDto,
   ): Promise<UserGameByNicknameAndGameIdResponseDto> {
-    const userGames = await this.userGameRepository.findTwoByUserGameByGameId(
-      getDto.gameId,
-    );
+    const userGames: UserGame[] =
+      await this.userGameRepository.findTwoUserGameByGameId(getDto.gameId);
     let meUserGame: UserGame = null;
     let youUserGame: UserGame = null;
     if (userGames[0].user.nickname === getDto.nickname) {
       meUserGame = userGames[0];
       youUserGame = userGames[1];
     } else {
+      if (userGames[1].user.nickname !== getDto.nickname)
+        throw new NotFoundException('유저가 게임에 참여하지 않았습니다.');
       youUserGame = userGames[0];
       meUserGame = userGames[1];
     }
