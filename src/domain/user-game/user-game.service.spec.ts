@@ -21,6 +21,8 @@ import {
 import { User } from 'src/domain/user/user.entity';
 import { UserGameRecordsDto } from './dto/user-game.records.dto';
 import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
+import { GetUserGameByNicknameAndGameIdDto } from './dto/get.user-game.by.nickname.and.gameid.dto';
+import { UserGameByNicknameAndGameIdResponseDto } from './dto/get.user-game.game.response.dto';
 
 describe('UserGameService', () => {
   let service: UserGameService;
@@ -270,5 +272,24 @@ describe('UserGameService', () => {
 
     expect(noGames.records.length).toBe(0);
     expect(noGames.isLastPage).toBe(true);
+  });
+
+  it('nickname 이 가지고있는 gameId 로 정보조회', async () => {
+    await testData.createBasicGames();
+
+    const user0GameDto = new GetUserGameByNicknameAndGameIdDto(
+      testData.users[0].nickname,
+      testData.games[0].id,
+    );
+    const UserGameResponseDto: UserGameByNicknameAndGameIdResponseDto =
+      await service.getUserGameByNicknameAndGameId(user0GameDto);
+    expect(UserGameResponseDto.duration).toBe(10);
+    expect(UserGameResponseDto.me.lp).toBe(100);
+    expect(UserGameResponseDto.me.lpChange).toBe(0);
+    expect(UserGameResponseDto.you.lp).toBe(100);
+    expect(UserGameResponseDto.you.lpChange).toBe(0);
+    expect(UserGameResponseDto).toHaveProperty('rounds');
+    // expect(UserGameResponseDto.rounds[0].bounces).toHaveProperty('bounces');
+    // expect(UserGameResponseDto.rounds[0].meWin).toHaveProperty('meWin');
   });
 });

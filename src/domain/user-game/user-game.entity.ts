@@ -31,4 +31,7 @@ export class UserGame extends BaseTimeEntity {
 
   @Column({ name: 'lp_change', type: 'int' })
   lpChange: number;
+
+  @Column({ name: 'lp_result', type: 'int' })
+  lpResult: number;
 }
