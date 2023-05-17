@@ -78,6 +78,8 @@ export class UserGameService {
   ): Promise<UserGameByNicknameAndGameIdResponseDto> {
     const userGames: UserGame[] =
       await this.userGameRepository.findTwoUserGameByGameId(getDto.gameId);
+    if (userGames.length === 0)
+      throw new NotFoundException('게임이 존재하지 않습니다.');
     let meUserGame: UserGame = null;
     let youUserGame: UserGame = null;
     if (userGames[0].user.nickname === getDto.nickname) {
