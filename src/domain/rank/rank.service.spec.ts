@@ -136,6 +136,7 @@ describe('RankService', () => {
 
     //랭크데이터가 잘 반환되는지 확인
     expect(recordRankTier.record).toEqual(testData.ranks[0].highestPoint);
+    expect(recordRankTier.rank).toEqual(null);
     expect(recordRankTier.tier).toEqual(testTier);
 
     //없는시즌 데이터는 null로 반환
