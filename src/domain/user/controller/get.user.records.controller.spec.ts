@@ -199,5 +199,50 @@ describe('UserController', () => {
         expect(response.statusCode).toBe(400);
       });
     });
+    describe('/users/{nickname}/records/{gameId}', () => {
+      it('유저의 게임 기록 반환', async () => {
+        await testService.createBasicGames();
+        // console.log(testService.userGames);
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            testService.userGames[0].user.nickname +
+            '/records/' +
+            testService.userGames[0].game.id,
+        );
+        expect(response.statusCode).toBe(200);
+        //인자 있는지 확인
+        expect(response.body).toHaveProperty('duration');
+        expect(response.body).toHaveProperty('me');
+        expect(response.body).toHaveProperty('you');
+        expect(response.body).toHaveProperty('rounds');
+        // 값 확인
+        expect(response.body.duration).toBe(10);
+        expect(response.body.me.lp).toBe(100);
+        expect(response.body.me.lpChange).toBe(0);
+        expect(response.body.you.lp).toBe(100);
+        expect(response.body.you.lpChange).toBe(0);
+        //expect(response.body.rounds).toBe(null);
+      });
+      it('Error Cases Test: UserGame에 유저가 없는경우', async () => {
+        await testService.createBasicGames();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            'user00000' +
+            '/records/' +
+            testService.userGames[0].game.id,
+        );
+        expect(response.statusCode).toBe(404);
+      });
+      it('Error Cases Test: 찾는 gameId 가 없는경우', async () => {
+        await testService.createBasicGames();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            testService.userGames[0].user.nickname +
+            '/records/' +
+            100,
+        );
+        expect(response.statusCode).toBe(404);
+      });
+    });
   });
 });
