@@ -13,6 +13,8 @@ import { UserGameService } from '../../user-game/user-game.service';
 import { UserGameRecordsResponseDto } from '../../user-game/dto/user-game.record.response.dto';
 import { GetUserGameRecordsDto } from '../../user-game/dto/get.user-game.records.dto';
 import { UserGameRecordsDto } from '../../user-game/dto/user-game.records.dto';
+import { GetUserGameByNicknameAndGameIdDto } from 'src/domain/user-game/dto/get.user-game.by.nickname.and.gameid.dto';
+import { UserGameByNicknameAndGameIdResponseDto } from 'src/domain/user-game/dto/get.user-game.game.response.dto';
 
 @Controller('users')
 export class UserRecordsController {
@@ -49,99 +51,23 @@ export class UserRecordsController {
     return responseDto;
   }
 
-  // @Get('/:nickname/records/:gameId')
-  // async userGameRecordDetail(
-  //   @Param('nickname') nickname: string,
-  //   @Param('gameId', ParseIntPipe) count: number,
-  // ) {
-  //   return {
-  //     duration: 214,
-  //     me: {
-  //       lp: 4242,
-  //       lpChange: 42,
-  //     },
-  //     you: {
-  //       lp: 4158,
-  //       lpChange: -42,
-  //     },
-  //     rounds: [
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: false,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: false,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: false,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: false,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: false,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: false,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: false,
-  //       },
-  //       {
-  //         bounces: randomInt(1, 42),
-  //         meWin: true,
-  //       },
-  //     ],
-  //   };
-  // }
+  @Get('/:nickname/records/:gameId')
+  async userGameRecordDetail(
+    @Param('nickname') nickname: string,
+    @Param('gameId', ParseIntPipe) gameId: number,
+  ) {
+    const inputDto: GetUserGameByNicknameAndGameIdDto =
+      new GetUserGameByNicknameAndGameIdDto(nickname, gameId);
+    const response = await this.userGameService.getUserGameByNicknameAndGameId(
+      inputDto,
+    );
+    const responseDto: UserGameByNicknameAndGameIdResponseDto =
+      new UserGameByNicknameAndGameIdResponseDto(
+        response.duration,
+        response.me,
+        response.you,
+        response.rounds,
+      );
+    return responseDto;
+  }
 }
