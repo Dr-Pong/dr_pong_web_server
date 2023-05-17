@@ -55,10 +55,7 @@ export class RankService {
     }
 
     if (userRanks.highestPoint >= Number(process.env.DOCTOR_CUT)) {
-      const userRank = await this.rankRepository.findRankByLadderPoint(
-        userRanks.highestPoint,
-      );
-      return RankBestStatDto.doctorUser(userRanks.highestPoint, userRank);
+      return RankBestStatDto.doctorUser(userRanks.highestPoint, null);
     } else {
       return RankBestStatDto.nonDoctorUser(userRanks.highestPoint);
     }
