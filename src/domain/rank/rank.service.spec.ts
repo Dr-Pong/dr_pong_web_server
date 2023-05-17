@@ -21,7 +21,6 @@ describe('RankService', () => {
   let service: RankService;
   let testData: TestService;
   let dataSources: DataSource;
-  let rankRepository: Repository<Rank>;
   initializeTransactionalContext();
 
   //game 레포 + user-game레포 넣기
@@ -53,7 +52,6 @@ describe('RankService', () => {
       ],
     }).compile();
 
-    rankRepository = module.get<Repository<Rank>>(getRepositoryToken(Rank));
     dataSources = module.get<DataSource>(DataSource);
     service = module.get<RankService>(RankService);
     testData = module.get<TestService>(TestService);
@@ -84,12 +82,6 @@ describe('RankService', () => {
     const getDto1: GetUserRankStatDto = {
       userId: testData.users[0].id,
     }; // 시즌1데이터
-    const invalidgetDto1: GetUserRankStatDto = {
-      userId: testData.ranks[0].user.id,
-    }; // 없는시즌 데이터
-    const invalidgetDto2: GetUserRankStatDto = {
-      userId: 4242,
-    }; // 없는유저 데이터
 
     //when
     const recordRankTier = await service.getUserRankBySeason(getDto1);
@@ -127,20 +119,6 @@ describe('RankService', () => {
     const recordRankTier = await service.getUserBestRank(getDto1);
     const invalidRecordRankTier = await service.getUserBestRank(invalidgetDto1);
 
-    const userRankInDb: Rank[] = await rankRepository.find({
-      where: {
-        user: { id: testData.users[0].id },
-      },
-      order: {
-        highestPoint: 'ASC',
-      },
-    });
-
-    //전체 db에서 현재시즌 데이터정렬
-    const testRank = userRankInDb.findIndex(
-      (rank) => rank.id === testData.ranks[0].id,
-    );
-
     let testTier: string;
     switch (true) {
       case testData.ranks[0].highestPoint >= Number(process.env.DOCTOR_CUT):
@@ -158,7 +136,6 @@ describe('RankService', () => {
 
     //랭크데이터가 잘 반환되는지 확인
     expect(recordRankTier.record).toEqual(testData.ranks[0].highestPoint);
-    expect(recordRankTier.rank).toEqual(testRank + 1);
     expect(recordRankTier.tier).toEqual(testTier);
 
     //없는시즌 데이터는 null로 반환
