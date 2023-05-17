@@ -59,8 +59,20 @@ export class RankRepository {
   //** 래더 포인트로 순위 조회 */
   async findRankByLadderPoint(ladderPoint: number): Promise<number> {
     const rank = await this.repository.count({
-      where: { ladderPoint: MoreThan(ladderPoint) },
+      where: {
+        ladderPoint: MoreThan(ladderPoint),
+      },
     });
-    return rank + 1;
+
+    const samePointCount = await this.repository.count({
+      where: { ladderPoint },
+    });
+
+    const latestRank = await this.repository.count();
+
+    const distinctRank = latestRank - rank - samePointCount + 1;
+
+    const sortedRank = distinctRank + samePointCount - 1;
+    return sortedRank;
   }
 }
