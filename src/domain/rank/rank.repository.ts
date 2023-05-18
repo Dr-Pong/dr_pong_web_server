@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Rank } from './rank.entity';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
@@ -57,22 +57,18 @@ export class RankRepository {
   }
 
   //** 래더 포인트로 순위 조회 */
-  async findRankByLadderPoint(ladderPoint: number): Promise<number> {
-    const rank = await this.repository.count({
-      where: {
-        ladderPoint: MoreThan(ladderPoint),
-      },
-    });
+  async findRankByLadderPoint(userId: number): Promise<number> {
+    const userRank = await this.repository
+      .createQueryBuilder('rank')
+      .select('COUNT(*) + 1', 'ranking')
+      .where(
+        'rank.ladder_point > (SELECT ladder_point FROM rank WHERE id = :id)',
+        { id: userId },
+      )
+      .getRawOne();
 
-    const samePointCount = await this.repository.count({
-      where: { ladderPoint },
-    });
+    const ranking = Number(userRank.ranking);
 
-    const latestRank = await this.repository.count();
-
-    const distinctRank = latestRank - rank - samePointCount + 1;
-
-    const sortedRank = distinctRank + samePointCount - 1;
-    return sortedRank;
+    return ranking;
   }
 }
