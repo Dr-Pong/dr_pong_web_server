@@ -57,14 +57,50 @@ export class RankRepository {
   }
 
   //** 래더 포인트로 순위 조회 */
-  async findRankByLadderPoint(userId: number): Promise<number> {
+  // async findRankByLadderPoint(
+  //   userId: number,
+  //   seasonId: number,
+  // ): Promise<number> {
+  //   const subQuery = this.repository
+  //     .createQueryBuilder('rank')
+  //     .select(
+  //       'user_id, ROW_NUMBER() OVER (ORDER BY rank.ladder_point DESC) as ranking',
+  //     )
+  //     .where('user_id = :id and season=:season', {
+  //       id: userId,
+  //       season: seasonId,
+  //     });
+  //   const userRank = await this.repository
+  //     .createQueryBuilder('rank')
+  //     .select(`ranking from (${subQuery.getQuery()}) ranking`)
+  //     .where('user_id = :id', { id: userId })
+  //     // .setParameter('id', userId)
+  //     .cache(true)
+  //     .getRawOne();
+
+  //   const ranking = Number(userRank.ranking);
+
+  //   return ranking;
+  // }
+  async findRankByLadderPoint(
+    userId: number,
+    seasonId: number,
+  ): Promise<number> {
+    const subQuery = this.repository
+      .createQueryBuilder('rank')
+      .select(
+        'rank.user_id, ROW_NUMBER() OVER (ORDER BY rank.ladderPoint DESC) as ranking',
+      )
+      .where('rank.user_id = :id and seasonId=:season', {
+        id: userId,
+        season: seasonId,
+      });
+
     const userRank = await this.repository
       .createQueryBuilder('rank')
-      .select('COUNT(*) + 1', 'ranking')
-      .where(
-        'rank.ladder_point > (SELECT ladder_point FROM rank WHERE id = :id)',
-        { id: userId },
-      )
+      .select(`ranking from (${subQuery.getQuery()}) ranking`)
+      .where('rank.user_id = :id', { id: userId })
+      .cache(true)
       .getRawOne();
 
     const ranking = Number(userRank.ranking);
