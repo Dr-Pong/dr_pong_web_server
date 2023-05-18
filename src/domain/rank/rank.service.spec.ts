@@ -107,13 +107,9 @@ describe('RankService', () => {
       default:
         testTier = 'student';
     }
-    // console.log(testData.ranks);
     //랭크데이터가 잘 반환되는지 확인
     expect(recordRankTier.record).toEqual(testData.ranks[0].ladderPoint);
     expect(recordRankTier2.record).toEqual(testData.ranks[1].ladderPoint);
-    console.log(recordRankTier);
-    console.log(recordRankTier2);
-    console.log(recordRankTier3);
     expect(recordRankTier.rank).toEqual(1);
     expect(recordRankTier2.rank).toEqual(2);
     expect(recordRankTier3.rank).toEqual(3);
