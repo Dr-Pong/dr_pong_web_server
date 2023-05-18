@@ -274,7 +274,7 @@ export class TestService {
           await this.rankRepository.save({
             season: c,
             user: this.users[i],
-            ladderPoint: 100 - i,
+            ladderPoint: 1000 - i,
             highestPoint: 1000 - i,
           }),
         );
@@ -295,7 +295,7 @@ export class TestService {
         await this.rankRepository.save({
           season: this.currentSeason,
           user: this.users[i],
-          ladderPoint: 100 - i,
+          ladderPoint: 1000 - i,
           highestPoint: 1000 - i,
         }),
       );
