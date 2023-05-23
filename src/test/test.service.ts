@@ -284,17 +284,22 @@ export class TestService {
   }
 
   async createSameRank(): Promise<Rank[]> {
+    this.currentSeason = await this.seasonRepository.save({
+      name: 'sameRanks',
+      startTime: '2021-01-01',
+      endTime: '2022-01-02',
+      imageUrl: 'SeasonImage',
+    });
+
     for (let i = 0; i < this.users.length; i++) {
-      for (const c of this.seasons) {
-        this.ranks.push(
-          await this.rankRepository.save({
-            season: c,
-            user: this.users[i],
-            ladderPoint: 1000,
-            highestPoint: 1000,
-          }),
-        );
-      }
+      this.ranks.push(
+        await this.rankRepository.save({
+          season: this.currentSeason,
+          user: this.users[i],
+          ladderPoint: 1000,
+          highestPoint: 1000,
+        }),
+      );
     }
     return this.ranks;
   }
