@@ -9,13 +9,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'rank' })
 export class Rank extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @ManyToOne(() => Season, { eager: true })
-  @JoinColumn({ name: 'season' })
+  @JoinColumn({ name: 'season_id' })
   season: Season;
 
   @ManyToOne(() => User, { eager: true })
