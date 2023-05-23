@@ -117,7 +117,7 @@ describe('RankService', () => {
     expect(recordRankTier.tier).toEqual(testTier);
   });
 
-  it.only('공동순위 조회 확인', async () => {
+  it('공동순위 조회 확인', async () => {
     //given
     await testData.createSameRank();
     const getDto1: GetUserRankStatDto = {
