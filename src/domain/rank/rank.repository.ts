@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Rank } from './rank.entity';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
@@ -57,10 +57,54 @@ export class RankRepository {
   }
 
   //** 래더 포인트로 순위 조회 */
-  async findRankByLadderPoint(ladderPoint: number): Promise<number> {
-    const rank = await this.repository.count({
-      where: { ladderPoint: MoreThan(ladderPoint) },
-    });
-    return rank + 1;
+  // async findRankByLadderPoint(
+  //   userId: number,
+  //   seasonId: number,
+  // ): Promise<number> {
+  //   const subQuery = this.repository
+  //     .createQueryBuilder('rank')
+  //     .select(
+  //       'user_id, ROW_NUMBER() OVER (ORDER BY rank.ladder_point DESC) as ranking',
+  //     )
+  //     .where('user_id = :id and season=:season', {
+  //       id: userId,
+  //       season: seasonId,
+  //     });
+  //   const userRank = await this.repository
+  //     .createQueryBuilder('rank')
+  //     .select(`ranking from (${subQuery.getQuery()}) ranking`)
+  //     .where('user_id = :id', { id: userId })
+  //     // .setParameter('id', userId)
+  //     .cache(true)
+  //     .getRawOne();
+
+  //   const ranking = Number(userRank.ranking);
+
+  //   return ranking;
+  // }
+  async findRankByLadderPoint(
+    userId: number,
+    seasonId: number,
+  ): Promise<number> {
+    const subQuery = this.repository
+      .createQueryBuilder('rank')
+      .select(
+        'rank.user_id, ROW_NUMBER() OVER (ORDER BY rank.ladderPoint DESC) as ranking',
+      )
+      .where('rank.user_id = :id and seasonId=:season', {
+        id: userId,
+        season: seasonId,
+      });
+
+    const userRank = await this.repository
+      .createQueryBuilder('rank')
+      .select(`ranking from (${subQuery.getQuery()}) ranking`)
+      .where('rank.user_id = :id', { id: userId })
+      .cache(true)
+      .getRawOne();
+
+    const ranking = Number(userRank.ranking);
+
+    return ranking;
   }
 }
