@@ -56,7 +56,7 @@ export class RankRepository {
     });
   }
 
-  async findRankByLadderPoint(
+  async findRankingByUserIdAndSeasonId(
     userId: number,
     seasonId: number,
   ): Promise<number> {
