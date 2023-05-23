@@ -33,7 +33,7 @@ export class RankService {
     }
 
     if (userRanks.ladderPoint >= Number(process.env.DOCTOR_CUT)) {
-      const userRank = await this.rankRepository.findRankByLadderPoint(
+      const userRank = await this.rankRepository.findRankingByUserIdAndSeasonId(
         getDto.userId,
         currentseason.id,
       );
