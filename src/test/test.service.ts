@@ -274,24 +274,8 @@ export class TestService {
           await this.rankRepository.save({
             season: c,
             user: this.users[i],
-            ladderPoint: 1000 - i,
+            ladderPoint: 100 - i,
             highestPoint: 1000 - i,
-          }),
-        );
-      }
-    }
-    return this.ranks;
-  }
-
-  async createSameRank(): Promise<Rank[]> {
-    for (let i = 0; i < this.users.length; i++) {
-      for (const c of this.seasons) {
-        this.ranks.push(
-          await this.rankRepository.save({
-            season: c,
-            user: this.users[i],
-            ladderPoint: 1000,
-            highestPoint: 1000,
           }),
         );
       }
@@ -311,7 +295,7 @@ export class TestService {
         await this.rankRepository.save({
           season: this.currentSeason,
           user: this.users[i],
-          ladderPoint: 1000 - i,
+          ladderPoint: 100 - i,
           highestPoint: 1000 - i,
         }),
       );
