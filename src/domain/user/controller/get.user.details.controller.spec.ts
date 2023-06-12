@@ -62,7 +62,7 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
-        expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
+        expect(response.body.image.url).toBe(user.image.url); //원하는 데이터 넣기
         expect(response.body.statusMessage).toBe(user.statusMessage); //원하는 데이터 넣기
       });
 
@@ -74,7 +74,7 @@ describe('UserController', () => {
 
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
-        expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
+        expect(response.body.image.url).toBe(user.image.url); //원하는 데이터 넣기
         expect(response.body.statusMessage).toBe(user.statusMessage); //원하는 데이터 넣기
         expect(response.body).toHaveProperty('title.id'); //원하는 데이터 넣기
         expect(response.body).toHaveProperty('title.title'); //원하는 데이터 넣기
@@ -87,7 +87,7 @@ describe('UserController', () => {
         );
         expect(response.statusCode).toBe(200);
         expect(response.body.nickname).toBe(user.nickname); //원하는 데이터 넣기
-        expect(response.body.imgUrl).toBe(user.image.url); //원하는 데이터 넣기
+        expect(response.body.image.url).toBe(user.image.url); //원하는 데이터 넣기
         expect(response.body.statusMessage).toBe(user.statusMessage); //원하는 데이터 넣기
         expect(response.body.title).toBe(null); //원하는 데이터 넣기
       });

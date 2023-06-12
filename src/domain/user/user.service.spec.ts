@@ -86,7 +86,7 @@ describe('UserService', () => {
     );
 
     expect(result.nickname).toBe(basicUser.nickname);
-    expect(result.imgUrl).toBe(basicUser.image.url);
+    expect(result.image.url).toBe(basicUser.image.url);
     expect(result.statusMessage).toBe(basicUser.statusMessage);
     expect(result.level).toBe(basicUser.level);
   });

@@ -9,7 +9,6 @@ import {
   GAMERESULT_TIE,
   GAMERESULT_WIN,
 } from 'src/global/type/type.game.result';
-import { ROLETYPE_MEMBER } from 'src/global/type/type.user.roletype';
 import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
 import { Rank } from 'src/domain/rank/rank.entity';
 import { Season } from 'src/domain/season/season.entity';
@@ -97,7 +96,6 @@ export class TestService {
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
       image: this.profileImages[0],
-      roleType: ROLETYPE_MEMBER,
     });
     this.users.push(user);
     return user;

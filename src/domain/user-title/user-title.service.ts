@@ -12,6 +12,7 @@ export class UserTitleService {
   constructor(private userTitleRepository: UserTitleRepository) {}
 
   //get title service
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserTitles(getDto: GetUserTitlesDto): Promise<UserTitlesDto> {
     const userTitles = await this.userTitleRepository.findAllByUserId(
       getDto.userId,
@@ -27,6 +28,7 @@ export class UserTitleService {
   }
 
   //get selected title service
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserTitleSelected(
     getDto: GetUserTitlesDto,
   ): Promise<UserTitleSelectedDto> {
