@@ -31,6 +31,7 @@ import { PatchUserTitleRequestDto } from '../../user-title/dto/patch.user.title.
 import { PatchUserImageDto } from '../dto/patch.user.image.dto';
 import { PatchUserMessageRequestDto } from '../dto/patch.user.message.request.dto';
 import { PatchUserMessageDto } from '../dto/patch.user.message.dto';
+import { ProfileImagesDto } from 'src/domain/profile-image/dto/profile-image.dto';
 
 @Controller('users')
 export class UserCollectablesController {
@@ -110,6 +111,13 @@ export class UserCollectablesController {
       titles: titles.titles,
     };
     return responseDto;
+  }
+
+  @Get('/images')
+  async usersImagesGet(): Promise<ProfileImagesDto> {
+    const profileImages: ProfileImagesDto =
+      await this.userService.getUserImages();
+    return profileImages;
   }
 
   @Patch('/:nickname/title')
