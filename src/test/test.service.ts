@@ -274,8 +274,8 @@ export class TestService {
           await this.rankRepository.save({
             season: c,
             user: this.users[i],
-            ladderPoint: 1000 - i,
-            highestPoint: 1000 - i,
+            ladderPoint: Number(process.env.DOCTOR_CUT) * 10 - i,
+            highestPoint: Number(process.env.DOCTOR_CUT) * 10 - i,
           }),
         );
       }
@@ -296,8 +296,8 @@ export class TestService {
         await this.rankRepository.save({
           season: this.currentSeason,
           user: this.users[i],
-          ladderPoint: 1000,
-          highestPoint: 1000,
+          ladderPoint: Number(process.env.DOCTOR_CUT) * 10,
+          highestPoint: Number(process.env.DOCTOR_CUT) * 10,
         }),
       );
     }
@@ -316,8 +316,8 @@ export class TestService {
         await this.rankRepository.save({
           season: this.currentSeason,
           user: this.users[i],
-          ladderPoint: 1000 - i,
-          highestPoint: 1000 - i,
+          ladderPoint: Number(process.env.DOCTOR_CUT) * 10 - i,
+          highestPoint: Number(process.env.DOCTOR_CUT) * 10 - i,
         }),
       );
     }
