@@ -88,11 +88,16 @@ describe('UserController', () => {
     describe('/users/{nickname}/message', () => {
       it('message를 변경한 경우', async () => {
         const user: User = await testService.createBasicUser();
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/message')
-          .send({
-            message: 'Patch change message',
-          });
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          message: 'Patch change message',
+        };
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/message',
+          body,
+        );
 
         const result = await userRepository.findOne({
           where: { nickname: user.nickname },
@@ -105,12 +110,17 @@ describe('UserController', () => {
     describe('users/{nickname}/image', () => {
       it('image를 변경한 경우', async () => {
         const user: User = await testService.createBasicUser();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          id: testService.profileImages[1].id,
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/image')
-          .send({
-            id: testService.profileImages[1].id,
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/image',
+          body,
+        );
 
         const result = await userRepository.findOne({
           where: { nickname: user.nickname },
@@ -124,12 +134,17 @@ describe('UserController', () => {
     describe('/users/{nickname}/titles', () => {
       it('title을 선택한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          id: testService.titles[1].id,
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/title')
-          .send({
-            id: testService.titles[1].id,
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/title',
+          body,
+        );
 
         const result = await userTitleRepository.findOne({
           where: { user: { id: user.id }, isSelected: true },
@@ -142,16 +157,21 @@ describe('UserController', () => {
     describe('/users/{nickname}/achievements', () => {
       it('achievements를 순서대로 선택한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [
+            testService.achievements[0].id,
+            testService.achievements[1].id,
+            testService.achievements[2].id,
+          ],
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/achievements')
-          .send({
-            ids: [
-              testService.achievements[0].id,
-              testService.achievements[1].id,
-              testService.achievements[2].id,
-            ],
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/achievements',
+          body,
+        );
 
         expect(response.statusCode).toBe(200);
         const result = await userAchievementRepository.find({
@@ -166,16 +186,21 @@ describe('UserController', () => {
       it('achievement을 임의의 순서대로 선택한경우', async () => {
         const user: User =
           await testService.createMixedSelectedAchievementUser();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [
+            testService.achievements[2].id,
+            null,
+            testService.achievements[3].id,
+          ],
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/achievements')
-          .send({
-            ids: [
-              testService.achievements[2].id,
-              null,
-              testService.achievements[3].id,
-            ],
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/achievements',
+          body,
+        );
 
         const result = await userAchievementRepository.find({
           where: { user: { id: user.id }, selectedOrder: Not(IsNull()) },
@@ -192,12 +217,17 @@ describe('UserController', () => {
       it('achievement을 선택하지 않은 경우 (전부 null)', async () => {
         const user: User =
           await testService.createUserWithUnSelectedAchievements();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [null, null, null],
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/achievements')
-          .send({
-            ids: [null, null, null],
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/achievements',
+          body,
+        );
 
         const result = await userAchievementRepository.find({
           where: { user: { id: user.id }, selectedOrder: Not(IsNull()) },
@@ -211,16 +241,21 @@ describe('UserController', () => {
     describe('/users/{nickname}/emojis', () => {
       it('emoji를 순서대로 선택한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [
+            testService.emojis[0].id,
+            testService.emojis[1].id,
+            testService.emojis[2].id,
+          ],
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/emojis')
-          .send({
-            ids: [
-              testService.emojis[0].id,
-              testService.emojis[1].id,
-              testService.emojis[2].id,
-            ],
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/emojis',
+          body,
+        );
 
         expect(response.statusCode).toBe(200);
         const result = await userEmojiRepository.find({
@@ -238,12 +273,17 @@ describe('UserController', () => {
 
       it('emoji를 임의의 순서대로 선택한경우', async () => {
         const user: User = await testService.createMixedSelectedEmojiUser();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [testService.emojis[2].id, null, testService.emojis[3].id],
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/emojis')
-          .send({
-            ids: [testService.emojis[2].id, null, testService.emojis[3].id],
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/emojis',
+          body,
+        );
 
         const result = await userEmojiRepository.find({
           where: { user: { id: user.id }, selectedOrder: Not(IsNull()) },
@@ -258,12 +298,17 @@ describe('UserController', () => {
 
       it('emoji를 선택하지 않은 경우 (전부 null)', async () => {
         const user: User = await testService.createUserWithUnSelectedEmojis();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [null, null, null],
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/emojis')
-          .send({
-            ids: [null, null, null],
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/emojis',
+          body,
+        );
 
         const result = await userEmojiRepository.find({
           where: { user: { id: user.id }, selectedOrder: Not(IsNull()) },
@@ -277,11 +322,17 @@ describe('UserController', () => {
   describe('patch Error Cases Test', () => {
     describe('/users/{nickname}/messages', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + 'nonono' + '/message')
-          .send({
-            messgae: 'testMessage',
-          });
+        const user: User = await testService.createBasicUser();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          message: 'Patch change message',
+        };
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + 'nonono' + '/message',
+          body,
+        );
 
         expect(response.statusCode).toBe(404);
       });
@@ -289,23 +340,35 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/image', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + 'nonono' + '/image')
-          .send({
-            id: testService.profileImages[0].id,
-          });
+        const user: User = await testService.createBasicUser();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          id: testService.profileImages[1].id,
+        };
+
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + 'nonono' + '/image',
+          body,
+        );
 
         expect(response.statusCode).toBe(404);
       });
 
       it('유저에게 없는 image를 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          id: 1000,
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/image')
-          .send({
-            id: 1000, // testdptj images[] 선언후  testservice에 있는 이미지 아이디가 아니라서 400이 나와야함
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/image',
+          body,
+        );
 
         expect(response.statusCode).toBe(404);
       });
@@ -313,23 +376,35 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/titles', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + 'nonono' + '/title')
-          .send({
-            id: testService.titles[0].id,
-          });
+        const user: User = await testService.createBasicUser();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          id: testService.titles[1].id,
+        };
+
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + 'nonono' + '/title',
+          body,
+        );
 
         expect(response.statusCode).toBe(404);
       });
 
       it('유저에게 없는 title을 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          id: 1000,
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/title')
-          .send({
-            id: testService.titles[9].id,
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/title',
+          body,
+        );
 
         expect(response.statusCode).toBe(400);
       });
@@ -337,23 +412,39 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/achievements', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + 'nonono' + '/achievements')
-          .send({
-            ids: [null, null, null],
-          });
+        const user: User = await testService.createBasicUser();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [
+            testService.achievements[0].id,
+            testService.achievements[1].id,
+            testService.achievements[2].id,
+          ],
+        };
+
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + 'nonono' + '/achievements',
+          body,
+        );
 
         expect(response.statusCode).toBe(404);
       });
 
       it('유저에게 없는 achievement를 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [testService.achievements[9].id, null, null],
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/achievements')
-          .send({
-            ids: [testService.achievements[9].id, null, null],
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/achievements',
+          body,
+        );
 
         expect(response.statusCode).toBe(400);
       });
@@ -361,26 +452,70 @@ describe('UserController', () => {
 
     describe('/users/{nickname}/emojis', () => {
       it('존재하지 않는 유저의 경우', async () => {
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + 'nonono' + '/emojis')
-          .send({
-            ids: [null, null, null],
-          });
+        const user: User = await testService.createBasicUser();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [
+            testService.emojis[0].id,
+            testService.emojis[1].id,
+            testService.emojis[2].id,
+          ],
+        };
+
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + 'nonono' + '/emojis',
+          body,
+        );
 
         expect(response.statusCode).toBe(404);
       });
 
       it('유저에게 없는 emoji를 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
+        const token = await testService.giveTokenToUser(user);
+        const body = {
+          ids: [testService.emojis[9].id, null, null],
+        };
 
-        const response = await request(app.getHttpServer())
-          .patch('/users/' + user.nickname + '/emojis')
-          .send({
-            ids: [testService.emojis[9].id, null, null],
-          });
+        const response = await req(
+          token,
+          'PATCH',
+          '/users/' + user.nickname + '/emojis',
+          body,
+        );
 
         expect(response.statusCode).toBe(400);
       });
     });
   });
+
+  const req = async (
+    token: string,
+    method: string,
+    url: string,
+    body?: object,
+  ) => {
+    switch (method) {
+      case 'GET':
+        return request(app.getHttpServer())
+          .get(url)
+          .set({ Authorization: `Bearer ${token}` });
+      case 'POST':
+        return request(app.getHttpServer())
+          .post(url)
+          .set({ Authorization: `Bearer ${token}` })
+          .send(body);
+      case 'PATCH':
+        return request(app.getHttpServer())
+          .patch(url)
+          .set({ Authorization: `Bearer ${token}` })
+          .send(body);
+      case 'DELETE':
+        return request(app.getHttpServer())
+          .delete(url)
+          .set({ Authorization: `Bearer ${token}` });
+    }
+  };
 });
