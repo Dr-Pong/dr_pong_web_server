@@ -48,7 +48,6 @@ export class UserService {
       const responseDto: UserInfoDto = {
         id: userFromMemory.id,
         nickname: userFromMemory.nickname,
-        roleType: userFromMemory.roleType,
       };
       return responseDto;
     }
@@ -62,7 +61,6 @@ export class UserService {
     const responseDto: UserInfoDto = {
       id: userFromDatabase.id,
       nickname: userFromDatabase.nickname,
-      roleType: userFromDatabase.roleType,
     };
     return responseDto;
   }
