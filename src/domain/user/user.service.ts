@@ -27,9 +27,14 @@ export class UserService {
     const user = await this.userRepository.findByNickname(getDto.nickname);
     if (!user) throw new NotFoundException('No such User');
 
+    const image: ProfileImageDto = {
+      id: user.image.id,
+      url: user.image.url,
+    };
+
     const responseDto: UserDetailDto = {
       nickname: user.nickname,
-      imgUrl: user.image.url,
+      image,
       level: user.level,
       statusMessage: user.statusMessage,
     };
