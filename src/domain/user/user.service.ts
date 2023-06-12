@@ -11,7 +11,7 @@ import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
 import {
   ProfileImageDto,
   ProfileImagesDto,
-} from 'src/domain/profile-image/profile-image.dto';
+} from 'src/domain/profile-image/dto/profile-image.dto';
 import { IsolationLevel, Transactional } from 'typeorm-transactional';
 
 @Injectable()
@@ -80,6 +80,7 @@ export class UserService {
     await this.userRepository.updateUserStatusMessage(user, patchDto);
   }
 
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserImages(): Promise<ProfileImagesDto> {
     const profileImages: ProfileImage[] =
       await this.profileImageRepository.findAll();

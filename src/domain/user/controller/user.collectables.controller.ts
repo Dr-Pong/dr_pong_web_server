@@ -7,6 +7,7 @@ import {
   ParseBoolPipe,
   Patch,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../user.service';
 import { GetUserDetailDto } from '../dto/get.user.detail.dto';
@@ -31,6 +32,10 @@ import { PatchUserTitleRequestDto } from '../../user-title/dto/patch.user.title.
 import { PatchUserImageDto } from '../dto/patch.user.image.dto';
 import { PatchUserMessageRequestDto } from '../dto/patch.user.message.request.dto';
 import { PatchUserMessageDto } from '../dto/patch.user.message.dto';
+import { ProfileImagesDto } from 'src/domain/profile-image/dto/profile-image.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Requestor } from 'src/domain/auth/jwt/auth.requestor.decorator';
+import { UserIdCardDto } from 'src/domain/auth/jwt/auth.user.id-card.dto';
 
 @Controller('users')
 export class UserCollectablesController {
@@ -112,66 +117,65 @@ export class UserCollectablesController {
     return responseDto;
   }
 
+  @Get('/images')
+  async usersImagesGet(): Promise<ProfileImagesDto> {
+    const profileImages: ProfileImagesDto =
+      await this.userService.getUserImages();
+    return profileImages;
+  }
+
   @Patch('/:nickname/title')
+  @UseGuards(AuthGuard('jwt'))
   async usersDetailByNicknamePatch(
+    @Requestor() requestor: UserIdCardDto,
     @Param('nickname') nickname: string,
     @Body()
     patchRequestDto: PatchUserTitleRequestDto,
   ): Promise<void> {
-    const getUsersDetailDto: GetUserDetailDto = { nickname };
-    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
-      getUsersDetailDto,
-    );
     const patchUserTitleDto: PatchUserTitleDto =
-      PatchUserTitleDto.forPatchUserTitleDto(userInfoDto, patchRequestDto);
+      PatchUserTitleDto.forPatchUserTitleDto(requestor, patchRequestDto);
     await this.userTitleService.patchUserTitle(patchUserTitleDto);
   }
 
   /** Patch User Image*/
   @Patch('/:nickname/image')
+  @UseGuards(AuthGuard('jwt'))
   async usersImageByNicknamePatch(
+    @Requestor() requestor: UserIdCardDto,
     @Param('nickname') nickname: string,
     @Body()
     patchRequestDto: PatchUserImageRequestDto,
   ): Promise<void> {
-    const getUsersDetailDto: GetUserDetailDto = { nickname };
-    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
-      getUsersDetailDto,
-    );
     const patchUserImageDto: PatchUserImageDto =
-      PatchUserImageDto.forPatchUserImageDto(userInfoDto, patchRequestDto);
+      PatchUserImageDto.forPatchUserImageDto(requestor, patchRequestDto);
     await this.userService.patchUserImage(patchUserImageDto);
   }
 
   /** Patch User StatusMessage*/
   @Patch('/:nickname/message')
+  @UseGuards(AuthGuard('jwt'))
   async usersMessageByNicknamePatch(
+    @Requestor() requestor: UserIdCardDto,
     @Param('nickname') nickname: string,
     @Body()
     patchRequestDto: PatchUserMessageRequestDto,
   ): Promise<void> {
-    const getUsersDetailDto: GetUserDetailDto = { nickname };
-    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
-      getUsersDetailDto,
-    );
     const patchUserMessageDto: PatchUserMessageDto =
-      PatchUserMessageDto.forPatchUserMessageDto(userInfoDto, patchRequestDto);
+      PatchUserMessageDto.forPatchUserMessageDto(requestor, patchRequestDto);
     await this.userService.patchUserStatusMessage(patchUserMessageDto);
   }
 
   @Patch('/:nickname/achievements')
+  @UseGuards(AuthGuard('jwt'))
   async userAchievementsByNicknamePatch(
+    @Requestor() requestor: UserIdCardDto,
     @Param('nickname') nickname: string,
     @Body()
     patchRequestDto: PatchUserAchievementsRequestDto,
   ): Promise<void> {
-    const getUsersDetailDto: GetUserDetailDto = { nickname };
-    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
-      getUsersDetailDto,
-    );
     const patchUserAchievementsDto: PatchUserAchievementsDto =
       PatchUserAchievementsDto.forPatchUserAchievementsDto(
-        userInfoDto,
+        requestor,
         patchRequestDto,
       );
 
@@ -181,18 +185,15 @@ export class UserCollectablesController {
   }
 
   @Patch('/:nickname/emojis')
+  @UseGuards(AuthGuard('jwt'))
   async userEmojisByNicknamePatch(
+    @Requestor() requestor: UserIdCardDto,
     @Param('nickname') nickname: string,
     @Body()
     patchRequestDto: PatchUserEmojisRequestDto,
   ): Promise<void> {
-    const getUsersDetailDto: GetUserDetailDto = { nickname };
-    const userInfoDto: UserInfoDto = await this.userService.getUserInfo(
-      getUsersDetailDto,
-    );
-
     const patchUserAchievementsDto: PatchUserEmojisDto =
-      PatchUserEmojisDto.forPatchUserEmojisDto(userInfoDto, patchRequestDto);
+      PatchUserEmojisDto.forPatchUserEmojisDto(requestor, patchRequestDto);
 
     await this.userEmojiService.patchUseremojis(patchUserAchievementsDto);
   }

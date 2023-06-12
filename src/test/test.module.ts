@@ -13,6 +13,7 @@ import { UserEmoji } from 'src/domain/user-emoji/user-emoji.entity';
 import { UserAchievement } from 'src/domain/user-achievement/user-achievement.entity';
 import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
 import { UserGame } from 'src/domain/user-game/user-game.entity';
+import { AuthModule } from 'src/domain/auth/auth.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UserGame } from 'src/domain/user-game/user-game.entity';
       ProfileImage,
       UserGame,
     ]),
+    AuthModule,
   ],
   providers: [TestService],
   exports: [

@@ -15,6 +15,7 @@ import { AchievementModule } from './domain/achievement/achievement.module';
 import { DataSource } from 'typeorm';
 import { ProfileImageModule } from './domain/profile-image/profile-image.module';
 import { UserGameModule } from './domain/user-game/user-game.module';
+import { AuthModule } from './domain/auth/auth.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { UserGameModule } from './domain/user-game/user-game.module';
     TestModule,
     ProfileImageModule,
     UserGameModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
