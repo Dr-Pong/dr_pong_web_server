@@ -14,9 +14,6 @@ export class User extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'e_mail', nullable: false })
-  email: string;
-
   @Column({ name: 'nickname', default: '' })
   nickname: string;
 
