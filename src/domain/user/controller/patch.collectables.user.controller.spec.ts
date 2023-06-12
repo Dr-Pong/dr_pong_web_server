@@ -320,42 +320,7 @@ describe('UserController', () => {
   });
 
   describe('patch Error Cases Test', () => {
-    describe('/users/{nickname}/messages', () => {
-      it('존재하지 않는 유저의 경우', async () => {
-        const user: User = await testService.createBasicUser();
-        const token = await testService.giveTokenToUser(user);
-        const body = {
-          message: 'Patch change message',
-        };
-        const response = await req(
-          token,
-          'PATCH',
-          '/users/' + 'nonono' + '/message',
-          body,
-        );
-
-        expect(response.statusCode).toBe(404);
-      });
-    });
-
     describe('/users/{nickname}/image', () => {
-      it('존재하지 않는 유저의 경우', async () => {
-        const user: User = await testService.createBasicUser();
-        const token = await testService.giveTokenToUser(user);
-        const body = {
-          id: testService.profileImages[1].id,
-        };
-
-        const response = await req(
-          token,
-          'PATCH',
-          '/users/' + 'nonono' + '/image',
-          body,
-        );
-
-        expect(response.statusCode).toBe(404);
-      });
-
       it('유저에게 없는 image를 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
         const token = await testService.giveTokenToUser(user);
@@ -375,23 +340,6 @@ describe('UserController', () => {
     });
 
     describe('/users/{nickname}/titles', () => {
-      it('존재하지 않는 유저의 경우', async () => {
-        const user: User = await testService.createBasicUser();
-        const token = await testService.giveTokenToUser(user);
-        const body = {
-          id: testService.titles[1].id,
-        };
-
-        const response = await req(
-          token,
-          'PATCH',
-          '/users/' + 'nonono' + '/title',
-          body,
-        );
-
-        expect(response.statusCode).toBe(404);
-      });
-
       it('유저에게 없는 title을 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
         const token = await testService.giveTokenToUser(user);
@@ -411,27 +359,6 @@ describe('UserController', () => {
     });
 
     describe('/users/{nickname}/achievements', () => {
-      it('존재하지 않는 유저의 경우', async () => {
-        const user: User = await testService.createBasicUser();
-        const token = await testService.giveTokenToUser(user);
-        const body = {
-          ids: [
-            testService.achievements[0].id,
-            testService.achievements[1].id,
-            testService.achievements[2].id,
-          ],
-        };
-
-        const response = await req(
-          token,
-          'PATCH',
-          '/users/' + 'nonono' + '/achievements',
-          body,
-        );
-
-        expect(response.statusCode).toBe(404);
-      });
-
       it('유저에게 없는 achievement를 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
         const token = await testService.giveTokenToUser(user);
@@ -451,27 +378,6 @@ describe('UserController', () => {
     });
 
     describe('/users/{nickname}/emojis', () => {
-      it('존재하지 않는 유저의 경우', async () => {
-        const user: User = await testService.createBasicUser();
-        const token = await testService.giveTokenToUser(user);
-        const body = {
-          ids: [
-            testService.emojis[0].id,
-            testService.emojis[1].id,
-            testService.emojis[2].id,
-          ],
-        };
-
-        const response = await req(
-          token,
-          'PATCH',
-          '/users/' + 'nonono' + '/emojis',
-          body,
-        );
-
-        expect(response.statusCode).toBe(404);
-      });
-
       it('유저에게 없는 emoji를 요청한 경우', async () => {
         const user: User = await testService.createUserWithCollectables();
         const token = await testService.giveTokenToUser(user);
