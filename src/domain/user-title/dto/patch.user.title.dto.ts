@@ -1,4 +1,4 @@
-import { UserInfoDto } from 'src/domain/user/dto/user.info.dto';
+import { UserIdCardDto } from 'src/domain/auth/jwt/auth.user.id-card.dto';
 import { PatchUserTitleRequestDto } from './patch.user.title.request.dto';
 
 export class PatchUserTitleDto {
@@ -6,7 +6,7 @@ export class PatchUserTitleDto {
   titleId: number;
 
   static forPatchUserTitleDto(
-    userInfoDto: UserInfoDto,
+    userInfoDto: UserIdCardDto,
     patchRequestDto: PatchUserTitleRequestDto,
   ): PatchUserTitleDto {
     return {

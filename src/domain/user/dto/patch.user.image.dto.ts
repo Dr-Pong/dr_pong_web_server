@@ -1,12 +1,12 @@
+import { UserIdCardDto } from 'src/domain/auth/jwt/auth.user.id-card.dto';
 import { PatchUserImageRequestDto } from './patch.user.image.request.dto';
-import { UserInfoDto } from './user.info.dto';
 
 export class PatchUserImageDto {
   userId: number;
   imageId: number;
 
   static forPatchUserImageDto(
-    userInfoDto: UserInfoDto,
+    userInfoDto: UserIdCardDto,
     patchRequestDto: PatchUserImageRequestDto,
   ): PatchUserImageDto {
     return {
