@@ -59,6 +59,18 @@ describe('UserController', () => {
   });
 
   describe('GET tests', () => {
+    describe('/users/images', () => {
+      it('선택할 수 있는 이미지 조회', async () => {
+        const response = await request(app.getHttpServer()).get(
+          '/users/images',
+        );
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('images');
+        expect(response.body.images.length).toBe(2);
+      });
+    });
+
     describe('/users/{nickname}/achievements?selected=true', () => {
       it('선택된 업적이 없는경우', async () => {
         const user: User =
