@@ -20,10 +20,12 @@ import { UserGame } from 'src/domain/user-game/user-game.entity';
 import { UserTitle } from 'src/domain/user-title/user-title.entity';
 import { User } from 'src/domain/user/user.entity';
 import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class TestService {
   constructor(
+    private jwtService: JwtService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(Title)
@@ -660,5 +662,13 @@ export class TestService {
         lpResult: 100,
       });
     }
+  }
+
+  async giveTokenToUser(user: User) {
+    const token = this.jwtService.sign({
+      id: user.id,
+      nickname: user.nickname,
+    });
+    return token;
   }
 }
