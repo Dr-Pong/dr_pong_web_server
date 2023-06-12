@@ -13,6 +13,7 @@ import { UserGameSeasonStatDto } from './dto/user-game.season.stat.dto';
 import { UserGameByNicknameAndGameIdResponseDto } from './dto/get.user-game.game.response.dto';
 import { GetUserGameByNicknameAndGameIdDto } from './dto/get.user-game.by.nickname.and.gameid.dto';
 import { UserGameLpDto } from './dto/user-game.lp.dto';
+import { IsolationLevel, Transactional } from 'typeorm-transactional';
 @Injectable()
 export class UserGameService {
   private readonly logger: Logger = new Logger(UserGameService.name);
@@ -21,6 +22,7 @@ export class UserGameService {
     private readonly seasonRepository: SeasonRepository,
   ) {}
 
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserGameTotalStat(
     getDto: GetUserGameTotalStatDto,
   ): Promise<UserGameTotalStatDto> {
@@ -31,6 +33,7 @@ export class UserGameService {
     return responseDto;
   }
 
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserGameSeasonStat(
     getDto: GetUserGameSeasonStatDto,
   ): Promise<UserGameSeasonStatDto> {
@@ -48,6 +51,7 @@ export class UserGameService {
     return responseDto;
   }
 
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserGameRecordsByCountAndLastGameId(
     getDto: GetUserGameRecordsDto,
   ): Promise<UserGameRecordsDto> {
@@ -73,6 +77,7 @@ export class UserGameService {
     return responseDto;
   }
 
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserGameByNicknameAndGameId(
     getDto: GetUserGameByNicknameAndGameIdDto,
   ): Promise<UserGameByNicknameAndGameIdResponseDto> {

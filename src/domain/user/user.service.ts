@@ -23,6 +23,7 @@ export class UserService {
   users: Map<string, User> = new Map();
 
   //get detail service
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUsersDetail(getDto: GetUserDetailDto): Promise<UserDetailDto> {
     const user = await this.userRepository.findByNickname(getDto.nickname);
     if (!user) throw new NotFoundException('No such User');
@@ -42,6 +43,7 @@ export class UserService {
   }
 
   //get user info
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserInfo(getDto: GetUserDetailDto): Promise<UserInfoDto> {
     const userFromMemory = this.users.get(getDto.nickname);
     if (userFromMemory) {

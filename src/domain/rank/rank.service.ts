@@ -10,6 +10,7 @@ import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
 import { RankBottomDataDto, RanksBottomDto } from './dto/ranks.bottom.dto';
 import { RankSeasonStatDto } from './dto/rank.season.stat.dto';
 import { RankBestStatDto } from './dto/rank.best.stat.dto';
+import { IsolationLevel, Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class RankService {
@@ -19,6 +20,7 @@ export class RankService {
   ) {}
 
   //get 유저 현시즌 랭크 데이터
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserRankBySeason(
     getDto: GetUserRankStatDto,
   ): Promise<RankSeasonStatDto> {
@@ -44,6 +46,7 @@ export class RankService {
   }
 
   /** 유저 최고 record rank tier반환*/
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserBestRank(
     getDto: GetUserBestRankStatDto,
   ): Promise<RankBestStatDto> {
@@ -63,6 +66,7 @@ export class RankService {
   }
 
   //상위 랭크 카운트 만큼 랭크 정보를 가져옴
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getTopRanksByCount(getDto: GetRanksTopDto): Promise<RanksTopDto> {
     const nowSeason: Season = await this.seasonRepository.findCurrentSeason();
     const ranks = await this.rankRepository.findTopRanksBySeason(
@@ -89,6 +93,7 @@ export class RankService {
   }
 
   // 하위 랭크 카운트 만큼 랭크 정보를 가져옴
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getBottomRanksByCount(
     getDto: GetRanksBottomDto,
   ): Promise<RanksBottomDto> {

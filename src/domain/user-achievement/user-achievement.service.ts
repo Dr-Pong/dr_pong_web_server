@@ -20,6 +20,7 @@ export class UserAchievementService {
     private achievementRepository: AchievementRepository,
   ) {}
 
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserAchievementsAll(
     getDto: GetUserAchievementsDto,
   ): Promise<UserAchievementsDto> {
@@ -50,6 +51,7 @@ export class UserAchievementService {
   }
 
   //get user achievements
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUserAchievementsSelected(
     getDto: GetUserAchievementsDto,
   ): Promise<UserAchievementsDto> {

@@ -17,6 +17,7 @@ export class UserEmojiService {
     private readonly emojiRepository: EmojiRepository,
   ) {}
 
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUseremojisAll(getDto: GetUserEmojisDto): Promise<UseremojisDto> {
     const allEmoji: Emoji[] = await this.emojiRepository.findAll();
     const userEmoji: UserEmoji[] =
@@ -42,6 +43,7 @@ export class UserEmojiService {
   }
 
   //getUseremojis함수
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async getUseremojisSelected(
     getDto: GetUserEmojisDto,
   ): Promise<UseremojisDto> {
