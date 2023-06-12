@@ -7,6 +7,7 @@ import {
   ParseBoolPipe,
   Patch,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../user.service';
 import { GetUserDetailDto } from '../dto/get.user.detail.dto';
@@ -32,6 +33,7 @@ import { PatchUserImageDto } from '../dto/patch.user.image.dto';
 import { PatchUserMessageRequestDto } from '../dto/patch.user.message.request.dto';
 import { PatchUserMessageDto } from '../dto/patch.user.message.dto';
 import { ProfileImagesDto } from 'src/domain/profile-image/dto/profile-image.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UserCollectablesController {
@@ -121,6 +123,7 @@ export class UserCollectablesController {
   }
 
   @Patch('/:nickname/title')
+  @UseGuards(AuthGuard('jwt'))
   async usersDetailByNicknamePatch(
     @Param('nickname') nickname: string,
     @Body()
@@ -137,6 +140,7 @@ export class UserCollectablesController {
 
   /** Patch User Image*/
   @Patch('/:nickname/image')
+  @UseGuards(AuthGuard('jwt'))
   async usersImageByNicknamePatch(
     @Param('nickname') nickname: string,
     @Body()
@@ -153,6 +157,7 @@ export class UserCollectablesController {
 
   /** Patch User StatusMessage*/
   @Patch('/:nickname/message')
+  @UseGuards(AuthGuard('jwt'))
   async usersMessageByNicknamePatch(
     @Param('nickname') nickname: string,
     @Body()
@@ -168,6 +173,7 @@ export class UserCollectablesController {
   }
 
   @Patch('/:nickname/achievements')
+  @UseGuards(AuthGuard('jwt'))
   async userAchievementsByNicknamePatch(
     @Param('nickname') nickname: string,
     @Body()
@@ -189,6 +195,7 @@ export class UserCollectablesController {
   }
 
   @Patch('/:nickname/emojis')
+  @UseGuards(AuthGuard('jwt'))
   async userEmojisByNicknamePatch(
     @Param('nickname') nickname: string,
     @Body()
