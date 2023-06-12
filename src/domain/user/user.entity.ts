@@ -1,10 +1,16 @@
 import { BaseTimeEntity } from 'src/global/base-entity/base-time.entity';
 import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class User extends BaseTimeEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ name: 'nickname', default: '' })
