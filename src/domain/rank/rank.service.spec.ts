@@ -149,13 +149,10 @@ describe('RankService', () => {
       default:
         testTier = 'student';
     }
-    console.log(recordRankTier);
-    console.log(recordRankTier2);
-    console.log(recordRankTier3);
 
-    // expect(recordRankTier.tier).toEqual(testTier);
-    // expect(recordRankTier2.tier).toEqual(testTier);
-    // expect(recordRankTier3.tier).toEqual(testTier);
+    expect(recordRankTier.tier).toEqual(testTier);
+    expect(recordRankTier2.tier).toEqual(testTier);
+    expect(recordRankTier3.tier).toEqual(testTier);
     expect(recordRankTier.rank).toBe(1);
     expect(recordRankTier2.rank).toBe(2);
     expect(recordRankTier3.rank).toBe(3);
