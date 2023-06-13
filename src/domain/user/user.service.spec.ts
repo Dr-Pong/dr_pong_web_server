@@ -140,14 +140,16 @@ describe('UserService', () => {
   });
 
   it('GateWay User 저장 테스트', async () => {
+    await testData.createProfileImages();
+
     const gateWayUser: PostGatewayUserDto = {
       id: 1,
       nickname: 'test',
-      imgId: 10,
-      imgUrl: 'test',
+      imgId: testData.profileImages[0].id,
+      imgUrl: testData.profileImages[0].url,
     };
 
-    await service.postGateWayUser(gateWayUser);
+    await service.postGatewayUser(gateWayUser);
 
     const result: User = await userRepository.findOne({
       where: { id: gateWayUser.id },
