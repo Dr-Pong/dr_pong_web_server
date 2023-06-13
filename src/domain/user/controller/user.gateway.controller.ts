@@ -7,9 +7,9 @@ export class UserGatewayController {
   constructor(private userService: UserService) {}
 
   @Post('/')
-  async userGatewayPost(
+  async userPost(
     @Body() postGatewayUserDto: PostGatewayUserDto,
   ): Promise<void> {
-    await this.userService.postGatewayUser(postGatewayUserDto);
+    await this.userService.postUser(postGatewayUserDto);
   }
 }
