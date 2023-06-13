@@ -92,6 +92,7 @@ export class TestService {
   async createBasicUser(): Promise<User> {
     const index: number = this.users.length;
     const user = await this.userRepository.save({
+      id: index + 2,
       nickname: 'user' + index.toString(),
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
@@ -105,6 +106,7 @@ export class TestService {
     // 해결
     for (let i = 0; i < 10; i++) {
       const user = await this.userRepository.save({
+        id: i + 1,
         nickname: 'user' + i.toString(),
         email: i.toString() + '@mail.com',
         statusMessage: i.toString(),
@@ -118,6 +120,7 @@ export class TestService {
   async createBasicUserWithoutImg(): Promise<User> {
     const index: number = this.users.length;
     const user = await this.userRepository.save({
+      id: index + 1,
       nickname: 'user' + index.toString(),
       email: index.toString() + '@mail.com',
       statusMessage: index.toString(),
@@ -159,6 +162,7 @@ export class TestService {
   /**이모지를 선택하지 않은 유저 생성[null null null null]*/
   async createUserWithUnSelectedEmojis(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 3,
       nickname: 'userWithUEmoji',
       email: 'emoji@mail.com',
       image: this.profileImages[0],
@@ -178,6 +182,7 @@ export class TestService {
   /**이모지가 아예 없는 유저 생성*/
   async createUserWithUnAchievedEmoji(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 1,
       nickname: 'userWithoutAchievements',
       email: '@mail.com',
       image: this.profileImages[0],
@@ -188,6 +193,7 @@ export class TestService {
   /** 어치브먼트를 선택하지 않은 유저 생성[null null null]*/
   async createUserWithUnSelectedAchievements(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 2,
       nickname: 'userWithAchievements',
       email: 'achv@mail.com',
       image: this.profileImages[0],
@@ -206,6 +212,7 @@ export class TestService {
   /** 어치브먼트가 아예 없는 유저 생성*/
   async createUserWithUnAchievedAchievements(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 3,
       nickname: 'userWithoutAchievements',
       email: '@mail.com',
       image: this.profileImages[0],
@@ -216,6 +223,7 @@ export class TestService {
   /** 타이틀을 선택한 유저 생성*/
   async createUserWithSelectedTitles(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 4,
       nickname: 'userWithAchievements',
       email: 'achv@mail.com',
       image: this.profileImages[0],
@@ -235,6 +243,7 @@ export class TestService {
   /**타이틀을 선택하지 않은 유저 생성*/
   async createUserWithUnSelectedTitles(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 5,
       nickname: 'userWithAchievements',
       email: 'achv@mail.com',
       image: this.profileImages[0],
@@ -327,6 +336,7 @@ export class TestService {
   /**이모지 타이틀 어치브먼트를 모두 가진 유저 생성*/
   async createUserWithCollectables(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 6,
       nickname: 'userWithCollectable',
       email: 'user@mail.com',
       image: this.profileImages[0],
@@ -362,6 +372,7 @@ export class TestService {
   /**이모지를 반대로 선택한 유저 생성 [3 2 1 0]*/
   async createReverseSelectedEmojiUser(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 7,
       nickname: 'userWithMixedEmoji',
       email: 'emoji@mail.com',
       image: this.profileImages[0],
@@ -381,6 +392,7 @@ export class TestService {
   /**이모지를 임의로 선택한 유저생성[0 null 2 null]*/
   async createMixedSelectedEmojiUser(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 8,
       nickname: 'userWithMixedWithNullEmoji',
       email: 'emoji@mail.com',
       image: this.profileImages[0],
@@ -402,6 +414,7 @@ export class TestService {
   /**어치브먼트를 반대로 선택한 유저 생성 [3 2 1 0]*/
   async createReverseSelectedAchievementUser(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 9,
       nickname: 'userWithReversedAchievement',
       email: 'achievement@mail.com',
       image: this.profileImages[0],
@@ -421,6 +434,7 @@ export class TestService {
   /** 어치브먼트를 임의로 선택한 유저 생성 [0 null 2 null]*/
   async createMixedSelectedAchievementUser(): Promise<User> {
     const user: User = await this.userRepository.save({
+      id: 10,
       nickname: 'userWithMixedWithNullAchievement',
       email: 'achievement@mail.com',
       image: this.profileImages[0],
