@@ -15,6 +15,7 @@ import {
   addTransactionalDataSource,
   initializeTransactionalContext,
 } from 'typeorm-transactional';
+import { PostGatewayUserDto } from './dto/post.gateway.users.dto';
 
 describe('UserService', () => {
   let service: UserService;
@@ -136,5 +137,27 @@ describe('UserService', () => {
     expect(basicCase.images.length).toBe(testData.profileImages.length);
     expect(basicCase.images[0].id).toBe(testData.profileImages[0].id);
     expect(basicCase.images[0].url).toBe(testData.profileImages[0].url);
+  });
+
+  it('GateWay User 저장 테스트', async () => {
+    await testData.createProfileImages();
+
+    const gateWayUser: PostGatewayUserDto = {
+      id: 1,
+      nickname: 'test',
+      imgId: testData.profileImages[0].id,
+      imgUrl: testData.profileImages[0].url,
+    };
+
+    await service.postUser(gateWayUser);
+
+    const result: User = await userRepository.findOne({
+      where: { id: gateWayUser.id },
+    });
+
+    expect(result.id).toBe(gateWayUser.id);
+    expect(result.nickname).toBe(gateWayUser.nickname);
+    expect(result.image.id).toBe(gateWayUser.imgId);
+    expect(result.image.url).toBe(gateWayUser.imgUrl);
   });
 });

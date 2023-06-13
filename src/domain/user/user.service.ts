@@ -13,6 +13,7 @@ import {
   ProfileImagesDto,
 } from 'src/domain/profile-image/dto/profile-image.dto';
 import { IsolationLevel, Transactional } from 'typeorm-transactional';
+import { PostGatewayUserDto } from './dto/post.gateway.users.dto';
 
 @Injectable()
 export class UserService {
@@ -96,5 +97,10 @@ export class UserService {
       images: imageDtos,
     };
     return responseDto;
+  }
+
+  @Transactional({ isolationLevel: IsolationLevel.SERIALIZABLE })
+  async postUser(postDto: PostGatewayUserDto): Promise<void> {
+    await this.userRepository.save(postDto);
   }
 }

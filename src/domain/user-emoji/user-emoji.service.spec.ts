@@ -209,11 +209,9 @@ describe('UserEmojiService', () => {
     expect(mixedCase.emojis[3]).toBe(null);
   });
 
-  it('유저 이모지 Patch (valid case)', async () => {
+  it('유저 이모지 Patch orderedUser (valid case)', async () => {
     //given
     const orderedUser = await testData.createUserWithUnSelectedEmojis();
-    const mixedUser = await testData.createUserWithUnSelectedEmojis();
-    const mixedWithNullUser = await testData.createUserWithUnSelectedEmojis();
 
     // isSelected가 다 false인경우
     const orderedRequest: PatchUserEmojisDto = {
@@ -226,41 +224,11 @@ describe('UserEmojiService', () => {
       ],
     };
 
-    const mixedOrderRequest: PatchUserEmojisDto = {
-      userId: mixedUser.id,
-      emojisId: [
-        testData.emojis[2].id,
-        testData.emojis[1].id,
-        testData.emojis[0].id,
-        testData.emojis[3].id,
-      ],
-    };
-
-    const mixedWithNullRequest: PatchUserEmojisDto = {
-      userId: mixedWithNullUser.id,
-      emojisId: [null, testData.emojis[3].id, null, testData.emojis[1].id],
-    };
-
     //when
-    //validUpdateDto1 에대한 실행
     await service.patchUseremojis(orderedRequest);
-    //validUpdateDto2 에대한 실행
-    await service.patchUseremojis(mixedOrderRequest);
-    await service.patchUseremojis(mixedWithNullRequest);
 
     const orderedCase: UserEmoji[] = await userEmojiRepository.find({
       where: { user: { id: orderedUser.id }, selectedOrder: Not(IsNull()) },
-      order: { selectedOrder: 'ASC' },
-    });
-    const mixedCase: UserEmoji[] = await userEmojiRepository.find({
-      where: { user: { id: mixedUser.id }, selectedOrder: Not(IsNull()) },
-      order: { selectedOrder: 'ASC' },
-    });
-    const mixeWithNullCase: UserEmoji[] = await userEmojiRepository.find({
-      where: {
-        user: { id: mixedWithNullUser.id },
-        selectedOrder: Not(IsNull()),
-      },
       order: { selectedOrder: 'ASC' },
     });
 
@@ -273,6 +241,31 @@ describe('UserEmojiService', () => {
     expect(orderedCase[1].emoji.id).toBe(testData.emojis[1].id);
     expect(orderedCase[2].emoji.id).toBe(testData.emojis[2].id);
     expect(orderedCase[3].emoji.id).toBe(testData.emojis[3].id);
+  });
+
+  it('유저 이모지 Patch mixedUser (valid case)', async () => {
+    //given
+    const mixedUser = await testData.createUserWithUnSelectedEmojis();
+
+    // isSelected가 다 false인경우
+
+    const mixedOrderRequest: PatchUserEmojisDto = {
+      userId: mixedUser.id,
+      emojisId: [
+        testData.emojis[2].id,
+        testData.emojis[1].id,
+        testData.emojis[0].id,
+        testData.emojis[3].id,
+      ],
+    };
+
+    //when
+    await service.patchUseremojis(mixedOrderRequest);
+
+    const mixedCase: UserEmoji[] = await userEmojiRepository.find({
+      where: { user: { id: mixedUser.id }, selectedOrder: Not(IsNull()) },
+      order: { selectedOrder: 'ASC' },
+    });
 
     expect(mixedCase.length).toBe(4);
     expect(mixedCase[0].selectedOrder).toBe(0);
@@ -283,6 +276,28 @@ describe('UserEmojiService', () => {
     expect(mixedCase[1].emoji.id).toBe(testData.emojis[1].id);
     expect(mixedCase[2].emoji.id).toBe(testData.emojis[0].id);
     expect(mixedCase[3].emoji.id).toBe(testData.emojis[3].id);
+  });
+
+  it('유저 이모지 Patch orderedUser (valid case)', async () => {
+    //given
+    const mixedWithNullUser = await testData.createUserWithUnSelectedEmojis();
+
+    const mixedWithNullRequest: PatchUserEmojisDto = {
+      userId: mixedWithNullUser.id,
+      emojisId: [null, testData.emojis[3].id, null, testData.emojis[1].id],
+    };
+
+    //when
+
+    await service.patchUseremojis(mixedWithNullRequest);
+
+    const mixeWithNullCase: UserEmoji[] = await userEmojiRepository.find({
+      where: {
+        user: { id: mixedWithNullUser.id },
+        selectedOrder: Not(IsNull()),
+      },
+      order: { selectedOrder: 'ASC' },
+    });
 
     expect(mixeWithNullCase.length).toBe(2);
     expect(mixeWithNullCase[0].selectedOrder).toBe(1);

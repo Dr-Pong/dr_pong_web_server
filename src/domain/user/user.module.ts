@@ -15,6 +15,7 @@ import { UserRanksController } from './controller/user.ranks.controller';
 import { UserRecordsController } from './controller/user.records.controller';
 import { UserStatsController } from './controller/user.stats.controller';
 import { UserCollectablesController } from './controller/user.collectables.controller';
+import { UserGatewayController } from './controller/user.gateway.controller';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UserCollectablesController } from './controller/user.collectables.contr
     UserRanksController,
     UserRecordsController,
     UserStatsController,
+    UserGatewayController,
   ],
   providers: [UserService, UserRepository, ProfileImageRepository],
   exports: [UserService],
