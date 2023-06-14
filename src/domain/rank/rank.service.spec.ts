@@ -217,7 +217,7 @@ describe('RankService', () => {
       testData.ranks[0].user.nickname,
     );
     expect(topRankResult.top[0].lp).toEqual(testData.ranks[0].ladderPoint);
-    expect(topRankResult.top[0].imageUrl).toEqual(
+    expect(topRankResult.top[0].imgUrl).toEqual(
       testData.ranks[0].user.image.url,
     );
 
@@ -226,7 +226,7 @@ describe('RankService', () => {
       testData.ranks[2].user.nickname,
     );
     expect(topRankResult.top[2].lp).toEqual(testData.ranks[2].ladderPoint);
-    expect(topRankResult.top[2].imageUrl).toEqual(
+    expect(topRankResult.top[2].imgUrl).toEqual(
       testData.ranks[2].user.image.url,
     );
 
@@ -235,7 +235,7 @@ describe('RankService', () => {
       testData.ranks[9].user.nickname,
     );
     expect(topRankResult.top[9].lp).toEqual(testData.ranks[9].ladderPoint);
-    expect(topRankResult.top[9].imageUrl).toEqual(
+    expect(topRankResult.top[9].imgUrl).toEqual(
       testData.ranks[9].user.image.url,
     );
   });

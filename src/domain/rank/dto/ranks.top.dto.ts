@@ -3,7 +3,7 @@ export class RankTopDataDto {
   rank: number;
   nickname: string;
   lp: number;
-  imageUrl: string;
+  imgUrl: string;
 }
 
 export class RanksTopDto {
