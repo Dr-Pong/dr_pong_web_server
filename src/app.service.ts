@@ -31,6 +31,12 @@ export class AppService implements OnApplicationBootstrap {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        {
+          id: 4,
+          url: 'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/hakim.jpeg',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       );
     }
     const season = await this.seasonRepository.findCurrentSeason();
