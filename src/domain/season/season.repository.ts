@@ -18,4 +18,8 @@ export class SeasonRepository {
       })
     )[0];
   }
+
+  async save(...seasons: Season[]): Promise<Season[]> {
+    return this.repository.save(seasons);
+  }
 }

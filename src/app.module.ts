@@ -16,6 +16,10 @@ import { DataSource } from 'typeorm';
 import { ProfileImageModule } from './domain/profile-image/profile-image.module';
 import { UserGameModule } from './domain/user-game/user-game.module';
 import { AuthModule } from './domain/auth/auth.module';
+import { ProfileImageRepository } from './domain/profile-image/profile-image.repository';
+import { SeasonRepository } from './domain/season/season.repository';
+import { ProfileImage } from './domain/profile-image/profile-image.entity';
+import { Season } from './domain/season/season.entity';
 
 @Module({
   imports: [
@@ -43,8 +47,9 @@ import { AuthModule } from './domain/auth/auth.module';
     ProfileImageModule,
     UserGameModule,
     AuthModule,
+    TypeOrmModule.forFeature([ProfileImage, Season]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ProfileImageRepository, SeasonRepository],
 })
 export class AppModule {}
