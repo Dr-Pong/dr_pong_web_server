@@ -68,6 +68,7 @@ describe('UserController', () => {
 
   beforeEach(async () => {
     await testService.createProfileImages();
+    await testService.createBasicCollectable();
   });
 
   afterAll(async () => {

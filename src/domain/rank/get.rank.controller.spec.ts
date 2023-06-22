@@ -53,7 +53,7 @@ describe('RankController', () => {
         expect(response.body.top[0]).toHaveProperty('rank');
         expect(response.body.top[0]).toHaveProperty('nickname');
         expect(response.body.top[0]).toHaveProperty('lp');
-        expect(response.body.top[0]).toHaveProperty('imageUrl');
+        expect(response.body.top[0]).toHaveProperty('imgUrl');
       });
       it('count에 따른 Top 랭크데이터 반환', async () => {
         await testService.createBasicSeasons(1);
@@ -72,7 +72,7 @@ describe('RankController', () => {
         expect(response.body.top[0].nickname).toBe(
           testService.users[0].nickname,
         );
-        expect(response.body.top[0].imageUrl).toBe(
+        expect(response.body.top[0].imgUrl).toBe(
           testService.users[0].image.url,
         );
         expect(response.body.top[1].rank).toBe(2);
