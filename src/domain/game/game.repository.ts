@@ -14,15 +14,11 @@ export class GameRepository {
 
   async save(postDto: PostGameDto, currentSeason: Season): Promise<Game> {
     const { mode, type, startTime, endTime } = postDto;
-
-    const game = new Game();
-    game.season = currentSeason;
-    game.playTime = endTime.getTime() - startTime.getTime();
-    game.type = type;
-    game.mode = mode;
-
-    await this.repository.save(game);
-
-    return game;
+    return await this.repository.save({
+      season: currentSeason,
+      playTime: endTime.getTime() - startTime.getTime(),
+      type,
+      mode,
+    });
   }
 }

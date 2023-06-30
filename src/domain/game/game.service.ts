@@ -3,19 +3,15 @@ import { Game } from 'src/domain/game/game.entity';
 import { GameRepository } from './game.repository';
 import { UserGameRepository } from '../user-game/user-game.repository';
 import { PostGameDto } from './dto/post.game.dto';
-import { UserGame } from '../user-game/user-game.entity';
-import { TouchLog } from '../touch-log/touch.log.entity';
 import { TouchLogRepository } from '../touch-log/touch.log.repository';
 import { SeasonRepository } from '../season/season.repository';
 import { Season } from '../season/season.entity';
-import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class GameService {
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly userGameRepository: UserGameRepository,
-    private readonly userRepository: UserRepository,
     private readonly touchLogRepository: TouchLogRepository,
     private readonly seasonRepository: SeasonRepository,
   ) {}
@@ -30,30 +26,15 @@ export class GameService {
     );
 
     const player1 = postGameDto.player1;
-    const userGame1 = new UserGame();
-    userGame1.game = game;
-    userGame1.user = await this.userRepository.findById(player1.id);
-    userGame1.score = player1.score;
-    userGame1.lpChange = player1.lpChange;
-    await this.userGameRepository.save(userGame1);
+    const userGame1 = await this.userGameRepository.save(player1, game);
 
     const player2 = postGameDto.player2;
-    const userGame2 = new UserGame();
-    userGame2.game = game;
-    userGame2.user = await this.userRepository.findById(player2.id);
-    userGame2.score = player2.score;
-    userGame2.lpChange = player2.lpChange;
-    await this.userGameRepository.save(userGame2);
+    const userGame2 = await this.userGameRepository.save(player2, game);
 
     const logs = postGameDto.logs;
     for (const log of logs) {
-      const touchLog = new TouchLog();
-      touchLog.user =
-        player1.id === log.userId ? userGame1.user : userGame2.user;
-      touchLog.event = log.event;
-      touchLog.round = log.round;
-      touchLog.ball = log.ball;
-      await this.touchLogRepository.save(touchLog);
+      const user = player1.id === log.userId ? userGame1.user : userGame2.user;
+      await this.touchLogRepository.save(user, log.event, log.round, log.ball);
     }
   }
 }
