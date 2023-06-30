@@ -65,4 +65,8 @@ export class UserGameRepository {
     });
     return userGames;
   }
+
+  async save(userGame: UserGame): Promise<UserGame> {
+    return await this.repository.save(userGame);
+  }
 }
