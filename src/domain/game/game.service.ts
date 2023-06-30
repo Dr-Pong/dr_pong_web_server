@@ -48,7 +48,8 @@ export class GameService {
     const logs = postGameDto.logs;
     for (const log of logs) {
       const touchLog = new TouchLog();
-      touchLog.user = await this.userRepository.findById(log.userId);
+      touchLog.user =
+        player1.id === log.userId ? userGame1.user : userGame2.user;
       touchLog.event = log.event;
       touchLog.round = log.round;
       touchLog.ball = log.ball;
