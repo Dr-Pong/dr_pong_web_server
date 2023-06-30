@@ -5,18 +5,18 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../user/user.entity';
 import { GameEvent } from 'src/global/type/type.game.event';
 import { Ball } from './object/ball';
+import { UserGame } from '../user-game/user-game.entity';
 
 @Entity()
 export class TouchLog {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, { eager: true })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @ManyToOne(() => UserGame, { eager: true })
+  @JoinColumn({ name: 'user_game' })
+  userGame: UserGame;
 
   @Column({ name: 'event', type: 'varchar' })
   event: GameEvent;
