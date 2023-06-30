@@ -74,12 +74,11 @@ export class UserGameRepository {
     player: { id: number; score: number; lpChange: number },
     game: Game,
   ): Promise<UserGame> {
-    const userGame = new UserGame();
-    userGame.game = game;
-    userGame.user = await this.userRepository.findById(player.id);
-    userGame.score = player.score;
-    userGame.lpChange = player.lpChange;
-
-    return await this.repository.save(userGame);
+    return await this.repository.save({
+      user: { id: player.id },
+      game: { id: game.id },
+      score: player.score,
+      lpChange: player.lpChange,
+    });
   }
 }
