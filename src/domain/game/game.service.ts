@@ -6,6 +6,7 @@ import { PostGameDto } from './dto/post.game.dto';
 import { TouchLogRepository } from '../touch-log/touch.log.repository';
 import { SeasonRepository } from '../season/season.repository';
 import { Season } from '../season/season.entity';
+import { UserGame } from '../user-game/user-game.entity';
 
 @Injectable()
 export class GameService {
@@ -17,6 +18,8 @@ export class GameService {
   ) {}
 
   async postGame(postGameDto: PostGameDto): Promise<void> {
+    const { player1, player2 } = postGameDto;
+
     const currentSeason: Season =
       await this.seasonRepository.findCurrentSeason();
 
@@ -25,11 +28,14 @@ export class GameService {
       currentSeason,
     );
 
-    const player1 = postGameDto.player1;
-    const userGame1 = await this.userGameRepository.save(player1, game);
-
-    const player2 = postGameDto.player2;
-    const userGame2 = await this.userGameRepository.save(player2, game);
+    const userGame1: UserGame = await this.userGameRepository.save(
+      player1,
+      game,
+    );
+    const userGame2: UserGame = await this.userGameRepository.save(
+      player2,
+      game,
+    );
 
     const logs = postGameDto.logs;
     for (const log of logs) {
