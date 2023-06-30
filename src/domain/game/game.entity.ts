@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { GameMode } from 'src/global/type/type.game.mode';
 
 @Entity()
 export class Game extends BaseTimeEntity {
@@ -26,4 +27,7 @@ export class Game extends BaseTimeEntity {
 
   @Column({ name: 'type', type: 'varchar' })
   type: GameType;
+
+  @Column({ name: 'mode', type: 'varchar' })
+  mode: GameMode;
 }
