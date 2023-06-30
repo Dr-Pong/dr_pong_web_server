@@ -18,12 +18,12 @@ export class TouchLog {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column()
+  @Column({ name: 'event', type: 'varchar' })
   event: GameEvent;
 
-  @Column()
+  @Column({ name: 'round', type: 'int' })
   round: number;
 
-  @Column()
-  Ball: Ball;
+  @Column({ name: 'ball' })
+  ball: Ball;
 }

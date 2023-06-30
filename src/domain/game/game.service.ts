@@ -51,7 +51,7 @@ export class GameService {
       touchLog.user = await this.userRepository.findById(log.userId);
       touchLog.event = log.event;
       touchLog.round = log.round;
-      touchLog.Ball = log.ball;
+      touchLog.ball = log.ball;
       await this.touchLogRepository.save(touchLog);
     }
   }
