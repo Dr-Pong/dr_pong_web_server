@@ -22,7 +22,12 @@ export class TouchLogRepository {
       user,
       event,
       round,
-      ball,
+      ballSpeed: ball.speed,
+      ballDirectionX: ball.direction.x,
+      ballDirectionY: ball.direction.y,
+      ballPositionX: ball.position.x,
+      ballPositionY: ball.position.y,
+      ballSpinSpeed: ball.spinSpeed,
     });
   }
 }

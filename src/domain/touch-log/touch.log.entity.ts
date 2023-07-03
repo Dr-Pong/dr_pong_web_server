@@ -24,6 +24,21 @@ export class TouchLog {
   @Column({ name: 'round', type: 'int' })
   round: number;
 
-  @Column({ name: 'ball' })
-  ball: Ball;
+  @Column({ name: 'ball_speed' })
+  ballSpeed: number;
+
+  @Column({ name: 'ball_direction_x' })
+  ballDirectionX: number;
+
+  @Column({ name: 'ball_direction_y' })
+  ballDirectionY: number;
+
+  @Column({ name: 'ball_position_x' })
+  ballPositionX: number;
+
+  @Column({ name: 'ball_position_y' })
+  ballPositionY: number;
+
+  @Column({ name: 'ball_spin_speed' })
+  ballSpinSpeed: number;
 }
