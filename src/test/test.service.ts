@@ -20,6 +20,7 @@ import { UserTitle } from 'src/domain/user-title/user-title.entity';
 import { User } from 'src/domain/user/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { GAMEMODE_SFINAE } from 'src/global/type/type.game.mode';
 
 @Injectable()
 export class TestService {
@@ -464,6 +465,7 @@ export class TestService {
           startTime: '2021-01-01',
           playTime: 10,
           type: GAMETYPE_NORMAL,
+          mode: GAMEMODE_SFINAE,
         }),
       );
     }
@@ -492,6 +494,7 @@ export class TestService {
           startTime: '2021-01-01',
           playTime: 10,
           type: GAMETYPE_NORMAL,
+          mode: GAMEMODE_SFINAE,
         }),
       );
     }
@@ -521,6 +524,7 @@ export class TestService {
           startTime: '2021-01-01',
           playTime: 10,
           type: i % 2 === 0 ? GAMETYPE_RANK : GAMETYPE_NORMAL,
+          mode: GAMEMODE_SFINAE,
         }),
       );
     }
@@ -565,6 +569,7 @@ export class TestService {
           startTime: '2021-01-01',
           playTime: 10,
           type: GAMETYPE_RANK,
+          mode: GAMEMODE_SFINAE,
         }),
       );
     }
@@ -641,6 +646,7 @@ export class TestService {
           startTime: '2021-01-01',
           playTime: 10,
           type: GAMETYPE_RANK,
+          mode: GAMEMODE_SFINAE,
         }),
       );
     }
