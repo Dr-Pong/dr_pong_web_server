@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
 import { FindUserGameSeasonStatDto } from './dto/find.user-game.season.stat.dto';
 import { Game } from '../game/game.entity';
+import { GameResultType } from 'src/global/type/type.game.result';
 
 @Injectable()
 export class UserGameRepository {
@@ -70,12 +71,29 @@ export class UserGameRepository {
   async save(
     player: { id: number; score: number; lpChange: number },
     game: Game,
+    result: GameResultType,
   ): Promise<UserGame> {
+    const lastLpResult = await this.findLpResultByUserId(player.id);
     return await this.repository.save({
       user: { id: player.id },
       game: { id: game.id },
+      result: result,
       score: player.score,
       lpChange: player.lpChange,
+      lpResult: lastLpResult,
     });
+  }
+
+  async findLpResultByUserId(userId: number): Promise<number> {
+    const userGames = await this.repository.find({
+      select: ['lpResult'],
+      where: { user: { id: userId } },
+    });
+
+    const totalLpResult = userGames.reduce(
+      (sum, userGame) => sum + userGame.lpResult,
+      0,
+    );
+    return totalLpResult;
   }
 }
