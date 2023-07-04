@@ -21,6 +21,8 @@ import { User } from 'src/domain/user/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { GAMEMODE_SFINAE } from 'src/global/type/type.game.mode';
+import { TouchLog } from 'src/domain/touch-log/touch.log.entity';
+import { GAMEEVENT_SCORE } from 'src/global/type/type.game.event';
 
 @Injectable()
 export class TestService {
@@ -50,6 +52,8 @@ export class TestService {
     private gameRepository: Repository<Game>,
     @InjectRepository(UserGame)
     private userGameRepository: Repository<UserGame>,
+    @InjectRepository(TouchLog)
+    private touchLogRepository: Repository<TouchLog>,
   ) {}
   users: User[] = [];
   profileImages: ProfileImage[] = [];
@@ -62,6 +66,7 @@ export class TestService {
   currentSeason: Season;
   games: Game[] = [];
   userGames: UserGame[] = [];
+  touchLogs: TouchLog[] = [];
 
   clear(): void {
     this.users.splice(0);
@@ -74,6 +79,8 @@ export class TestService {
     this.currentSeasonRanks.splice(0);
     this.currentSeason = null;
     this.games.splice(0);
+    this.userGames.splice(0);
+    this.touchLogs.splice(0);
   }
 
   async createProfileImages(): Promise<void> {
@@ -688,5 +695,48 @@ export class TestService {
       nickname: user.nickname,
     });
     return token;
+  }
+
+  async createGameWithTouchLog(): Promise<void> {
+    await this.createBasicUser();
+    await this.createBasicUser();
+    for (let i = 0; i < 3; i++) {
+      this.games.push(
+        await this.gameRepository.save({
+          season: this.currentSeason,
+          startTime: '2021-01-01',
+          playTime: 10,
+          type: GAMETYPE_NORMAL,
+          mode: GAMEMODE_SFINAE,
+        }),
+      );
+    }
+    for (let j = 0; j < 6; j++) {
+      this.userGames.push(
+        await this.userGameRepository.save({
+          user: j % 2 === 0 ? this.users[0] : this.users[1],
+          game: this.games[Math.floor(j / 2)],
+          result: j % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
+          score: j % 2 === 0 ? 10 : 0,
+          lpChange: 0,
+          lpResult: 100,
+        }),
+      );
+    }
+    for (let i = 0; i < 6; i++) {
+      this.touchLogs.push(
+        await this.touchLogRepository.save({
+          userGame: this.userGames[i],
+          event: i % 2 === 0 ? GAMEEVENT_SCORE : GAMEEVENT_SCORE,
+          round: i,
+          ballSpeed: 0,
+          ballDirectionX: 0,
+          ballDirectionY: 0,
+          ballPositionX: 0,
+          ballPositionY: 0,
+          ballSpinSpeed: 0,
+        }),
+      );
+    }
   }
 }
