@@ -16,6 +16,7 @@ export class GameRepository {
     const { mode, type, startTime, endTime } = postDto;
     return await this.repository.save({
       season: currentSeason,
+      startTime: startTime,
       playTime: endTime.getTime() - startTime.getTime(),
       type,
       mode,
