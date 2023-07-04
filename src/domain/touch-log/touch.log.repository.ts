@@ -4,6 +4,7 @@ import { TouchLog } from './touch.log.entity';
 import { Repository } from 'typeorm';
 import { GameEvent } from 'src/global/type/type.game.event';
 import { Ball } from './object/ball';
+import { UserGame } from '../user-game/user-game.entity';
 
 @Injectable()
 export class TouchLogRepository {
@@ -13,13 +14,13 @@ export class TouchLogRepository {
   ) {}
 
   async save(
-    user: any,
+    userGame: UserGame,
     event: GameEvent,
     round: number,
     ball: Ball,
   ): Promise<TouchLog> {
     return await this.touchLogRepository.save({
-      user,
+      userGame,
       event,
       round,
       ballSpeed: ball.speed,
