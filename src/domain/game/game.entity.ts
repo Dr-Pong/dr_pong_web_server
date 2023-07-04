@@ -19,7 +19,7 @@ export class Game extends BaseTimeEntity {
   @JoinColumn({ name: 'season_id' })
   season: Season;
 
-  @Column({ name: 'start_time', type: 'date' })
+  @Column({ name: 'start_time', type: 'timestamp' })
   startTime: Date;
 
   @Column({ name: 'play_time', type: 'int' })
