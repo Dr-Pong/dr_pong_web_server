@@ -20,11 +20,21 @@ import {
   TIER_BACHELOR,
   TIER_DOCTOR,
   TIER_MASTER,
+  TIER_STUDENT,
   TierType,
 } from 'src/global/type/type.tier';
 import { Ball } from '../touch-log/object/ball';
 import { TouchLog } from '../touch-log/touch.log.entity';
 import { GameEvent } from 'src/global/type/type.game.event';
+import { AchievementRepository } from '../achievement/achievement.repository';
+import { UserAchievement } from '../user-achievement/user-achievement.entity';
+import { Achievement } from '../achievement/achievement.entity';
+import {
+  UpDateUserAchievementDto,
+  UserAchievementsDto,
+} from '../user-achievement/dto/update.user.achievement.dto';
+import { RankRepository } from '../rank/rank.repository';
+import { Rank } from '../rank/rank.entity';
 
 @Injectable()
 export class GameService {
@@ -33,6 +43,11 @@ export class GameService {
     private readonly userGameRepository: UserGameRepository,
     private readonly touchLogRepository: TouchLogRepository,
     private readonly seasonRepository: SeasonRepository,
+    private readonly userAchievementRepository: UserAchievementRepository,
+    private readonly achievementRepository: AchievementRepository,
+    private readonly rankRepository: RankRepository,
+    private readonly userTitleRepository: UserTitleRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async postGame(postGameDto: PostGameDto): Promise<void> {
@@ -51,17 +66,26 @@ export class GameService {
       player1.score,
     );
 
+    const user1Rank: Rank = await this.rankRepository.findByUserIdAndSeasonId(
+      player1.id,
+      currentSeason.id,
+    );
+    const user2Rank: Rank = await this.rankRepository.findByUserIdAndSeasonId(
+      player2.id,
+      currentSeason.id,
+    );
+
     const userGame1: UserGame = await this.saveUserGames(
       game,
-      currentSeason.id,
       player1,
       player1Result,
+      user1Rank.ladderPoint + player1.lpChange,
     );
     const userGame2: UserGame = await this.saveUserGames(
       game,
-      currentSeason.id,
       player2,
       player2Result,
+      user2Rank.ladderPoint,
     );
 
     const logs = postGameDto.logs;
@@ -70,6 +94,14 @@ export class GameService {
         player1.id === log.userId ? userGame1 : userGame2;
       await this.saveTouchLog(userGame, log.event, log.round, log.ball);
     }
+
+    await this.updateAchievementsAndTitles(
+      player1.id,
+      player2.id,
+      currentSeason.id,
+      user1Rank.ladderPoint,
+      user2Rank.ladderPoint,
+    );
   }
 
   async saveGame(
@@ -81,11 +113,11 @@ export class GameService {
 
   async saveUserGames(
     game: Game,
-    currentSeasonId: number,
     player: any,
     result: GameResultType,
+    userLP: number,
   ): Promise<UserGame> {
-    return this.userGameRepository.save(player, game, result, currentSeasonId);
+    return this.userGameRepository.save(player, game, result, userLP);
   }
 
   async saveTouchLog(
@@ -95,6 +127,162 @@ export class GameService {
     ball: Ball,
   ): Promise<TouchLog> {
     return this.touchLogRepository.save(userGame, event, round, ball);
+  }
+
+  async updateAchievementsAndTitles(
+    player1Id: number,
+    player2Id: number,
+    currentSeasonId: number,
+    player1LP: number,
+    player2LP: number,
+  ): Promise<UserAchievementsDto> {
+    const player1Games: UserGame[] =
+      await this.userGameRepository.findAllByUserId(player1Id);
+    const player2Games: UserGame[] =
+      await this.userGameRepository.findAllByUserId(player2Id);
+
+    const player1Achievements: UserAchievement[] =
+      await this.userAchievementRepository.findAllByUserId(player1Id);
+    const player2Achievements: UserAchievement[] =
+      await this.userAchievementRepository.findAllByUserId(player2Id);
+
+    const achievements: Achievement[] =
+      await this.achievementRepository.findAll();
+
+    const player1WinCount = player1Games.filter(
+      (userGame: UserGame) => userGame.result === GAMERESULT_WIN,
+    ).length;
+    const player2WinCount = player2Games.filter(
+      (userGame: UserGame) => userGame.result === GAMERESULT_WIN,
+    ).length;
+
+    const updatedUserAchievements: UserAchievementsDto =
+      new UserAchievementsDto();
+    updatedUserAchievements.updateAchievements = [];
+
+    if (player1Achievements.length !== achievements.length) {
+      switch (player1WinCount) {
+        case 1: {
+          await this.userAchievementRepository.save(
+            player1Id,
+            achievements[0].id,
+          );
+          updatedUserAchievements.updateAchievements.push(
+            new UpDateUserAchievementDto(player1Id, achievements[0].id),
+          );
+          break;
+        }
+        case 2: {
+          await this.userAchievementRepository.save(
+            player1Id,
+            achievements[1].id,
+          );
+          updatedUserAchievements.updateAchievements.push(
+            new UpDateUserAchievementDto(player1Id, achievements[1].id),
+          );
+          break;
+        }
+        case 10: {
+          await this.userAchievementRepository.save(
+            player1Id,
+            achievements[2].id,
+          );
+          updatedUserAchievements.updateAchievements.push(
+            new UpDateUserAchievementDto(player1Id, achievements[2].id),
+          );
+          break;
+        }
+        default:
+          break;
+      }
+    }
+
+    if (player2Achievements.length !== achievements.length) {
+      switch (player2WinCount) {
+        case 1: {
+          await this.userAchievementRepository.save(
+            player2Id,
+            achievements[0].id,
+          );
+          updatedUserAchievements.updateAchievements.push(
+            new UpDateUserAchievementDto(player2Id, achievements[0].id),
+          );
+          break;
+        }
+        case 2: {
+          await this.userAchievementRepository.save(
+            player2Id,
+            achievements[1].id,
+          );
+          updatedUserAchievements.updateAchievements.push(
+            new UpDateUserAchievementDto(player2Id, achievements[1].id),
+          );
+          break;
+        }
+        case 10: {
+          await this.userAchievementRepository.save(
+            player2Id,
+            achievements[2].id,
+          );
+          updatedUserAchievements.updateAchievements.push(
+            new UpDateUserAchievementDto(player2Id, achievements[2].id),
+          );
+          break;
+        }
+        default:
+          break;
+      }
+    }
+
+    const player1Tier: TierType = await this.checkTier(player1LP);
+    const player2Tier: TierType = await this.checkTier(player2LP);
+
+    if (player1Tier) {
+      const player1AchievementId = getAchievementByLPCut(player1LP);
+      const hasAchievement = player1Achievements.some(
+        (achievement) => achievement.achievement.id === player1AchievementId,
+      );
+      if (!hasAchievement) {
+        await this.userAchievementRepository.save(
+          player1Id,
+          player1AchievementId,
+        );
+        updatedUserAchievements.updateAchievements.push(
+          new UpDateUserAchievementDto(player1Id, player1AchievementId),
+        );
+      }
+    }
+
+    if (player2Tier) {
+      const player2AchievementId = getAchievementByLPCut(player2LP);
+      const hasAchievement = player2Achievements.some(
+        (achievement) => achievement.achievement.id === player2AchievementId,
+      );
+      if (!hasAchievement) {
+        await this.userAchievementRepository.save(
+          player2Id,
+          player2AchievementId,
+        );
+        updatedUserAchievements.updateAchievements.push(
+          new UpDateUserAchievementDto(player2Id, player2AchievementId),
+        );
+      }
+    }
+
+    function getAchievementByLPCut(lp: number): number {
+      switch (true) {
+        case lp >= Number(process.env.STUDENT_CUT):
+          return achievements[3].id;
+        case lp >= Number(process.env.BACHELOR_CUT):
+          return achievements[4].id;
+        case lp >= Number(process.env.MASTER_CUT):
+          return achievements[5].id;
+        case lp >= Number(process.env.DOCTOR_CUT):
+          return achievements[6].id;
+      }
+    }
+
+    return updatedUserAchievements;
   }
 
   private checkGameResult(
@@ -117,8 +305,8 @@ export class GameService {
       return TIER_MASTER;
     } else if (playerLP >= Number(process.env.BACHELOR_CUT)) {
       return TIER_BACHELOR;
-    } else {
-      return null;
+    } else if (playerLP >= Number(process.env.STUDENT_CUT)) {
+      return TIER_STUDENT;
     }
   }
 }
