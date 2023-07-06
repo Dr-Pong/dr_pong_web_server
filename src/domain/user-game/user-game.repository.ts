@@ -72,8 +72,12 @@ export class UserGameRepository {
     player: { id: number; score: number; lpChange: number },
     game: Game,
     result: GameResultType,
+    seasonId: number,
   ): Promise<UserGame> {
-    const lastLpResult = await this.findLpResultByUserId(player.id);
+    const lastLpResult = await this.findLpByUserIdAndSeasonId(
+      player.id,
+      seasonId,
+    );
     return await this.repository.save({
       user: { id: player.id },
       game: { id: game.id },
@@ -84,16 +88,19 @@ export class UserGameRepository {
     });
   }
 
-  async findLpResultByUserId(userId: number): Promise<number> {
+  async findLpByUserIdAndSeasonId(
+    userId: number,
+    seasonId: number,
+  ): Promise<number> {
     const userGames = await this.repository.find({
-      select: ['lpResult'],
-      where: { user: { id: userId } },
+      select: ['lpChange'],
+      where: { user: { id: userId }, game: { season: { id: seasonId } } },
     });
 
-    const totalLpResult = userGames.reduce(
-      (sum, userGame) => sum + userGame.lpResult,
+    const totalLpChange = userGames.reduce(
+      (sum, userGame) => sum + userGame.lpChange,
       0,
     );
-    return totalLpResult;
+    return totalLpChange;
   }
 }
