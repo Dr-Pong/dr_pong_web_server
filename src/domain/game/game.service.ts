@@ -75,11 +75,16 @@ export class GameService {
       currentSeason.id,
     );
 
+    const user1Lp = user1Rank.ladderPoint + player1.lpChange;
+    const user2Lp = user2Rank.ladderPoint + player2.lpChange;
+    await this.rankRepository.update(player1.id, currentSeason.id, user1Lp);
+    await this.rankRepository.update(player2.id, currentSeason.id, user2Lp);
+
     const userGame1: UserGame = await this.saveUserGames(
       game,
       player1,
       player1Result,
-      user1Rank.ladderPoint + player1.lpChange,
+      user1Lp,
     );
     const userGame2: UserGame = await this.saveUserGames(
       game,
@@ -234,11 +239,19 @@ export class GameService {
       }
     }
 
-    const player1Tier: TierType = await this.checkTier(player1LP);
-    const player2Tier: TierType = await this.checkTier(player2LP);
-
+    // lp변화에 따른 업적
+    let player1ChangedLp: number = player1LP;
+    let player2ChangedLp: number = player2LP;
+    for (let i = 0; i < player1Games.length; i++) {
+      player1ChangedLp = player1LP + player1Games[i].lpChange;
+    }
+    for (let i = 0; i < player2Games.length; i++) {
+      player2ChangedLp = player2LP + player2Games[i].lpChange;
+    }
+    const player1Tier: TierType = await this.checkTier(player1ChangedLp);
+    const player2Tier: TierType = await this.checkTier(player2ChangedLp);
     if (player1Tier) {
-      const player1AchievementId = getAchievementByLPCut(player1LP);
+      const player1AchievementId = getAchievementByLPCut(player1ChangedLp);
       const hasAchievement = player1Achievements.some(
         (achievement) => achievement.achievement.id === player1AchievementId,
       );
@@ -271,14 +284,14 @@ export class GameService {
 
     function getAchievementByLPCut(lp: number): number {
       switch (true) {
-        case lp >= Number(process.env.STUDENT_CUT):
-          return achievements[3].id;
-        case lp >= Number(process.env.BACHELOR_CUT):
-          return achievements[4].id;
-        case lp >= Number(process.env.MASTER_CUT):
-          return achievements[5].id;
         case lp >= Number(process.env.DOCTOR_CUT):
           return achievements[6].id;
+        case lp >= Number(process.env.MASTER_CUT):
+          return achievements[5].id;
+        case lp >= Number(process.env.BACHELOR_CUT):
+          return achievements[4].id;
+        case lp >= Number(process.env.STUDENT_CUT):
+          return achievements[3].id;
       }
     }
 

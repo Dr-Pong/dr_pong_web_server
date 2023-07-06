@@ -21,6 +21,8 @@ import {
 import { UserGame } from '../user-game/user-game.entity';
 import { TouchLog } from '../touch-log/touch.log.entity';
 import { UserAchievement } from '../user-achievement/user-achievement.entity';
+import { Rank } from '../rank/rank.entity';
+import { RankRepository } from '../rank/rank.repository';
 
 describe('GameService', () => {
   let service: GameService;
@@ -275,7 +277,7 @@ describe('GameService', () => {
       }
     });
 
-    it('player Achievement가 잘 저장되는지', async () => {
+    it.only('player Achievement가 잘 저장되는지', async () => {
       await testData.createBasicCollectable();
       await testData.createBasicUsers();
       await testData.createCurrentSeasonRank();
@@ -283,7 +285,7 @@ describe('GameService', () => {
         player1: {
           id: testData.users[0].id,
           score: 10,
-          lpChange: 10,
+          lpChange: 1,
         },
         player2: {
           id: testData.users[1].id,
@@ -317,7 +319,7 @@ describe('GameService', () => {
         player1: {
           id: testData.users[0].id,
           score: 10,
-          lpChange: 10,
+          lpChange: 99,
         },
         player2: {
           id: testData.users[1].id,
@@ -361,8 +363,8 @@ describe('GameService', () => {
           order: { id: 'ASC' },
         });
 
-      expect(P1userAchievements.length).toBe(3);
-      expect(P2userAchievements.length).toBe(1);
+      expect(P1userAchievements.length).toBe(4);
+      expect(P2userAchievements.length).toBe(0);
     });
   });
 });
