@@ -12,4 +12,8 @@ export class AchievementRepository {
   async findAll(): Promise<Achievement[]> {
     return await this.repository.find();
   }
+
+  async findOneById(id: number): Promise<Achievement> {
+    return await this.repository.findOne({ where: { id } });
+  }
 }
