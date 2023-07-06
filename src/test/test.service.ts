@@ -151,7 +151,7 @@ export class TestService {
     for (let i = 0; i < 10; i++) {
       this.titles.push(
         await this.titleRepository.save({
-          name: 'emoji' + i.toString(),
+          name: 'title' + i.toString(),
           content: 'content' + i.toString(),
         }),
       );
@@ -159,7 +159,7 @@ export class TestService {
     for (let i = 0; i < 10; i++) {
       this.achievements.push(
         await this.achievementRepository.save({
-          name: 'emoji' + i.toString(),
+          name: 'achievement' + i.toString(),
           content: 'content' + i.toString(),
           imageUrl: 'imageUrl' + i.toString(),
         }),
