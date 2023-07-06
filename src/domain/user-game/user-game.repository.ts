@@ -6,12 +6,15 @@ import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
 import { FindUserGameSeasonStatDto } from './dto/find.user-game.season.stat.dto';
 import { Game } from '../game/game.entity';
 import { GameResultType } from 'src/global/type/type.game.result';
+import { Rank } from '../rank/rank.entity';
 
 @Injectable()
 export class UserGameRepository {
   constructor(
     @InjectRepository(UserGame)
     private readonly repository: Repository<UserGame>,
+    @InjectRepository(Rank)
+    private readonly rankRepository: Repository<Rank>,
   ) {}
 
   async findAllByUserId(userId: number): Promise<UserGame[]> {
@@ -69,38 +72,18 @@ export class UserGameRepository {
   }
 
   async save(
-    player: { id: number; score: number; lpChange: number },
+    player: { id: number; score: number; lpChange: number; lpResult: number },
     game: Game,
     result: GameResultType,
-    seasonId: number,
+    userLp: number,
   ): Promise<UserGame> {
-    const lastLpResult = await this.findLpByUserIdAndSeasonId(
-      player.id,
-      seasonId,
-    );
     return await this.repository.save({
       user: { id: player.id },
       game: { id: game.id },
       result: result,
       score: player.score,
       lpChange: player.lpChange,
-      lpResult: lastLpResult,
+      lpResult: userLp,
     });
-  }
-
-  async findLpByUserIdAndSeasonId(
-    userId: number,
-    seasonId: number,
-  ): Promise<number> {
-    const userGames = await this.repository.find({
-      select: ['lpChange'],
-      where: { user: { id: userId }, game: { season: { id: seasonId } } },
-    });
-
-    const totalLpChange = userGames.reduce(
-      (sum, userGame) => sum + userGame.lpChange,
-      0,
-    );
-    return totalLpChange;
   }
 }
