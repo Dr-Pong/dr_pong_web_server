@@ -20,6 +20,7 @@ import {
 } from 'src/global/type/type.game.event';
 import { UserGame } from '../user-game/user-game.entity';
 import { TouchLog } from '../touch-log/touch.log.entity';
+import { UserAchievement } from '../user-achievement/user-achievement.entity';
 
 describe('GameService', () => {
   let service: GameService;
@@ -28,6 +29,7 @@ describe('GameService', () => {
   let gameRepository: Repository<Game>;
   let userGameRepository: Repository<UserGame>;
   let touchLogRepository: Repository<TouchLog>;
+  let userAchievementRepository: Repository<UserAchievement>;
 
   beforeAll(async () => {
     initializeTransactionalContext();
@@ -67,11 +69,15 @@ describe('GameService', () => {
     touchLogRepository = module.get<Repository<TouchLog>>(
       getRepositoryToken(TouchLog),
     );
+    userAchievementRepository = module.get<Repository<UserAchievement>>(
+      getRepositoryToken(UserAchievement),
+    );
     await dataSources.synchronize(true);
   });
 
   beforeEach(async () => {
     await testData.createProfileImages();
+    await testData.createBasicCollectable();
     await testData.createBasicSeasons(2);
   });
 
@@ -89,6 +95,7 @@ describe('GameService', () => {
   describe('postGame', () => {
     it('Game이 잘 저장되는지', async () => {
       await testData.createBasicUsers();
+      await testData.createCurrentSeasonRank();
       const postDto: PostGameDto = {
         player1: {
           id: testData.users[0].id,
@@ -140,6 +147,7 @@ describe('GameService', () => {
 
     it('player가 2명 잘 저장 되는지', async () => {
       await testData.createBasicUsers();
+      await testData.createCurrentSeasonRank();
       const postDto: PostGameDto = {
         player1: {
           id: testData.users[0].id,
@@ -186,6 +194,7 @@ describe('GameService', () => {
       expect(player1.id).toBe(postDto.player1.id);
       expect(player1.score).toBe(postDto.player1.score);
       expect(player1.lpChange).toBe(postDto.player1.lpChange);
+      // expect(player1.lpResult).toBe(postDto.player1.lpChange);
 
       expect(player2.id).toBe(postDto.player2.id);
       expect(player2.score).toBe(postDto.player2.score);
@@ -194,6 +203,8 @@ describe('GameService', () => {
 
     it('touchLog가 잘 저장되는지', async () => {
       await testData.createBasicUsers();
+      await testData.createCurrentSeasonRank();
+
       const postDto: PostGameDto = {
         player1: {
           id: testData.users[0].id,
@@ -262,6 +273,96 @@ describe('GameService', () => {
         expect(P2touchLogs[i].ballPositionY).toBe(11 + i * 2);
         expect(P2touchLogs[i].ballSpinSpeed).toBe(11 + i * 2);
       }
+    });
+
+    it('player Achievement가 잘 저장되는지', async () => {
+      await testData.createBasicCollectable();
+      await testData.createBasicUsers();
+      await testData.createCurrentSeasonRank();
+      const postDto: PostGameDto = {
+        player1: {
+          id: testData.users[0].id,
+          score: 10,
+          lpChange: 10,
+        },
+        player2: {
+          id: testData.users[1].id,
+          score: 1,
+          lpChange: 0,
+        },
+        mode: GAMEMODE_SFINAE,
+        type: GAMETYPE_RANK,
+        startTime: new Date(),
+        endTime: new Date(),
+        logs: [],
+      };
+
+      for (let i = 1; i <= 10; i++) {
+        const log = {
+          userId: i % 2 === 0 ? postDto.player1.id : postDto.player2.id,
+          event: i % 2 === 0 ? GAMEEVENT_SCORE : GAMEEVENT_TOUCH,
+          round: i,
+          ball: {
+            speed: 10 + i,
+            direction: { x: 10 + i, y: 10 + i },
+            position: { x: 10 + i, y: 10 + i },
+            spinSpeed: 10 + i,
+          },
+        };
+
+        postDto.logs.push(log);
+      }
+
+      const postDto2: PostGameDto = {
+        player1: {
+          id: testData.users[0].id,
+          score: 10,
+          lpChange: 10,
+        },
+        player2: {
+          id: testData.users[1].id,
+          score: 1,
+          lpChange: 0,
+        },
+        mode: GAMEMODE_SFINAE,
+        type: GAMETYPE_RANK,
+        startTime: new Date(),
+        endTime: new Date(),
+        logs: [],
+      };
+
+      for (let i = 1; i <= 10; i++) {
+        const log = {
+          userId: i % 2 === 0 ? postDto2.player1.id : postDto2.player2.id,
+          event: i % 2 === 0 ? GAMEEVENT_SCORE : GAMEEVENT_TOUCH,
+          round: i,
+          ball: {
+            speed: 10 + i,
+            direction: { x: 10 + i, y: 10 + i },
+            position: { x: 10 + i, y: 10 + i },
+            spinSpeed: 10 + i,
+          },
+        };
+
+        postDto2.logs.push(log);
+      }
+
+      await service.postGame(postDto);
+      await service.postGame(postDto2);
+
+      const P1userAchievements: UserAchievement[] =
+        await userAchievementRepository.find({
+          where: { user: { id: postDto.player1.id } },
+        });
+
+      const P2userAchievements: UserAchievement[] =
+        await userAchievementRepository.find({
+          where: { user: { id: postDto.player2.id } },
+          order: { id: 'ASC' },
+        });
+
+      expect(P1userAchievements.length).toBe(3);
+      expect(P2userAchievements.length).toBe(1);
     });
   });
 });
