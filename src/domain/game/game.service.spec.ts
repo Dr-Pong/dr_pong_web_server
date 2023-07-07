@@ -21,8 +21,7 @@ import {
 import { UserGame } from '../user-game/user-game.entity';
 import { TouchLog } from '../touch-log/touch.log.entity';
 import { UserAchievement } from '../user-achievement/user-achievement.entity';
-import { Rank } from '../rank/rank.entity';
-import { RankRepository } from '../rank/rank.repository';
+import { UserTitle } from '../user-title/user-title.entity';
 
 describe('GameService', () => {
   let service: GameService;
@@ -32,6 +31,7 @@ describe('GameService', () => {
   let userGameRepository: Repository<UserGame>;
   let touchLogRepository: Repository<TouchLog>;
   let userAchievementRepository: Repository<UserAchievement>;
+  let userTitleRepository: Repository<UserTitle>;
 
   beforeAll(async () => {
     initializeTransactionalContext();
@@ -73,6 +73,9 @@ describe('GameService', () => {
     );
     userAchievementRepository = module.get<Repository<UserAchievement>>(
       getRepositoryToken(UserAchievement),
+    );
+    userTitleRepository = module.get<Repository<UserTitle>>(
+      getRepositoryToken(UserTitle),
     );
     await dataSources.synchronize(true);
   });
@@ -368,6 +371,59 @@ describe('GameService', () => {
 
       // user 2 achievement 1개 (1번째 닥터달성) 생성시에 닥터로 생성함
       expect(P2userAchievements.length).toBe(1);
+    });
+
+    it('타이틀이 잘 저장되는지', async () => {
+      // 타이틀 저장 되는지 테스트 게임 서비스 레벨 1 로 해보셈
+      await testData.createBasicCollectable();
+      await testData.createLevel9Users();
+      await testData.createCurrentSeasonRank();
+      const postDto: PostGameDto = {
+        player1: {
+          id: testData.users[0].id,
+          score: 10,
+          lpChange: 20,
+        },
+        player2: {
+          id: testData.users[1].id,
+          score: 1,
+          lpChange: 10,
+        },
+        mode: GAMEMODE_SFINAE,
+        type: GAMETYPE_RANK,
+        startTime: new Date(),
+        endTime: new Date(),
+        logs: [],
+      };
+
+      for (let i = 1; i <= 10; i++) {
+        const log = {
+          userId: i % 2 === 0 ? postDto.player1.id : postDto.player2.id,
+          event: i % 2 === 0 ? GAMEEVENT_SCORE : GAMEEVENT_TOUCH,
+          round: i,
+          ball: {
+            speed: 10 + i,
+            direction: { x: 10 + i, y: 10 + i },
+            position: { x: 10 + i, y: 10 + i },
+            spinSpeed: 10 + i,
+          },
+        };
+
+        postDto.logs.push(log);
+      }
+
+      await service.postGame(postDto);
+
+      const P1userTitle: UserTitle[] = await userTitleRepository.find({
+        where: { user: { id: postDto.player1.id } },
+      });
+
+      const P2userTitle: UserTitle[] = await userTitleRepository.find({
+        where: { user: { id: postDto.player2.id } },
+      });
+
+      expect(P1userTitle.length).toBe(1);
+      expect(P2userTitle.length).toBe(0);
     });
   });
 });
