@@ -6,15 +6,12 @@ import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
 import { FindUserGameSeasonStatDto } from './dto/find.user-game.season.stat.dto';
 import { Game } from '../game/game.entity';
 import { GameResultType } from 'src/global/type/type.game.result';
-import { Rank } from '../rank/rank.entity';
 
 @Injectable()
 export class UserGameRepository {
   constructor(
     @InjectRepository(UserGame)
     private readonly repository: Repository<UserGame>,
-    @InjectRepository(Rank)
-    private readonly rankRepository: Repository<Rank>,
   ) {}
 
   async findAllByUserId(userId: number): Promise<UserGame[]> {
