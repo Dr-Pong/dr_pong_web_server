@@ -103,7 +103,6 @@ export class GameService {
     await this.updateAchievementsAndTitles(
       player1.id,
       player2.id,
-      currentSeason.id,
       user1Rank.ladderPoint,
       user2Rank.ladderPoint,
     );
@@ -137,7 +136,6 @@ export class GameService {
   async updateAchievementsAndTitles(
     player1Id: number,
     player2Id: number,
-    currentSeasonId: number,
     player1LP: number,
     player2LP: number,
   ): Promise<UserAchievementsDto> {
