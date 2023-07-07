@@ -9,10 +9,10 @@ export class Season extends BaseTimeEntity {
   @Column({ name: 'name', type: 'varchar', default: '' })
   name: string;
 
-  @Column({ name: 'start_time', type: 'date' })
+  @Column({ name: 'start_time', type: 'timestamp' })
   startTime: Date;
 
-  @Column({ name: 'end_time', type: 'date' })
+  @Column({ name: 'end_time', type: 'timestamp' })
   endTime: Date;
 
   @Column({ name: 'image_url', type: 'varchar' })

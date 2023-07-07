@@ -7,7 +7,7 @@ export class User extends BaseTimeEntity {
   @PrimaryColumn()
   id: number;
 
-  @Column({ name: 'nickname', default: '' })
+  @Column({ name: 'nickname', nullable: false })
   nickname: string;
 
   @ManyToOne(() => ProfileImage, { eager: true })
