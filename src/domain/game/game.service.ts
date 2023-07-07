@@ -35,6 +35,7 @@ import {
 } from '../user-achievement/dto/update.user.achievement.dto';
 import { RankRepository } from '../rank/rank.repository';
 import { Rank } from '../rank/rank.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class GameService {
@@ -100,12 +101,15 @@ export class GameService {
       await this.saveTouchLog(userGame, log.event, log.round, log.ball);
     }
 
-    await this.updateAchievementsAndTitles(
+    await this.updateAchievements(
       player1.id,
       player2.id,
+      currentSeason.id,
       user1Rank.ladderPoint,
       user2Rank.ladderPoint,
     );
+
+    // await this.updateUserLevel(player1.id, player2.id);
   }
 
   async saveGame(
@@ -133,9 +137,10 @@ export class GameService {
     return this.touchLogRepository.save(userGame, event, round, ball);
   }
 
-  async updateAchievementsAndTitles(
+  async updateAchievements(
     player1Id: number,
     player2Id: number,
+    seasonId: number,
     player1LP: number,
     player2LP: number,
   ): Promise<UserAchievementsDto> {
@@ -236,16 +241,19 @@ export class GameService {
           break;
       }
     }
+    const user1Rank: Rank = await this.rankRepository.findByUserIdAndSeasonId(
+      player1Id,
+      seasonId,
+    );
 
-    // lp변화에 따른 업적
-    let player1ChangedLp: number = player1LP;
-    let player2ChangedLp: number = player2LP;
-    for (let i = 0; i < player1Games.length; i++) {
-      player1ChangedLp = player1LP + player1Games[i].lpChange;
-    }
-    for (let i = 0; i < player2Games.length; i++) {
-      player2ChangedLp = player2LP + player2Games[i].lpChange;
-    }
+    const user2Rank: Rank = await this.rankRepository.findByUserIdAndSeasonId(
+      player2Id,
+      seasonId,
+    );
+
+    const player1ChangedLp = user1Rank.ladderPoint;
+    const player2ChangedLp = user2Rank.ladderPoint;
+
     const player1Tier: TierType = await this.checkTier(player1ChangedLp);
     const player2Tier: TierType = await this.checkTier(player2ChangedLp);
     if (player1Tier) {
@@ -295,6 +303,23 @@ export class GameService {
 
     return updatedUserAchievements;
   }
+
+  // async updateUserLevel(player1Id: number, player2Id: number): Promise<void> {
+  //   const player1: User = await this.userRepository.findById(player1Id);
+  //   const player2: User = await this.userRepository.findById(player2Id);
+
+  //   // player1의 레벨 업 체크 및 경험치 추가
+  //   // 경험치 불러오기
+  //   const player1Exp = player1.exp;
+  //   // 경험치 추가
+  //   // 레벨 업 체크 및 타이틀 추가
+
+  //   // player2의 레벨 업 체크 및 경험치 추가
+  //   const player2Exp = player2.exp;
+  //   // 경험치 불러오기
+  //   // 경험치 추가
+  //   // 레벨 업 체크 및 타이틀 추가
+  // }
 
   private checkGameResult(
     player1Score: number,
