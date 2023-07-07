@@ -1,4 +1,4 @@
-export class UpDateUserAchievementDto {
+export class UpdateUserAchievementDto {
   userId: number;
   achievementId: number;
 
@@ -8,6 +8,6 @@ export class UpDateUserAchievementDto {
   }
 }
 
-export class UserAchievementsDto {
-  updateAchievements: UpDateUserAchievementDto[];
+export class UpdateUserAchievementsDto {
+  updateAchievements: UpdateUserAchievementDto[];
 }
