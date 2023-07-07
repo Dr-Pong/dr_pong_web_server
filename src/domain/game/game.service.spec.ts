@@ -277,7 +277,7 @@ describe('GameService', () => {
       }
     });
 
-    it.only('player Achievement가 잘 저장되는지', async () => {
+    it('player Achievement가 잘 저장되는지', async () => {
       await testData.createBasicCollectable();
       await testData.createBasicUsers();
       await testData.createCurrentSeasonRank();
@@ -363,8 +363,11 @@ describe('GameService', () => {
           order: { id: 'ASC' },
         });
 
-      expect(P1userAchievements.length).toBe(4);
-      expect(P2userAchievements.length).toBe(0);
+      // user 1 achievement 2개 (1번째는 게임승리, 2번째는 닥터 달성) 생성시에 닥터로 생성함
+      expect(P1userAchievements.length).toBe(2);
+
+      // user 2 achievement 1개 (1번째 닥터달성) 생성시에 닥터로 생성함
+      expect(P2userAchievements.length).toBe(1);
     });
   });
 });

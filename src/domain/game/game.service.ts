@@ -177,7 +177,7 @@ export class GameService {
           );
           break;
         }
-        case 2: {
+        case 8: {
           await this.userAchievementRepository.save(
             player1Id,
             achievements[1].id,
@@ -214,7 +214,7 @@ export class GameService {
           );
           break;
         }
-        case 2: {
+        case 8: {
           await this.userAchievementRepository.save(
             player2Id,
             achievements[1].id,
