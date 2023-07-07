@@ -44,4 +44,16 @@ export class UserRepository {
       },
     });
   }
+
+  async update(userId: number, exp: number, level: number): Promise<void> {
+    await this.repository.update(
+      {
+        id: userId,
+      },
+      {
+        exp: exp,
+        level: level,
+      },
+    );
+  }
 }
