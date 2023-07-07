@@ -17,6 +17,9 @@ export class User extends BaseTimeEntity {
   @Column({ name: 'level', default: 1 })
   level: number;
 
+  @Column({ name: 'exp', default: 0 })
+  exp: number;
+
   @Column({ name: 'status_maessage', default: '' })
   statusMessage: string;
 }

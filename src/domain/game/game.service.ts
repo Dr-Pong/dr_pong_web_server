@@ -30,12 +30,20 @@ import { AchievementRepository } from '../achievement/achievement.repository';
 import { UserAchievement } from '../user-achievement/user-achievement.entity';
 import { Achievement } from '../achievement/achievement.entity';
 import {
-  UpDateUserAchievementDto,
-  UserAchievementsDto,
+  UpdateUserAchievementDto,
+  UpdateUserAchievementsDto,
 } from '../user-achievement/dto/update.user.achievement.dto';
 import { RankRepository } from '../rank/rank.repository';
 import { Rank } from '../rank/rank.entity';
 import { User } from '../user/user.entity';
+import { TitleRepository } from '../title/title.repository';
+import { Title } from '../title/title.entity';
+import {
+  UpdateUserTitleDto,
+  UpdateUserTitlesDto,
+} from '../user-title/dto/update.user.title.dto';
+import { IsolationLevel, Transactional } from 'typeorm-transactional';
+import { PostGameResponseDto } from './dto/post.game.response.dto';
 
 @Injectable()
 export class GameService {
@@ -48,10 +56,12 @@ export class GameService {
     private readonly achievementRepository: AchievementRepository,
     private readonly rankRepository: RankRepository,
     private readonly userTitleRepository: UserTitleRepository,
+    private readonly titleRepository: TitleRepository,
     private readonly userRepository: UserRepository,
   ) {}
 
-  async postGame(postGameDto: PostGameDto): Promise<void> {
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
+  async postGame(postGameDto: PostGameDto): Promise<PostGameResponseDto> {
     const { player1, player2 } = postGameDto;
     const currentSeason: Season =
       await this.seasonRepository.findCurrentSeason();
@@ -101,15 +111,27 @@ export class GameService {
       await this.saveTouchLog(userGame, log.event, log.round, log.ball);
     }
 
-    await this.updateAchievements(
+    const usersAchievements: UpdateUserAchievementsDto =
+      await this.updateAchievements(
+        player1.id,
+        player2.id,
+        currentSeason.id,
+        user1Rank.ladderPoint,
+        user2Rank.ladderPoint,
+      );
+
+    const usersTitles: UpdateUserTitlesDto = await this.updateUserLevel(
       player1.id,
       player2.id,
-      currentSeason.id,
-      user1Rank.ladderPoint,
-      user2Rank.ladderPoint,
+      player1Result,
+      player2Result,
     );
 
-    // await this.updateUserLevel(player1.id, player2.id);
+    const responseDto: PostGameResponseDto = {
+      achievement: usersAchievements,
+      title: usersTitles,
+    };
+    return responseDto;
   }
 
   async saveGame(
@@ -143,7 +165,7 @@ export class GameService {
     seasonId: number,
     player1LP: number,
     player2LP: number,
-  ): Promise<UserAchievementsDto> {
+  ): Promise<UpdateUserAchievementsDto> {
     const player1Games: UserGame[] =
       await this.userGameRepository.findAllByUserId(player1Id);
     const player2Games: UserGame[] =
@@ -164,8 +186,8 @@ export class GameService {
       (userGame: UserGame) => userGame.result === GAMERESULT_WIN,
     ).length;
 
-    const updatedUserAchievements: UserAchievementsDto =
-      new UserAchievementsDto();
+    const updatedUserAchievements: UpdateUserAchievementsDto =
+      new UpdateUserAchievementsDto();
     updatedUserAchievements.updateAchievements = [];
 
     if (player1Achievements.length !== achievements.length) {
@@ -176,7 +198,7 @@ export class GameService {
             achievements[0].id,
           );
           updatedUserAchievements.updateAchievements.push(
-            new UpDateUserAchievementDto(player1Id, achievements[0].id),
+            new UpdateUserAchievementDto(player1Id, achievements[0].id),
           );
           break;
         }
@@ -186,7 +208,7 @@ export class GameService {
             achievements[1].id,
           );
           updatedUserAchievements.updateAchievements.push(
-            new UpDateUserAchievementDto(player1Id, achievements[1].id),
+            new UpdateUserAchievementDto(player1Id, achievements[1].id),
           );
           break;
         }
@@ -196,7 +218,7 @@ export class GameService {
             achievements[2].id,
           );
           updatedUserAchievements.updateAchievements.push(
-            new UpDateUserAchievementDto(player1Id, achievements[2].id),
+            new UpdateUserAchievementDto(player1Id, achievements[2].id),
           );
           break;
         }
@@ -213,7 +235,7 @@ export class GameService {
             achievements[0].id,
           );
           updatedUserAchievements.updateAchievements.push(
-            new UpDateUserAchievementDto(player2Id, achievements[0].id),
+            new UpdateUserAchievementDto(player2Id, achievements[0].id),
           );
           break;
         }
@@ -223,7 +245,7 @@ export class GameService {
             achievements[1].id,
           );
           updatedUserAchievements.updateAchievements.push(
-            new UpDateUserAchievementDto(player2Id, achievements[1].id),
+            new UpdateUserAchievementDto(player2Id, achievements[1].id),
           );
           break;
         }
@@ -233,7 +255,7 @@ export class GameService {
             achievements[2].id,
           );
           updatedUserAchievements.updateAchievements.push(
-            new UpDateUserAchievementDto(player2Id, achievements[2].id),
+            new UpdateUserAchievementDto(player2Id, achievements[2].id),
           );
           break;
         }
@@ -267,7 +289,7 @@ export class GameService {
           player1AchievementId,
         );
         updatedUserAchievements.updateAchievements.push(
-          new UpDateUserAchievementDto(player1Id, player1AchievementId),
+          new UpdateUserAchievementDto(player1Id, player1AchievementId),
         );
       }
     }
@@ -283,7 +305,7 @@ export class GameService {
           player2AchievementId,
         );
         updatedUserAchievements.updateAchievements.push(
-          new UpDateUserAchievementDto(player2Id, player2AchievementId),
+          new UpdateUserAchievementDto(player2Id, player2AchievementId),
         );
       }
     }
@@ -304,22 +326,80 @@ export class GameService {
     return updatedUserAchievements;
   }
 
-  // async updateUserLevel(player1Id: number, player2Id: number): Promise<void> {
-  //   const player1: User = await this.userRepository.findById(player1Id);
-  //   const player2: User = await this.userRepository.findById(player2Id);
+  async updateUserLevel(
+    player1Id: number,
+    player2Id: number,
+    player1Result: GameResultType,
+    player2Result: GameResultType,
+  ): Promise<UpdateUserTitlesDto> {
+    const titles = await this.titleRepository.findAll();
+    const player1: User = await this.userRepository.findById(player1Id);
+    const player2: User = await this.userRepository.findById(player2Id);
 
-  //   // player1의 레벨 업 체크 및 경험치 추가
-  //   // 경험치 불러오기
-  //   const player1Exp = player1.exp;
-  //   // 경험치 추가
-  //   // 레벨 업 체크 및 타이틀 추가
+    // player1의 레벨 업 체크 및 경험치 추가
+    const player1Exp = this.calculateExperiencePoints(player1Result);
+    const player1Level = this.calculateLevel(player1, player1Exp);
+    await this.userRepository.update(player1.id, player1Exp, player1Level);
+    const updatedPlayer1: User = await this.userRepository.findById(player1Id);
+    this.updateTitle(updatedPlayer1, titles);
 
-  //   // player2의 레벨 업 체크 및 경험치 추가
-  //   const player2Exp = player2.exp;
-  //   // 경험치 불러오기
-  //   // 경험치 추가
-  //   // 레벨 업 체크 및 타이틀 추가
-  // }
+    // player2의 레벨 업 체크 및 경험치 추가
+    const player2Exp = this.calculateExperiencePoints(player2Result);
+    const player2Level = this.calculateLevel(player2, player2Exp);
+    await this.userRepository.update(player2.id, player2Exp, player2Level);
+    const updatedPlayer2: User = await this.userRepository.findById(player2Id);
+    this.updateTitle(updatedPlayer2, titles);
+
+    // 업데이트된 유저 타이틀 정보를 반환합니다.
+    const updateUserTitles: UpdateUserTitlesDto = new UpdateUserTitlesDto();
+    updateUserTitles.updateUserTitles = [];
+
+    const updatePlayerTitles = (player: User) => {
+      if (player.level >= 10) {
+        updateUserTitles.updateUserTitles.push(
+          new UpdateUserTitleDto(player.id, titles[0].id),
+        );
+      }
+      if (player.level >= 42) {
+        updateUserTitles.updateUserTitles.push(
+          new UpdateUserTitleDto(player.id, titles[1].id),
+        );
+      }
+      if (player.level >= 100) {
+        updateUserTitles.updateUserTitles.push(
+          new UpdateUserTitleDto(player.id, titles[2].id),
+        );
+      }
+    };
+
+    updatePlayerTitles(updatedPlayer1);
+    updatePlayerTitles(updatedPlayer2);
+
+    return updateUserTitles;
+  }
+
+  private async updateTitle(player: User, titles: Title[]): Promise<void> {
+    const playerLevel = player.level;
+    if (playerLevel >= 100) {
+      await this.userTitleRepository.save(player.id, titles[2].id);
+    } else if (playerLevel >= 42) {
+      await this.userTitleRepository.save(player.id, titles[1].id);
+    } else if (playerLevel >= 10) {
+      await this.userTitleRepository.save(player.id, titles[0].id);
+    }
+  }
+
+  private calculateExperiencePoints(playerResult: GameResultType): number {
+    const exp = playerResult === GAMERESULT_WIN ? 20 : 10; // player가 이겼을 때는 20점, 아닐 때는 10점
+    return exp;
+  }
+
+  private calculateLevel(player: User, exp: number): number {
+    const playerExp = player.exp;
+    exp += playerExp;
+    const level = Math.floor(exp / 100);
+    return level;
+  }
 
   private checkGameResult(
     player1Score: number,

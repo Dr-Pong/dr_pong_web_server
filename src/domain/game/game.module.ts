@@ -20,6 +20,8 @@ import { UserTitle } from '../user-title/user-title.entity';
 import { User } from '../user/user.entity';
 import { Rank } from '../rank/rank.entity';
 import { RankRepository } from '../rank/rank.repository';
+import { Title } from '../title/title.entity';
+import { TitleRepository } from '../title/title.repository';
 
 @Module({
   imports: [
@@ -33,6 +35,7 @@ import { RankRepository } from '../rank/rank.repository';
       UserTitle,
       User,
       Rank,
+      Title,
     ]),
   ],
   providers: [
@@ -46,6 +49,7 @@ import { RankRepository } from '../rank/rank.repository';
     UserTitleRepository,
     UserRepository,
     RankRepository,
+    TitleRepository,
   ],
   exports: [GameService],
   controllers: [GameController],
