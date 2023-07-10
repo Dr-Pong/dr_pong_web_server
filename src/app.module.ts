@@ -21,11 +21,6 @@ import { SeasonRepository } from './domain/season/season.repository';
 import { ProfileImage } from './domain/profile-image/profile-image.entity';
 import { Season } from './domain/season/season.entity';
 import { GameModule } from './domain/game/game.module';
-import { User } from './domain/user/user.entity';
-import { Emoji } from './domain/emoji/emoji.entity';
-import { UserEmoji } from './domain/user-emoji/user-emoji.entity';
-import { Achievement } from './domain/achievement/achievement.entity';
-import { Title } from './domain/title/title.entity';
 import { UserRepository } from './domain/user/user.repository';
 import { EmojiRepository } from './domain/emoji/emoji.repository';
 import { UserEmojiRepository } from './domain/user-emoji/user-emoji.repository';
@@ -57,15 +52,8 @@ import { UserEmojiRepository } from './domain/user-emoji/user-emoji.repository';
     ProfileImageModule,
     UserGameModule,
     AuthModule,
-    TypeOrmModule.forFeature([
-      User,
-      ProfileImage,
-      Season,
-      Emoji,
-      Title,
-      UserEmoji,
-      Achievement,
-    ]),
+    GameModule,
+    TypeOrmModule.forFeature([ProfileImage, Season]),
   ],
   controllers: [AppController],
   providers: [
