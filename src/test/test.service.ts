@@ -105,9 +105,9 @@ export class TestService {
     const user = await this.userRepository.save({
       id: index + 2,
       nickname: 'user' + index.toString(),
-      email: index.toString() + '@mail.com',
-      statusMessage: index.toString(),
       image: this.profileImages[0],
+      level: 1,
+      exp: 0,
     });
     this.users.push(user);
     return user;
@@ -715,7 +715,7 @@ export class TestService {
     return token;
   }
 
-  async createGameWithTouchLog(n: number): Promise<void> {
+  async createGameWithTouchLog(n: number): Promise<UserGame> {
     const winner: User = await this.createBasicUser();
     const loser: User = await this.createBasicUser();
     const users: User[] = [winner, loser];
@@ -731,33 +731,31 @@ export class TestService {
         }),
       );
     }
-    for (let i = 0; i < n; i++) {
-      userGames.push(
-        await this.userGameRepository.save({
-          user: users[0],
-          game: this.games[i],
-          result: GAMERESULT_WIN,
-          score: 10,
-          lpChange: this.games[i].type === GAMETYPE_RANK ? 10 : 0,
-          lpResult: 110,
-        }),
-      );
-      userGames.push(
-        await this.userGameRepository.save({
-          user: users[1],
-          game: this.games[i],
-          result: GAMERESULT_LOSE,
-          score: 0,
-          lpChange: this.games[i].type === GAMETYPE_RANK ? -10 : 0,
-          lpResult: 90,
-        }),
-      );
-    }
+    userGames.push(
+      await this.userGameRepository.save({
+        user: users[0],
+        game: this.games[0],
+        result: GAMERESULT_WIN,
+        score: 10,
+        lpChange: this.games[0].type === GAMETYPE_RANK ? 10 : 0,
+        lpResult: 110,
+      }),
+    );
+    userGames.push(
+      await this.userGameRepository.save({
+        user: users[1],
+        game: this.games[0],
+        result: GAMERESULT_LOSE,
+        score: 0,
+        lpChange: this.games[0].type === GAMETYPE_RANK ? -10 : 0,
+        lpResult: 90,
+      }),
+    );
 
     for (let i = 0; i < n; i++) {
       await this.touchLogRepository.save({
-        userGame: userGames[i],
-        event: i % 2 === 0 ? GAMEEVENT_TOUCH : GAMEEVENT_SCORE,
+        userGame: userGames[i % 2],
+        event: i % 10 === 0 ? GAMEEVENT_SCORE : GAMEEVENT_TOUCH,
         round: i + 1,
         ballSpeed: 10,
         ballDirectionX: 10,
@@ -767,5 +765,6 @@ export class TestService {
         ballSpinSpeed: 10,
       });
     }
+    return userGames[0];
   }
 }
