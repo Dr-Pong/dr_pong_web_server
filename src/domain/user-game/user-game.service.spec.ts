@@ -292,4 +292,17 @@ describe('UserGameService', () => {
     // expect(UserGameResponseDto.rounds[0].bounces).toHaveProperty('bounces');
     // expect(UserGameResponseDto.rounds[0].meWin).toHaveProperty('meWin');
   });
+
+  it.only('GameId로 touchLog 조회', async () => {
+    await testData.createGameWithTouchLog(10);
+
+    const user0GameDto = new GetUserGameByNicknameAndGameIdDto(
+      testData.users[0].nickname,
+      testData.games[0].id,
+    );
+    const UserGameResponseDto: UserGameByNicknameAndGameIdResponseDto =
+      await service.getUserGameByNicknameAndGameId(user0GameDto);
+
+    console.log(UserGameResponseDto);
+  });
 });

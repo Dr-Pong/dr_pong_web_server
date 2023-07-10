@@ -22,7 +22,10 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { GAMEMODE_SFINAE } from 'src/global/type/type.game.mode';
 import { TouchLog } from 'src/domain/touch-log/touch.log.entity';
-import { GAMEEVENT_SCORE } from 'src/global/type/type.game.event';
+import {
+  GAMEEVENT_SCORE,
+  GAMEEVENT_TOUCH,
+} from 'src/global/type/type.game.event';
 
 @Injectable()
 export class TestService {
@@ -712,46 +715,57 @@ export class TestService {
     return token;
   }
 
-  async createGameWithTouchLog(): Promise<void> {
-    await this.createBasicUser();
-    await this.createBasicUser();
-    for (let i = 0; i < 3; i++) {
+  async createGameWithTouchLog(n: number): Promise<void> {
+    const winner: User = await this.createBasicUser();
+    const loser: User = await this.createBasicUser();
+    const users: User[] = [winner, loser];
+    const userGames = [];
+    for (let i = 0; i < n; i++) {
       this.games.push(
         await this.gameRepository.save({
           season: this.currentSeason,
           startTime: '2021-01-01',
           playTime: 10,
-          type: GAMETYPE_NORMAL,
+          type: i % 2 === 0 ? GAMETYPE_RANK : GAMETYPE_NORMAL,
           mode: GAMEMODE_SFINAE,
         }),
       );
     }
-    for (let j = 0; j < 6; j++) {
-      this.userGames.push(
+    for (let i = 0; i < n; i++) {
+      userGames.push(
         await this.userGameRepository.save({
-          user: j % 2 === 0 ? this.users[0] : this.users[1],
-          game: this.games[Math.floor(j / 2)],
-          result: j % 2 === 0 ? GAMERESULT_WIN : GAMERESULT_LOSE,
-          score: j % 2 === 0 ? 10 : 0,
-          lpChange: 0,
-          lpResult: 100,
+          user: users[0],
+          game: this.games[i],
+          result: GAMERESULT_WIN,
+          score: 10,
+          lpChange: this.games[i].type === GAMETYPE_RANK ? 10 : 0,
+          lpResult: 110,
+        }),
+      );
+      userGames.push(
+        await this.userGameRepository.save({
+          user: users[1],
+          game: this.games[i],
+          result: GAMERESULT_LOSE,
+          score: 0,
+          lpChange: this.games[i].type === GAMETYPE_RANK ? -10 : 0,
+          lpResult: 90,
         }),
       );
     }
-    for (let i = 0; i < 6; i++) {
-      this.touchLogs.push(
-        await this.touchLogRepository.save({
-          userGame: this.userGames[i],
-          event: i % 2 === 0 ? GAMEEVENT_SCORE : GAMEEVENT_SCORE,
-          round: i,
-          ballSpeed: 0,
-          ballDirectionX: 0,
-          ballDirectionY: 0,
-          ballPositionX: 0,
-          ballPositionY: 0,
-          ballSpinSpeed: 0,
-        }),
-      );
+
+    for (let i = 0; i < n; i++) {
+      await this.touchLogRepository.save({
+        userGame: userGames[i],
+        event: i % 2 === 0 ? GAMEEVENT_TOUCH : GAMEEVENT_SCORE,
+        round: i + 1,
+        ballSpeed: 10,
+        ballDirectionX: 10,
+        ballDirectionY: 10,
+        ballPositionX: 10,
+        ballPositionY: 10,
+        ballSpinSpeed: 10,
+      });
     }
   }
 }
