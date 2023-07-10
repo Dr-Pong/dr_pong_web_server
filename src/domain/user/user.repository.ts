@@ -13,6 +13,10 @@ export class UserRepository {
     private readonly repository: Repository<User>,
   ) {}
 
+  async findAll(): Promise<User[]> {
+    return await this.repository.find();
+  }
+
   async findById(userId: number): Promise<User> {
     return await this.repository.findOne({ where: { id: userId } });
   }
@@ -34,8 +38,8 @@ export class UserRepository {
     await this.repository.save(user);
   }
 
-  async save(postDto: PostGatewayUserDto): Promise<void> {
-    await this.repository.save({
+  async save(postDto: PostGatewayUserDto): Promise<User> {
+    return await this.repository.save({
       id: postDto.id,
       nickname: postDto.nickname,
       image: {
