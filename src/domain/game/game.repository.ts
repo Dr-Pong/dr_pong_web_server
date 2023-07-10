@@ -17,7 +17,7 @@ export class GameRepository {
     return await this.repository.save({
       season: currentSeason,
       startTime: startTime,
-      playTime: endTime.getTime() - startTime.getTime(),
+      playTime: new Date(endTime).getTime() - new Date(startTime).getTime(),
       type,
       mode,
     });
