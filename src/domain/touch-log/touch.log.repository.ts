@@ -31,4 +31,10 @@ export class TouchLogRepository {
       ballSpinSpeed: ball.spinSpeed,
     });
   }
+
+  async findAllByUserGameId(userGameId: number): Promise<TouchLog[]> {
+    return await this.touchLogRepository.find({
+      where: { userGame: { id: userGameId } },
+    });
+  }
 }

@@ -14,12 +14,16 @@ import { UserGameByNicknameAndGameIdResponseDto } from './dto/get.user-game.game
 import { GetUserGameByNicknameAndGameIdDto } from './dto/get.user-game.by.nickname.and.gameid.dto';
 import { UserGameLpDto } from './dto/user-game.lp.dto';
 import { IsolationLevel, Transactional } from 'typeorm-transactional';
+import { UserGameRoundDto } from './dto/user-game.round.dto';
+import { TouchLogRepository } from '../touch-log/touch.log.repository';
+import { GAMEEVENT_TOUCH } from 'src/global/type/type.game.event';
 @Injectable()
 export class UserGameService {
   private readonly logger: Logger = new Logger(UserGameService.name);
   constructor(
     private readonly userGameRepository: UserGameRepository,
     private readonly seasonRepository: SeasonRepository,
+    private readonly touchLogRepository: TouchLogRepository,
   ) {}
 
   @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
@@ -102,11 +106,29 @@ export class UserGameService {
       youUserGame.lpResult,
       youUserGame.lpChange,
     );
+
+    const touchLog = await this.touchLogRepository.findAllByUserGameId(
+      getDto.gameId,
+    );
+
+    const rounds: UserGameRoundDto[] = [];
+    let i = 0;
+    while (i < touchLog.length) {
+      i = 0;
+      while (touchLog[i].event === GAMEEVENT_TOUCH) {
+        i++;
+      }
+      rounds.push({
+        bounces: i,
+        meWin: touchLog[i].userGame.id === meUserGame.user.id,
+      });
+    }
+
     const responseDto = new UserGameByNicknameAndGameIdResponseDto(
       meUserGame.game.playTime,
       responseMeDto,
       responseYouDto,
-      null,
+      rounds,
     );
     return responseDto;
   }
