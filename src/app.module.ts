@@ -24,6 +24,13 @@ import { GameModule } from './domain/game/game.module';
 import { UserRepository } from './domain/user/user.repository';
 import { EmojiRepository } from './domain/emoji/emoji.repository';
 import { UserEmojiRepository } from './domain/user-emoji/user-emoji.repository';
+import { User } from './domain/user/user.entity';
+import { Emoji } from './domain/emoji/emoji.entity';
+import { Title } from './domain/title/title.entity';
+import { UserTitle } from './domain/user-title/user-title.entity';
+import { UserEmoji } from './domain/user-emoji/user-emoji.entity';
+import { TitleRepository } from './domain/title/title.repository';
+import { UserTitleRepository } from './domain/user-title/user-title.repository';
 
 @Module({
   imports: [
@@ -53,7 +60,15 @@ import { UserEmojiRepository } from './domain/user-emoji/user-emoji.repository';
     UserGameModule,
     AuthModule,
     GameModule,
-    TypeOrmModule.forFeature([ProfileImage, Season]),
+    TypeOrmModule.forFeature([
+      ProfileImage,
+      Season,
+      User,
+      Emoji,
+      UserEmoji,
+      Title,
+      UserTitle,
+    ]),
   ],
   controllers: [AppController],
   providers: [
@@ -63,6 +78,8 @@ import { UserEmojiRepository } from './domain/user-emoji/user-emoji.repository';
     UserRepository,
     EmojiRepository,
     UserEmojiRepository,
+    TitleRepository,
+    UserTitleRepository,
   ],
 })
 export class AppModule {}

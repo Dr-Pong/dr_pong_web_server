@@ -17,4 +17,11 @@ export class TitleRepository {
   async findOneById(id: number): Promise<Title> {
     return await this.repository.findOne({ where: { id } });
   }
+
+  async save(name: string, content: string): Promise<Title> {
+    return await this.repository.save({
+      name,
+      content,
+    });
+  }
 }

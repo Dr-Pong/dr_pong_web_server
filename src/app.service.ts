@@ -5,6 +5,8 @@ import { SeasonRepository } from './domain/season/season.repository';
 import { UserRepository } from './domain/user/user.repository';
 import { EmojiRepository } from './domain/emoji/emoji.repository';
 import { UserEmojiRepository } from './domain/user-emoji/user-emoji.repository';
+import { TitleRepository } from './domain/title/title.repository';
+import { UserTitleRepository } from './domain/user-title/user-title.repository';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -14,6 +16,8 @@ export class AppService implements OnApplicationBootstrap {
     private readonly userRepository: UserRepository,
     private readonly emojiRepository: EmojiRepository,
     private readonly userEmojiRepository: UserEmojiRepository,
+    private readonly titleRepository: TitleRepository,
+    private readonly userTitleRepository: UserTitleRepository,
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
@@ -84,6 +88,18 @@ export class AppService implements OnApplicationBootstrap {
         for (const d of savedEmojis) {
           await this.userEmojiRepository.save(c.id, d.id);
         }
+      }
+    }
+    const titles = await this.titleRepository.findAll();
+    console.log(titles.length);
+    if (titles.length === 0) {
+      const title1 = await this.titleRepository.save('나는 강하다', '- 김재환');
+      const title2 = await this.titleRepository.save('나는 약하다', '- 김지현');
+
+      const users = await this.userRepository.findAll();
+      for (const c of users) {
+        await this.userTitleRepository.save(c.id, title1.id);
+        await this.userTitleRepository.save(c.id, title2.id);
       }
     }
   }
