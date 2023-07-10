@@ -221,7 +221,7 @@ describe('UserController', () => {
         expect(response.body.me.lpChange).toBe(0);
         expect(response.body.you.lp).toBe(100);
         expect(response.body.you.lpChange).toBe(0);
-        console.log(response.body.rounds);
+        // console.log(response.body.rounds);
       });
       it('Error Cases Test: UserGame에 유저가 없는경우', async () => {
         await testService.createBasicGames();
