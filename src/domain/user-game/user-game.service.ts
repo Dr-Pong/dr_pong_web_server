@@ -115,13 +115,14 @@ export class UserGameService {
     let i = 0;
     while (i < touchLog.length) {
       let bounces = 0;
-      while (touchLog[i].event === GAMEEVENT_TOUCH) {
+      while (i < touchLog.length && touchLog[i]?.event === GAMEEVENT_TOUCH) {
         i++;
         bounces++;
       }
+      if (i >= touchLog.length) break;
       rounds.push({
         bounces: bounces,
-        meWin: touchLog[i].userGame.id === meUserGame.user.id,
+        meWin: touchLog[i].userGame.id === meUserGame.id,
       });
       i++;
     }
