@@ -88,4 +88,13 @@ export class RankRepository {
       { ladderPoint: userLp },
     );
   }
+
+  async save(userId: number, seasonId: number): Promise<void> {
+    await this.repository.save({
+      user: { id: userId },
+      season: { id: seasonId },
+      ladderPoint: 1000,
+      highestPoint: 1000,
+    });
+  }
 }

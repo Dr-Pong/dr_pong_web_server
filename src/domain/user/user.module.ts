@@ -16,10 +16,14 @@ import { UserRecordsController } from './controller/user.records.controller';
 import { UserStatsController } from './controller/user.stats.controller';
 import { UserCollectablesController } from './controller/user.collectables.controller';
 import { UserGatewayController } from './controller/user.gateway.controller';
+import { Season } from '../season/season.entity';
+import { Rank } from '../rank/rank.entity';
+import { SeasonRepository } from '../season/season.repository';
+import { RankRepository } from '../rank/rank.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, ProfileImage]),
+    TypeOrmModule.forFeature([User, ProfileImage, Season, Rank]),
     UsertitleModule,
     UserAchievementModule,
     UserEmojiModule,
@@ -35,7 +39,13 @@ import { UserGatewayController } from './controller/user.gateway.controller';
     UserStatsController,
     UserGatewayController,
   ],
-  providers: [UserService, UserRepository, ProfileImageRepository],
+  providers: [
+    UserService,
+    UserRepository,
+    ProfileImageRepository,
+    SeasonRepository,
+    RankRepository,
+  ],
   exports: [UserService],
 })
 export class UserModule {}

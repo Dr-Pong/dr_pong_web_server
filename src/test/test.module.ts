@@ -36,22 +36,6 @@ import { TouchLog } from 'src/domain/touch-log/touch.log.entity';
     AuthModule,
   ],
   providers: [TestService],
-  exports: [
-    TestService,
-    TypeOrmModule.forFeature([
-      User,
-      Title,
-      UserTitle,
-      Rank,
-      Season,
-      Game,
-      Achievement,
-      UserAchievement,
-      Emoji,
-      UserEmoji,
-      UserGame,
-      ProfileImage,
-    ]),
-  ],
+  exports: [TestService],
 })
 export class TestModule {}

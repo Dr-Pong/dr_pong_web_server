@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { GameEvent } from 'src/global/type/type.game.event';
-import { Ball } from './object/ball';
 import { UserGame } from '../user-game/user-game.entity';
 
 @Entity()
@@ -27,18 +26,18 @@ export class TouchLog {
   @Column({ name: 'ball_speed' })
   ballSpeed: number;
 
-  @Column({ name: 'ball_direction_x' })
+  @Column({ name: 'ball_direction_x', type: 'float' })
   ballDirectionX: number;
 
-  @Column({ name: 'ball_direction_y' })
+  @Column({ name: 'ball_direction_y', type: 'float' })
   ballDirectionY: number;
 
-  @Column({ name: 'ball_position_x' })
+  @Column({ name: 'ball_position_x', type: 'float' })
   ballPositionX: number;
 
-  @Column({ name: 'ball_position_y' })
+  @Column({ name: 'ball_position_y', type: 'float' })
   ballPositionY: number;
 
-  @Column({ name: 'ball_spin_speed' })
+  @Column({ name: 'ball_spin_speed', type: 'float' })
   ballSpinSpeed: number;
 }

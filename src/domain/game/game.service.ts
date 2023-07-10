@@ -313,13 +313,13 @@ export class GameService {
     function getAchievementByLPCut(lp: number): number {
       switch (true) {
         case lp >= Number(process.env.DOCTOR_CUT):
-          return achievements[6].id;
+          return achievements[6]?.id;
         case lp >= Number(process.env.MASTER_CUT):
-          return achievements[5].id;
+          return achievements[5]?.id;
         case lp >= Number(process.env.BACHELOR_CUT):
-          return achievements[4].id;
+          return achievements[4]?.id;
         case lp >= Number(process.env.STUDENT_CUT):
-          return achievements[3].id;
+          return achievements[3]?.id;
       }
     }
 
