@@ -114,14 +114,16 @@ export class UserGameService {
     const rounds: UserGameRoundDto[] = [];
     let i = 0;
     while (i < touchLog.length) {
-      i = 0;
+      let bounces = 0;
       while (touchLog[i].event === GAMEEVENT_TOUCH) {
         i++;
+        bounces++;
       }
       rounds.push({
-        bounces: i,
+        bounces: bounces,
         meWin: touchLog[i].userGame.id === meUserGame.user.id,
       });
+      i++;
     }
 
     const responseDto = new UserGameByNicknameAndGameIdResponseDto(

@@ -32,9 +32,9 @@ export class TouchLogRepository {
     });
   }
 
-  async findAllByUserGameId(userGameId: number): Promise<TouchLog[]> {
+  async findAllByUserGameId(gameId: number): Promise<TouchLog[]> {
     return await this.touchLogRepository.find({
-      where: { userGame: { id: userGameId } },
+      where: { userGame: { game: { id: gameId } } },
     });
   }
 }
