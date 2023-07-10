@@ -20,6 +20,7 @@ import { ProfileImageRepository } from './domain/profile-image/profile-image.rep
 import { SeasonRepository } from './domain/season/season.repository';
 import { ProfileImage } from './domain/profile-image/profile-image.entity';
 import { Season } from './domain/season/season.entity';
+import { GameModule } from './domain/game/game.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { Season } from './domain/season/season.entity';
     ProfileImageModule,
     UserGameModule,
     AuthModule,
+    GameModule,
     TypeOrmModule.forFeature([ProfileImage, Season]),
   ],
   controllers: [AppController],
