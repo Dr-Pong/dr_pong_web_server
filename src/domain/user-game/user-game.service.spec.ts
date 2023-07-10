@@ -294,11 +294,11 @@ describe('UserGameService', () => {
   });
 
   it.only('GameId로 touchLog 조회', async () => {
-    await testData.createGameWithTouchLog(10);
+    const userGame = await testData.createGameWithTouchLog(10);
 
     const user0GameDto = new GetUserGameByNicknameAndGameIdDto(
       testData.users[0].nickname,
-      testData.games[0].id,
+      userGame.id,
     );
     const UserGameResponseDto: UserGameByNicknameAndGameIdResponseDto =
       await service.getUserGameByNicknameAndGameId(user0GameDto);
