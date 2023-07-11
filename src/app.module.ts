@@ -31,6 +31,8 @@ import { UserTitle } from './domain/user-title/user-title.entity';
 import { UserEmoji } from './domain/user-emoji/user-emoji.entity';
 import { TitleRepository } from './domain/title/title.repository';
 import { UserTitleRepository } from './domain/user-title/user-title.repository';
+import { Achievement } from './domain/achievement/achievement.entity';
+import { AchievementRepository } from './domain/achievement/achievement.repository';
 
 @Module({
   imports: [
@@ -68,6 +70,7 @@ import { UserTitleRepository } from './domain/user-title/user-title.repository';
       UserEmoji,
       Title,
       UserTitle,
+      Achievement,
     ]),
   ],
   controllers: [AppController],
@@ -80,6 +83,7 @@ import { UserTitleRepository } from './domain/user-title/user-title.repository';
     UserEmojiRepository,
     TitleRepository,
     UserTitleRepository,
+    AchievementRepository,
   ],
 })
 export class AppModule {}
