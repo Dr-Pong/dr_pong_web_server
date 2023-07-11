@@ -109,43 +109,36 @@ export class AppService implements OnApplicationBootstrap {
     const achievements = await this.achievementRepository.findAll();
     if (achievements.length === 0) {
       await this.achievementRepository.save(
-        1,
         'seahorse',
         'first victory',
         'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/junyopar.jpeg',
       );
       await this.achievementRepository.save(
-        2,
         'octopus',
         '8th victory',
         'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/daekim.jpeg',
       );
       await this.achievementRepository.save(
-        3,
         'squid',
         '10th victory',
         'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jabae.jpeg',
       );
       await this.achievementRepository.save(
-        4,
         'hatch',
         'reached student tier',
         'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/him.jpeg',
       );
       await this.achievementRepository.save(
-        5,
         'summa cum laude',
         'reached bachelor tier',
         'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jaekim.jpeg',
       );
       await this.achievementRepository.save(
-        6,
         'transcendence',
         'reached master tier',
         'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jaemjung.jpeg',
       );
       await this.achievementRepository.save(
-        7,
         'dr.pong',
         'reached doctor tier',
         'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jujeon.jpeg',
