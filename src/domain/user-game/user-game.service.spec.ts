@@ -289,8 +289,6 @@ describe('UserGameService', () => {
     expect(UserGameResponseDto.you.lp).toBe(100);
     expect(UserGameResponseDto.you.lpChange).toBe(0);
     expect(UserGameResponseDto).toHaveProperty('rounds');
-    // expect(UserGameResponseDto.rounds[0].bounces).toHaveProperty('bounces');
-    // expect(UserGameResponseDto.rounds[0].meWin).toHaveProperty('meWin');
   });
 
   it('GameId로 touchLog 조회', async () => {
