@@ -32,6 +32,7 @@ describe('UserGatewayController', () => {
   beforeEach(async () => {
     await testService.createProfileImages();
     await testService.createBasicCollectable();
+    await testService.createBasicSeasons(1);
   });
 
   afterAll(async () => {
@@ -69,6 +70,7 @@ describe('UserGatewayController', () => {
       expect(response.status).toBe(201);
     });
   });
+
   const req = async (
     token: string,
     method: string,

@@ -141,6 +141,7 @@ describe('UserService', () => {
 
   it('GateWay User 저장 테스트', async () => {
     await testData.createProfileImages();
+    await testData.createBasicSeasons(1);
 
     const gateWayUser: PostGatewayUserDto = {
       id: 1,

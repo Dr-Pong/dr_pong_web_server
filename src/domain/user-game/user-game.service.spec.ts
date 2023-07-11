@@ -293,7 +293,7 @@ describe('UserGameService', () => {
     // expect(UserGameResponseDto.rounds[0].meWin).toHaveProperty('meWin');
   });
 
-  it.only('GameId로 touchLog 조회', async () => {
+  it('GameId로 touchLog 조회', async () => {
     const userGame = await testData.createGameWithTouchLog(10);
 
     const user0GameDto = new GetUserGameByNicknameAndGameIdDto(
@@ -303,6 +303,8 @@ describe('UserGameService', () => {
     const UserGameResponseDto: UserGameByNicknameAndGameIdResponseDto =
       await service.getUserGameByNicknameAndGameId(user0GameDto);
 
-    console.log(UserGameResponseDto);
+    expect(UserGameResponseDto).toHaveProperty('rounds');
+    expect(UserGameResponseDto.rounds[0]).toHaveProperty('bounces');
+    expect(UserGameResponseDto.rounds[0]).toHaveProperty('meWin');
   });
 });
