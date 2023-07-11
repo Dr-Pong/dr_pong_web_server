@@ -16,4 +16,13 @@ export class AchievementRepository {
   async findOneById(id: number): Promise<Achievement> {
     return await this.repository.findOne({ where: { id } });
   }
+
+  async save(
+    id: number,
+    name: string,
+    content: string,
+    imageUrl: string,
+  ): Promise<void> {
+    await this.repository.save({ id, name, content, imageUrl });
+  }
 }

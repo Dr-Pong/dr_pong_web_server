@@ -7,6 +7,7 @@ import { EmojiRepository } from './domain/emoji/emoji.repository';
 import { UserEmojiRepository } from './domain/user-emoji/user-emoji.repository';
 import { TitleRepository } from './domain/title/title.repository';
 import { UserTitleRepository } from './domain/user-title/user-title.repository';
+import { AchievementRepository } from './domain/achievement/achievement.repository';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -18,6 +19,7 @@ export class AppService implements OnApplicationBootstrap {
     private readonly userEmojiRepository: UserEmojiRepository,
     private readonly titleRepository: TitleRepository,
     private readonly userTitleRepository: UserTitleRepository,
+    private readonly achievementRepository: AchievementRepository,
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
@@ -91,16 +93,63 @@ export class AppService implements OnApplicationBootstrap {
       }
     }
     const titles = await this.titleRepository.findAll();
-    console.log(titles.length);
     if (titles.length === 0) {
-      const title1 = await this.titleRepository.save('나는 강하다', '- 김재환');
-      const title2 = await this.titleRepository.save('나는 약하다', '- 김지현');
+      await this.titleRepository.save(1, 'pisciner', '10레벨 달성');
+      await this.titleRepository.save(2, 'cadet', '42레벨 달성');
+      await this.titleRepository.save(3, 'member', '100레벨 달성');
 
       const users = await this.userRepository.findAll();
       for (const c of users) {
-        await this.userTitleRepository.save(c.id, title1.id);
-        await this.userTitleRepository.save(c.id, title2.id);
+        await this.userTitleRepository.save(c.id, titles[0].id);
+        await this.userTitleRepository.save(c.id, titles[1].id);
+        await this.userTitleRepository.save(c.id, titles[2].id);
       }
+    }
+
+    const achievements = await this.achievementRepository.findAll();
+    if (achievements.length === 0) {
+      await this.achievementRepository.save(
+        1,
+        'seahorse',
+        'first victory',
+        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/junyopar.jpeg',
+      );
+      await this.achievementRepository.save(
+        2,
+        'octopus',
+        '8th victory',
+        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/daekim.jpeg',
+      );
+      await this.achievementRepository.save(
+        3,
+        'squid',
+        '10th victory',
+        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jabae.jpeg',
+      );
+      await this.achievementRepository.save(
+        4,
+        'hatch',
+        'reached student tier',
+        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/him.jpeg',
+      );
+      await this.achievementRepository.save(
+        5,
+        'summa cum laude',
+        'reached bachelor tier',
+        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jaekim.jpeg',
+      );
+      await this.achievementRepository.save(
+        6,
+        'transcendence',
+        'reached master tier',
+        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jaemjung.jpeg',
+      );
+      await this.achievementRepository.save(
+        7,
+        'dr.pong',
+        'reached doctor tier',
+        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jujeon.jpeg',
+      );
     }
   }
 
