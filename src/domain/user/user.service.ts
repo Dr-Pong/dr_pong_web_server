@@ -108,7 +108,6 @@ export class UserService {
   async postUser(postDto: PostGatewayUserDto): Promise<void> {
     const user: User = await this.userRepository.save(postDto);
     const season: Season = await this.seasonRepository.findCurrentSeason();
-    console.log(user, season);
     await this.rankRepository.save(user.id, season.id);
   }
 }

@@ -201,8 +201,6 @@ describe('UserController', () => {
     });
     describe('/users/{nickname}/records/{gameId}', () => {
       it('유저의 게임 기록 반환', async () => {
-        // await testService.createBasicGames();
-        // console.log(testService.userGames);
         const userGame = await testService.createGameWithTouchLog(10);
         const response = await request(app.getHttpServer()).get(
           '/users/' + userGame.user.nickname + '/records/' + userGame.game.id,
@@ -219,7 +217,6 @@ describe('UserController', () => {
         expect(response.body.me.lpChange).toBe(10);
         expect(response.body.you.lp).toBe(90);
         expect(response.body.you.lpChange).toBe(-10);
-        console.log(response.body.rounds);
       });
       it('Error Cases Test: UserGame에 유저가 없는경우', async () => {
         await testService.createBasicGames();
