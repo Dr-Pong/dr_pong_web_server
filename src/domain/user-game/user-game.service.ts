@@ -127,8 +127,10 @@ export class UserGameService {
       i++;
     }
 
+    const duration = Math.floor(meUserGame.game.playTime / 1000);
+
     const responseDto = new UserGameByNicknameAndGameIdResponseDto(
-      meUserGame.game.playTime,
+      duration,
       responseMeDto,
       responseYouDto,
       rounds,
