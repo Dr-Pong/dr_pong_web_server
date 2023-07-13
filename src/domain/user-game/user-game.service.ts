@@ -17,6 +17,13 @@ import { IsolationLevel, Transactional } from 'typeorm-transactional';
 import { UserGameRoundDto } from './dto/user-game.round.dto';
 import { TouchLogRepository } from '../touch-log/touch.log.repository';
 import { GAMEEVENT_TOUCH } from 'src/global/type/type.game.event';
+import { GetUserGameExpDto } from './dto/get.user-game.exp.dto';
+import { GetUserGameExpResponseDto } from './dto/get.user-game.exp.response.dto';
+import {
+  GAMERESULT_LOSE,
+  GAMERESULT_TIE,
+  GAMERESULT_WIN,
+} from 'src/global/type/type.game.result';
 @Injectable()
 export class UserGameService {
   private readonly logger: Logger = new Logger(UserGameService.name);
@@ -136,5 +143,30 @@ export class UserGameService {
       rounds,
     );
     return responseDto;
+  }
+
+  @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
+  async getUserGameExpByNicknameAndGameId(
+    getDto: GetUserGameExpDto,
+  ): Promise<GetUserGameExpResponseDto> {
+    const { userId, gameId } = getDto;
+    const userGame = await this.userGameRepository.findOneByUserIdAndGameId(
+      userId,
+      gameId,
+    );
+
+    const expMapping = {
+      [GAMERESULT_LOSE]: Number(process.env.GAME_LOSE_EXP),
+      [GAMERESULT_WIN]: Number(process.env.GAME_WIN_EXP),
+      [GAMERESULT_TIE]: Number(process.env.GAME_TIE_EXP),
+    };
+
+    const exp = expMapping[userGame.result];
+
+    return new GetUserGameExpResponseDto(
+      userGame.lpResult,
+      exp,
+      Number(process.env.LEVEL_UP_EXP),
+    );
   }
 }

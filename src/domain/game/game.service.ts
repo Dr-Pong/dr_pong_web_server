@@ -191,78 +191,43 @@ export class GameService {
     updatedUserAchievements.updateAchievements = [];
 
     if (player1Achievements.length !== achievements.length) {
-      switch (player1WinCount) {
-        case 1: {
-          await this.userAchievementRepository.save(
-            player1Id,
-            achievements[0].id,
-          );
+      const achievementMapping = [
+        { winCount: 1, achievementIndex: 0 },
+        { winCount: 8, achievementIndex: 1 },
+        { winCount: 10, achievementIndex: 2 },
+      ];
+
+      for (const mapping of achievementMapping) {
+        if (player1WinCount === mapping.winCount) {
+          const achievementId = achievements[mapping.achievementIndex]?.id;
+          await this.userAchievementRepository.save(player1Id, achievementId);
           updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player1Id, achievements[0].id),
+            new UpdateUserAchievementDto(player1Id, achievementId),
           );
           break;
         }
-        case 8: {
-          await this.userAchievementRepository.save(
-            player1Id,
-            achievements[1].id,
-          );
-          updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player1Id, achievements[1].id),
-          );
-          break;
-        }
-        case 10: {
-          await this.userAchievementRepository.save(
-            player1Id,
-            achievements[2].id,
-          );
-          updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player1Id, achievements[2].id),
-          );
-          break;
-        }
-        default:
-          break;
       }
     }
 
     if (player2Achievements.length !== achievements.length) {
-      switch (player2WinCount) {
-        case 1: {
-          await this.userAchievementRepository.save(
-            player2Id,
-            achievements[0].id,
-          );
+      const achievementMapping = [
+        { winCount: 1, achievementIndex: 0 },
+        { winCount: 8, achievementIndex: 1 },
+        { winCount: 10, achievementIndex: 2 },
+      ];
+
+      for (const mapping of achievementMapping) {
+        if (player2WinCount === mapping.winCount) {
+          const achievementId = achievements[mapping.achievementIndex]?.id;
+          await this.userAchievementRepository.save(player2Id, achievementId);
           updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player2Id, achievements[0].id),
+            new UpdateUserAchievementDto(player2Id, achievementId),
           );
           break;
         }
-        case 8: {
-          await this.userAchievementRepository.save(
-            player2Id,
-            achievements[1].id,
-          );
-          updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player2Id, achievements[1].id),
-          );
-          break;
-        }
-        case 10: {
-          await this.userAchievementRepository.save(
-            player2Id,
-            achievements[2].id,
-          );
-          updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player2Id, achievements[2].id),
-          );
-          break;
-        }
-        default:
-          break;
       }
     }
+
     const user1Rank: Rank = await this.rankRepository.findByUserIdAndSeasonId(
       player1Id,
       seasonId,
@@ -310,16 +275,18 @@ export class GameService {
       }
     }
 
-    function getAchievementByLPCut(lp: number): number {
-      switch (true) {
-        case lp >= Number(process.env.DOCTOR_CUT):
-          return achievements[6]?.id;
-        case lp >= Number(process.env.MASTER_CUT):
-          return achievements[5]?.id;
-        case lp >= Number(process.env.BACHELOR_CUT):
-          return achievements[4]?.id;
-        case lp >= Number(process.env.STUDENT_CUT):
-          return achievements[3]?.id;
+    function getAchievementByLPCut(lp: number): number | undefined {
+      const lpThresholds = [
+        { cut: Number(process.env.DOCTOR_CUT), achievementIndex: 6 },
+        { cut: Number(process.env.MASTER_CUT), achievementIndex: 5 },
+        { cut: Number(process.env.BACHELOR_CUT), achievementIndex: 4 },
+        { cut: Number(process.env.STUDENT_CUT), achievementIndex: 3 },
+      ];
+
+      for (const threshold of lpThresholds) {
+        if (lp >= threshold.cut) {
+          return achievements[threshold.achievementIndex]?.id;
+        }
       }
     }
 
@@ -380,24 +347,38 @@ export class GameService {
 
   private async updateTitle(player: User, titles: Title[]): Promise<void> {
     const playerLevel = player.level;
-    if (playerLevel >= 100) {
-      await this.userTitleRepository.save(player.id, titles[2].id);
-    } else if (playerLevel >= 42) {
-      await this.userTitleRepository.save(player.id, titles[1].id);
-    } else if (playerLevel >= 10) {
-      await this.userTitleRepository.save(player.id, titles[0].id);
+
+    const titleMapping = [
+      { level: 100, titleIndex: 2 },
+      { level: 42, titleIndex: 1 },
+      { level: 10, titleIndex: 0 },
+    ];
+
+    for (const mapping of titleMapping) {
+      if (playerLevel >= mapping.level) {
+        await this.userTitleRepository.save(
+          player.id,
+          titles[mapping.titleIndex].id,
+        );
+        break;
+      }
     }
   }
 
   private calculateExperiencePoints(playerResult: GameResultType): number {
-    const exp = playerResult === GAMERESULT_WIN ? 20 : 10; // player가 이겼을 때는 20점, 아닐 때는 10점
-    return exp;
+    const expMap = {
+      [GAMERESULT_WIN]: Number(process.env.GAME_WIN_EXP),
+      [GAMERESULT_LOSE]: Number(process.env.GAME_LOSE_EXP),
+      [GAMERESULT_TIE]: Number(process.env.GAME_TIE_EXP),
+    };
+
+    return expMap[playerResult];
   }
 
   private calculateLevel(player: User, exp: number): number {
     const playerExp = player.exp;
     exp += playerExp;
-    const level = Math.floor(exp / 100);
+    const level = Math.floor(exp / Number(process.env.LEVEL_UP_EXP));
     return level;
   }
 
@@ -415,14 +396,17 @@ export class GameService {
   }
 
   async checkTier(playerLP: number): Promise<TierType> {
-    if (playerLP >= Number(process.env.DOCTOR_CUT)) {
-      return TIER_DOCTOR;
-    } else if (playerLP >= Number(process.env.MASTER_CUT)) {
-      return TIER_MASTER;
-    } else if (playerLP >= Number(process.env.BACHELOR_CUT)) {
-      return TIER_BACHELOR;
-    } else if (playerLP >= Number(process.env.STUDENT_CUT)) {
-      return TIER_STUDENT;
+    const tierMapping = [
+      { cut: Number(process.env.DOCTOR_CUT), tier: TIER_DOCTOR },
+      { cut: Number(process.env.MASTER_CUT), tier: TIER_MASTER },
+      { cut: Number(process.env.BACHELOR_CUT), tier: TIER_BACHELOR },
+      { cut: Number(process.env.STUDENT_CUT), tier: TIER_STUDENT },
+    ];
+
+    for (const tier of tierMapping) {
+      if (playerLP >= tier.cut) {
+        return tier.tier;
+      }
     }
   }
 }
