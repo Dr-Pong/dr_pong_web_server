@@ -488,7 +488,7 @@ export class TestService {
         await this.gameRepository.save({
           season: this.currentSeason,
           startTime: '2021-01-01',
-          playTime: 10,
+          playTime: 10000,
           type: GAMETYPE_NORMAL,
           mode: GAMEMODE_SFINAE,
         }),
@@ -725,7 +725,7 @@ export class TestService {
         await this.gameRepository.save({
           season: this.currentSeason,
           startTime: '2021-01-01',
-          playTime: 10,
+          playTime: 10000,
           type: i % 2 === 0 ? GAMETYPE_RANK : GAMETYPE_NORMAL,
           mode: GAMEMODE_SFINAE,
         }),
