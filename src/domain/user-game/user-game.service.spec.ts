@@ -312,11 +312,11 @@ describe('UserGameService', () => {
     const userGame = await testData.createGameWithTouchLog(10);
 
     const user0GameDto = new GetUserGameExpDto(
-      testData.users[0].id,
+      testData.users[0].nickname,
       userGame.id,
     );
     const user1GameDto = new GetUserGameExpDto(
-      testData.users[1].id,
+      testData.users[1].nickname,
       userGame.id,
     );
 

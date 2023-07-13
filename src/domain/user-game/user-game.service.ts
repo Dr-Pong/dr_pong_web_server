@@ -24,6 +24,8 @@ import {
   GAMERESULT_TIE,
   GAMERESULT_WIN,
 } from 'src/global/type/type.game.result';
+import { UserRepository } from '../user/user.repository';
+import { User } from '../user/user.entity';
 @Injectable()
 export class UserGameService {
   private readonly logger: Logger = new Logger(UserGameService.name);
@@ -31,6 +33,7 @@ export class UserGameService {
     private readonly userGameRepository: UserGameRepository,
     private readonly seasonRepository: SeasonRepository,
     private readonly touchLogRepository: TouchLogRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
@@ -149,11 +152,14 @@ export class UserGameService {
   async getUserGameExpByNicknameAndGameId(
     getDto: GetUserGameExpDto,
   ): Promise<GetUserGameExpResponseDto> {
-    const { userId, gameId } = getDto;
+    const { nickname, gameId } = getDto;
+    const user: User = await this.userRepository.findByNickname(nickname);
+    if (!user) throw new NotFoundException('유저가 존재하지 않습니다.');
     const userGame = await this.userGameRepository.findOneByUserIdAndGameId(
-      userId,
+      user.id,
       gameId,
     );
+    if (!userGame) throw new NotFoundException('게임이 존재하지 않습니다.');
 
     const expMapping = {
       [GAMERESULT_LOSE]: Number(process.env.GAME_LOSE_EXP),
