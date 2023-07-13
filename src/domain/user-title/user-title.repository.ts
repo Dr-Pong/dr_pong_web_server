@@ -45,4 +45,12 @@ export class UserTitleRepository {
     userTitle.isSelected = true;
     await this.repository.save(userTitle);
   }
+
+  async save(userId: number, titleId: number): Promise<void> {
+    await this.repository.save({
+      user: { id: userId },
+      title: { id: titleId },
+      isSelected: false,
+    });
+  }
 }

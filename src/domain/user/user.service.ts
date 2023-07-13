@@ -14,11 +14,16 @@ import {
 } from 'src/domain/profile-image/dto/profile-image.dto';
 import { IsolationLevel, Transactional } from 'typeorm-transactional';
 import { PostGatewayUserDto } from './dto/post.gateway.users.dto';
+import { RankRepository } from '../rank/rank.repository';
+import { SeasonRepository } from '../season/season.repository';
+import { Season } from '../season/season.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UserRepository,
+    private rankRepository: RankRepository,
+    private readonly seasonRepository: SeasonRepository,
     private profileImageRepository: ProfileImageRepository,
   ) {}
   users: Map<string, User> = new Map();
@@ -101,6 +106,8 @@ export class UserService {
 
   @Transactional({ isolationLevel: IsolationLevel.SERIALIZABLE })
   async postUser(postDto: PostGatewayUserDto): Promise<void> {
-    await this.userRepository.save(postDto);
+    const user: User = await this.userRepository.save(postDto);
+    const season: Season = await this.seasonRepository.findCurrentSeason();
+    await this.rankRepository.save(user.id, season.id);
   }
 }

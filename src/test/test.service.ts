@@ -21,6 +21,11 @@ import { User } from 'src/domain/user/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { GAMEMODE_SFINAE } from 'src/global/type/type.game.mode';
+import { TouchLog } from 'src/domain/touch-log/touch.log.entity';
+import {
+  GAMEEVENT_SCORE,
+  GAMEEVENT_TOUCH,
+} from 'src/global/type/type.game.event';
 
 @Injectable()
 export class TestService {
@@ -50,6 +55,8 @@ export class TestService {
     private gameRepository: Repository<Game>,
     @InjectRepository(UserGame)
     private userGameRepository: Repository<UserGame>,
+    @InjectRepository(TouchLog)
+    private touchLogRepository: Repository<TouchLog>,
   ) {}
   users: User[] = [];
   profileImages: ProfileImage[] = [];
@@ -62,6 +69,7 @@ export class TestService {
   currentSeason: Season;
   games: Game[] = [];
   userGames: UserGame[] = [];
+  touchLogs: TouchLog[] = [];
 
   clear(): void {
     this.users.splice(0);
@@ -74,6 +82,8 @@ export class TestService {
     this.currentSeasonRanks.splice(0);
     this.currentSeason = null;
     this.games.splice(0);
+    this.userGames.splice(0);
+    this.touchLogs.splice(0);
   }
 
   async createProfileImages(): Promise<void> {
@@ -95,12 +105,27 @@ export class TestService {
     const user = await this.userRepository.save({
       id: index + 2,
       nickname: 'user' + index.toString(),
-      email: index.toString() + '@mail.com',
-      statusMessage: index.toString(),
       image: this.profileImages[0],
+      level: 1,
+      exp: 0,
     });
     this.users.push(user);
     return user;
+  }
+
+  async createLevel9Users(): Promise<void> {
+    for (let i = 0; i < 10; i++) {
+      const user = await this.userRepository.save({
+        id: i + 1,
+        nickname: 'user' + i.toString(),
+        email: i.toString() + '@mail.com',
+        statusMessage: i.toString(),
+        image: this.profileImages[0],
+        level: 9,
+        exp: 980,
+      });
+      this.users.push(user);
+    }
   }
 
   async createBasicUsers(): Promise<void> {
@@ -144,7 +169,7 @@ export class TestService {
     for (let i = 0; i < 10; i++) {
       this.titles.push(
         await this.titleRepository.save({
-          name: 'emoji' + i.toString(),
+          name: 'title' + i.toString(),
           content: 'content' + i.toString(),
         }),
       );
@@ -152,7 +177,7 @@ export class TestService {
     for (let i = 0; i < 10; i++) {
       this.achievements.push(
         await this.achievementRepository.save({
-          name: 'emoji' + i.toString(),
+          name: 'achievement' + i.toString(),
           content: 'content' + i.toString(),
           imageUrl: 'imageUrl' + i.toString(),
         }),
@@ -688,5 +713,58 @@ export class TestService {
       nickname: user.nickname,
     });
     return token;
+  }
+
+  async createGameWithTouchLog(n: number): Promise<UserGame> {
+    const winner: User = await this.createBasicUser();
+    const loser: User = await this.createBasicUser();
+    const users: User[] = [winner, loser];
+    const userGames = [];
+    for (let i = 0; i < n; i++) {
+      this.games.push(
+        await this.gameRepository.save({
+          season: this.currentSeason,
+          startTime: '2021-01-01',
+          playTime: 10,
+          type: i % 2 === 0 ? GAMETYPE_RANK : GAMETYPE_NORMAL,
+          mode: GAMEMODE_SFINAE,
+        }),
+      );
+    }
+    userGames.push(
+      await this.userGameRepository.save({
+        user: users[0],
+        game: this.games[0],
+        result: GAMERESULT_WIN,
+        score: 10,
+        lpChange: this.games[0].type === GAMETYPE_RANK ? 10 : 0,
+        lpResult: 110,
+      }),
+    );
+    userGames.push(
+      await this.userGameRepository.save({
+        user: users[1],
+        game: this.games[0],
+        result: GAMERESULT_LOSE,
+        score: 0,
+        lpChange: this.games[0].type === GAMETYPE_RANK ? -10 : 0,
+        lpResult: 90,
+      }),
+    );
+
+    for (let i = 0; i < n; i++) {
+      await this.touchLogRepository.save({
+        userGame: userGames[i % 2],
+        event: i % 10 === 0 ? GAMEEVENT_SCORE : GAMEEVENT_TOUCH,
+        round: i + 1,
+        ballSpeed: 10,
+        ballDirectionX: 10,
+        ballDirectionY: 10,
+        ballPositionX: 10,
+        ballPositionY: 10,
+        ballSpinSpeed: 10,
+      });
+    }
+    return userGames[0];
   }
 }

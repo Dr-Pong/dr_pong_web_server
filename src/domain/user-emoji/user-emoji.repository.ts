@@ -40,4 +40,11 @@ export class UserEmojiRepository {
     userEmoji.selectedOrder = order;
     await this.repository.save(userEmoji);
   }
+
+  async save(userId: number, emojiId: number): Promise<void> {
+    await this.repository.save({
+      user: { id: userId },
+      emoji: { id: emojiId },
+    });
+  }
 }

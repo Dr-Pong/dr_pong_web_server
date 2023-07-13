@@ -12,4 +12,11 @@ export class EmojiRepository {
   async findAll(): Promise<Emoji[]> {
     return await this.repository.find();
   }
+
+  async save(name: string, imageUrl: string): Promise<void> {
+    await this.repository.save({
+      name,
+      imageUrl,
+    });
+  }
 }

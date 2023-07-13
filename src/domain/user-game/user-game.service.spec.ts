@@ -289,7 +289,20 @@ describe('UserGameService', () => {
     expect(UserGameResponseDto.you.lp).toBe(100);
     expect(UserGameResponseDto.you.lpChange).toBe(0);
     expect(UserGameResponseDto).toHaveProperty('rounds');
-    // expect(UserGameResponseDto.rounds[0].bounces).toHaveProperty('bounces');
-    // expect(UserGameResponseDto.rounds[0].meWin).toHaveProperty('meWin');
+  });
+
+  it('GameId로 touchLog 조회', async () => {
+    const userGame = await testData.createGameWithTouchLog(10);
+
+    const user0GameDto = new GetUserGameByNicknameAndGameIdDto(
+      testData.users[0].nickname,
+      userGame.id,
+    );
+    const UserGameResponseDto: UserGameByNicknameAndGameIdResponseDto =
+      await service.getUserGameByNicknameAndGameId(user0GameDto);
+
+    expect(UserGameResponseDto).toHaveProperty('rounds');
+    expect(UserGameResponseDto.rounds[0]).toHaveProperty('bounces');
+    expect(UserGameResponseDto.rounds[0]).toHaveProperty('meWin');
   });
 });

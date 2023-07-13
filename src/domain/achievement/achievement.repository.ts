@@ -12,4 +12,12 @@ export class AchievementRepository {
   async findAll(): Promise<Achievement[]> {
     return await this.repository.find();
   }
+
+  async findOneById(id: number): Promise<Achievement> {
+    return await this.repository.findOne({ where: { id } });
+  }
+
+  async save(name: string, content: string, imageUrl: string): Promise<void> {
+    await this.repository.save({ name, content, imageUrl });
+  }
 }

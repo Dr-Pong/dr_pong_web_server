@@ -20,6 +20,19 @@ import { ProfileImageRepository } from './domain/profile-image/profile-image.rep
 import { SeasonRepository } from './domain/season/season.repository';
 import { ProfileImage } from './domain/profile-image/profile-image.entity';
 import { Season } from './domain/season/season.entity';
+import { GameModule } from './domain/game/game.module';
+import { UserRepository } from './domain/user/user.repository';
+import { EmojiRepository } from './domain/emoji/emoji.repository';
+import { UserEmojiRepository } from './domain/user-emoji/user-emoji.repository';
+import { User } from './domain/user/user.entity';
+import { Emoji } from './domain/emoji/emoji.entity';
+import { Title } from './domain/title/title.entity';
+import { UserTitle } from './domain/user-title/user-title.entity';
+import { UserEmoji } from './domain/user-emoji/user-emoji.entity';
+import { TitleRepository } from './domain/title/title.repository';
+import { UserTitleRepository } from './domain/user-title/user-title.repository';
+import { Achievement } from './domain/achievement/achievement.entity';
+import { AchievementRepository } from './domain/achievement/achievement.repository';
 
 @Module({
   imports: [
@@ -42,14 +55,35 @@ import { Season } from './domain/season/season.entity';
     SeasonModule,
     UsertitleModule,
     AchievementModule,
+    GameModule,
     UserAchievementModule,
     TestModule,
     ProfileImageModule,
     UserGameModule,
     AuthModule,
-    TypeOrmModule.forFeature([ProfileImage, Season]),
+    GameModule,
+    TypeOrmModule.forFeature([
+      ProfileImage,
+      Season,
+      User,
+      Emoji,
+      UserEmoji,
+      Title,
+      UserTitle,
+      Achievement,
+    ]),
   ],
   controllers: [AppController],
-  providers: [AppService, ProfileImageRepository, SeasonRepository],
+  providers: [
+    AppService,
+    ProfileImageRepository,
+    SeasonRepository,
+    UserRepository,
+    EmojiRepository,
+    UserEmojiRepository,
+    TitleRepository,
+    UserTitleRepository,
+    AchievementRepository,
+  ],
 })
 export class AppModule {}

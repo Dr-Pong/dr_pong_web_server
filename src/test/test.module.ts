@@ -14,6 +14,7 @@ import { UserAchievement } from 'src/domain/user-achievement/user-achievement.en
 import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
 import { UserGame } from 'src/domain/user-game/user-game.entity';
 import { AuthModule } from 'src/domain/auth/auth.module';
+import { TouchLog } from 'src/domain/touch-log/touch.log.entity';
 
 @Module({
   imports: [
@@ -30,26 +31,11 @@ import { AuthModule } from 'src/domain/auth/auth.module';
       UserEmoji,
       ProfileImage,
       UserGame,
+      TouchLog,
     ]),
     AuthModule,
   ],
   providers: [TestService],
-  exports: [
-    TestService,
-    TypeOrmModule.forFeature([
-      User,
-      Title,
-      UserTitle,
-      Rank,
-      Season,
-      Game,
-      Achievement,
-      UserAchievement,
-      Emoji,
-      UserEmoji,
-      UserGame,
-      ProfileImage,
-    ]),
-  ],
+  exports: [TestService],
 })
 export class TestModule {}

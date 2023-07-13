@@ -42,4 +42,11 @@ export class UserAchievementRepository {
     userAchievement.selectedOrder = order;
     await this.repository.save(userAchievement);
   }
+
+  async save(userId: number, achievementId: number): Promise<void> {
+    await this.repository.save({
+      user: { id: userId },
+      achievement: { id: achievementId },
+    });
+  }
 }
