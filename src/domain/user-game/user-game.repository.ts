@@ -83,4 +83,16 @@ export class UserGameRepository {
       lpResult: userLp,
     });
   }
+
+  async findOneByUserIdAndGameId(
+    userId: number,
+    gameId: number,
+  ): Promise<UserGame> {
+    return await this.repository.findOne({
+      where: {
+        user: { id: userId },
+        game: { id: gameId },
+      },
+    });
+  }
 }
