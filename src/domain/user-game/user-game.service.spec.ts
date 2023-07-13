@@ -23,6 +23,8 @@ import { UserGameRecordsDto } from './dto/user-game.records.dto';
 import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
 import { GetUserGameByNicknameAndGameIdDto } from './dto/get.user-game.by.nickname.and.gameid.dto';
 import { UserGameByNicknameAndGameIdResponseDto } from './dto/get.user-game.game.response.dto';
+import { GetUserGameExpDto } from './dto/get.user-game.exp.dto';
+import { GetUserGameExpResponseDto } from './dto/get.user-game.exp.response.dto';
 
 describe('UserGameService', () => {
   let service: UserGameService;
@@ -304,5 +306,40 @@ describe('UserGameService', () => {
     expect(UserGameResponseDto).toHaveProperty('rounds');
     expect(UserGameResponseDto.rounds[0]).toHaveProperty('bounces');
     expect(UserGameResponseDto.rounds[0]).toHaveProperty('meWin');
+  });
+
+  it('Username과 GameId로 경험치 조회', async () => {
+    const userGame = await testData.createGameWithTouchLog(10);
+
+    const user0GameDto = new GetUserGameExpDto(
+      testData.users[0].id,
+      userGame.id,
+    );
+    const user1GameDto = new GetUserGameExpDto(
+      testData.users[1].id,
+      userGame.id,
+    );
+
+    const User0GameExpResponseDto: GetUserGameExpResponseDto =
+      await service.getUserGameExpByNicknameAndGameId(user0GameDto);
+    const User1GameExpResponseDto: GetUserGameExpResponseDto =
+      await service.getUserGameExpByNicknameAndGameId(user1GameDto);
+
+    expect(User0GameExpResponseDto).toHaveProperty('beforeExp');
+    expect(User0GameExpResponseDto).toHaveProperty('expChange');
+    expect(User0GameExpResponseDto).toHaveProperty('levelExp');
+
+    expect(User0GameExpResponseDto.expChange).toBe(
+      Number(process.env.GAME_WIN_EXP),
+    );
+    expect(User1GameExpResponseDto.expChange).toBe(
+      Number(process.env.GAME_LOSE_EXP),
+    );
+    expect(User0GameExpResponseDto.levelExp).toBe(
+      Number(process.env.LEVEL_UP_EXP),
+    );
+    expect(User1GameExpResponseDto.levelExp).toBe(
+      Number(process.env.LEVEL_UP_EXP),
+    );
   });
 });
