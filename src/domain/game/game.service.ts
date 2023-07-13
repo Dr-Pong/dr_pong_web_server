@@ -244,7 +244,7 @@ export class GameService {
     const player1Tier: TierType = await this.checkTier(player1ChangedLp);
     const player2Tier: TierType = await this.checkTier(player2ChangedLp);
     if (player1Tier) {
-      const player1AchievementId = getAchievementByLPCut(player1LP);
+      const player1AchievementId = getAchievementByLPCut(player1ChangedLp);
       const hasAchievement = player1Achievements.some(
         (achievement) => achievement.achievement.id === player1AchievementId,
       );
@@ -260,7 +260,7 @@ export class GameService {
     }
 
     if (player2Tier) {
-      const player2AchievementId = getAchievementByLPCut(player2LP);
+      const player2AchievementId = getAchievementByLPCut(player2ChangedLp);
       const hasAchievement = player2Achievements.some(
         (achievement) => achievement.achievement.id === player2AchievementId,
       );
