@@ -390,14 +390,19 @@ export class GameService {
   }
 
   private calculateExperiencePoints(playerResult: GameResultType): number {
-    const exp = playerResult === GAMERESULT_WIN ? 20 : 10; // player가 이겼을 때는 20점, 아닐 때는 10점
-    return exp;
+    const expMap = {
+      [GAMERESULT_WIN]: Number(process.env.GAME_WIN_EXP),
+      [GAMERESULT_LOSE]: Number(process.env.GAME_LOSE_EXP),
+      [GAMERESULT_TIE]: Number(process.env.GAME_TIE_EXP),
+    };
+
+    return expMap[playerResult];
   }
 
   private calculateLevel(player: User, exp: number): number {
     const playerExp = player.exp;
     exp += playerExp;
-    const level = Math.floor(exp / 100);
+    const level = Math.floor(exp / Number(process.env.LEVEL_UP_EXP));
     return level;
   }
 
@@ -415,14 +420,17 @@ export class GameService {
   }
 
   async checkTier(playerLP: number): Promise<TierType> {
-    if (playerLP >= Number(process.env.DOCTOR_CUT)) {
-      return TIER_DOCTOR;
-    } else if (playerLP >= Number(process.env.MASTER_CUT)) {
-      return TIER_MASTER;
-    } else if (playerLP >= Number(process.env.BACHELOR_CUT)) {
-      return TIER_BACHELOR;
-    } else if (playerLP >= Number(process.env.STUDENT_CUT)) {
-      return TIER_STUDENT;
+    const tierMapping = [
+      { cut: Number(process.env.DOCTOR_CUT), tier: TIER_DOCTOR },
+      { cut: Number(process.env.MASTER_CUT), tier: TIER_MASTER },
+      { cut: Number(process.env.BACHELOR_CUT), tier: TIER_BACHELOR },
+      { cut: Number(process.env.STUDENT_CUT), tier: TIER_STUDENT },
+    ];
+
+    for (const tier of tierMapping) {
+      if (playerLP >= tier.cut) {
+        return tier.tier;
+      }
     }
   }
 }
