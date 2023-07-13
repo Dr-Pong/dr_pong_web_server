@@ -244,7 +244,7 @@ export class GameService {
     const player1Tier: TierType = await this.checkTier(player1ChangedLp);
     const player2Tier: TierType = await this.checkTier(player2ChangedLp);
     if (player1Tier) {
-      const player1AchievementId = getAchievementByLPCut(player1ChangedLp);
+      const player1AchievementId = getAchievementByLPCut(player1LP);
       const hasAchievement = player1Achievements.some(
         (achievement) => achievement.achievement.id === player1AchievementId,
       );
@@ -356,11 +356,16 @@ export class GameService {
 
     for (const mapping of titleMapping) {
       if (playerLevel >= mapping.level) {
-        await this.userTitleRepository.save(
+        const hasTitle = await this.userTitleRepository.findByUserIdAndTitleId(
           player.id,
           titles[mapping.titleIndex].id,
         );
-        break;
+        if (!hasTitle) {
+          await this.userTitleRepository.save(
+            player.id,
+            titles[mapping.titleIndex].id,
+          );
+        }
       }
     }
   }
