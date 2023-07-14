@@ -384,7 +384,7 @@ export class GameService {
     const playerExp = player.exp;
     exp += playerExp;
     const level = Math.floor(exp / Number(process.env.LEVEL_UP_EXP));
-    return level;
+    return level + 1;
   }
 
   private checkGameResult(
