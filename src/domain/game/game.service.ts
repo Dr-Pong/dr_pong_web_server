@@ -44,6 +44,7 @@ import {
 } from '../user-title/dto/update.user.title.dto';
 import { IsolationLevel, Transactional } from 'typeorm-transactional';
 import { PostGameResponseDto } from './dto/post.game.response.dto';
+import { UserTitle } from '../user-title/user-title.entity';
 
 @Injectable()
 export class GameService {
@@ -101,7 +102,7 @@ export class GameService {
       game,
       player2,
       player2Result,
-      user2Rank.ladderPoint,
+      user2Lp,
     );
 
     const logs = postGameDto.logs;
@@ -112,13 +113,7 @@ export class GameService {
     }
 
     const usersAchievements: UpdateUserAchievementsDto =
-      await this.updateAchievements(
-        player1.id,
-        player2.id,
-        currentSeason.id,
-        user1Rank.ladderPoint,
-        user2Rank.ladderPoint,
-      );
+      await this.updateAchievements(player1.id, player2.id, currentSeason.id);
 
     const usersTitles: UpdateUserTitlesDto = await this.updateUserLevel(
       player1.id,
@@ -163,8 +158,6 @@ export class GameService {
     player1Id: number,
     player2Id: number,
     seasonId: number,
-    player1LP: number,
-    player2LP: number,
   ): Promise<UpdateUserAchievementsDto> {
     const player1Games: UserGame[] =
       await this.userGameRepository.findAllByUserId(player1Id);
@@ -356,11 +349,12 @@ export class GameService {
 
     for (const mapping of titleMapping) {
       if (playerLevel >= mapping.level) {
-        const hasTitle = await this.userTitleRepository.findByUserIdAndTitleId(
-          player.id,
-          titles[mapping.titleIndex].id,
-        );
-        if (!hasTitle) {
+        const titleExist: UserTitle =
+          await this.userTitleRepository.findByUserIdAndTitleId(
+            player.id,
+            titles[mapping.titleIndex].id,
+          );
+        if (!titleExist) {
           await this.userTitleRepository.save(
             player.id,
             titles[mapping.titleIndex].id,
