@@ -10,6 +10,8 @@ import { GetUserBestRankStatDto } from 'src/domain/rank/dto/get.user.best.rank.s
 import { UserSeasonRankResponseDto } from 'src/domain/rank/dto/user.season.rank.response.dto';
 import { GetUserRankSeasonStatDto } from 'src/domain/user-game/dto/get.user.rank.season.stat.dto';
 import { RankSeasonStatDto } from 'src/domain/rank/dto/rank.season.stat.dto';
+import { GetRankLpAndImageDto } from 'src/domain/rank/dto/get.rank.lp.and.image.dto';
+import { RankLpAndkImageResponseDto } from 'src/domain/rank/dto/rank.lp.and.image.response.dto';
 
 @Controller('users')
 export class UserRanksController {
@@ -54,6 +56,17 @@ export class UserRanksController {
       await this.rankService.getUserRankBySeason(getUserSeasonRankDto);
     const responseDto: UserSeasonRankResponseDto =
       UserSeasonRankResponseDto.forUserSeasonRankResponse(userSeasonRank);
+    return responseDto;
+  }
+
+  @Get('/:id/rank/current')
+  async rankLpAndImageByUserIdGet(
+    @Param('id') id: number,
+  ): Promise<RankLpAndkImageResponseDto> {
+    const getDto: GetRankLpAndImageDto = { userId: id };
+    const userData = await this.rankService.getRankLpAndImageByUserId(getDto);
+    const responseDto: RankLpAndkImageResponseDto =
+      new RankLpAndkImageResponseDto(userData.lp, userData.profileImgUrl);
     return responseDto;
   }
 }
