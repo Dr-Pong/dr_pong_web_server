@@ -6,10 +6,12 @@ import { Rank } from './rank.entity';
 import { RankRepository } from './rank.repository';
 import { RankService } from './rank.service';
 import { RankController } from './rank.controller';
+import { User } from '../user/user.entity';
+import { UserRepository } from '../user/user.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Rank, Season])],
-  providers: [RankService, RankRepository, SeasonRepository],
+  imports: [TypeOrmModule.forFeature([Rank, Season, User])],
+  providers: [RankService, RankRepository, SeasonRepository, UserRepository],
   exports: [RankService],
   controllers: [RankController],
 })
