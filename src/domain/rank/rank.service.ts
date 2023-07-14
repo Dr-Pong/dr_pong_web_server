@@ -11,12 +11,18 @@ import { RankBottomDataDto, RanksBottomDto } from './dto/ranks.bottom.dto';
 import { RankSeasonStatDto } from './dto/rank.season.stat.dto';
 import { RankBestStatDto } from './dto/rank.best.stat.dto';
 import { IsolationLevel, Transactional } from 'typeorm-transactional';
+import { GetRankLpAndImageDto } from './dto/get.rank.lp.and.image.dto';
+import { RankLpAndkImageResponseDto } from './dto/rank.lp.and.image.response.dto';
+import { Rank } from './rank.entity';
+import { UserRepository } from '../user/user.repository';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class RankService {
   constructor(
-    private rankRepository: RankRepository,
-    private seasonRepository: SeasonRepository,
+    private readonly rankRepository: RankRepository,
+    private readonly seasonRepository: SeasonRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   //get 유저 현시즌 랭크 데이터
@@ -116,6 +122,23 @@ export class RankService {
 
     const responseDto: RanksBottomDto = {
       bottom: bottomRankData,
+    };
+    return responseDto;
+  }
+
+  async getRankLpAndImageByUserId(
+    getDto: GetRankLpAndImageDto,
+  ): Promise<RankLpAndkImageResponseDto> {
+    const nowSeason: Season = await this.seasonRepository.findCurrentSeason();
+    const user: User = await this.userRepository.findById(getDto.userId);
+    const userRank: Rank = await this.rankRepository.findByUserIdAndSeasonId(
+      getDto.userId,
+      nowSeason.id,
+    );
+
+    const responseDto: RankLpAndkImageResponseDto = {
+      lp: userRank.ladderPoint,
+      profileImgUrl: user.image.url,
     };
     return responseDto;
   }
