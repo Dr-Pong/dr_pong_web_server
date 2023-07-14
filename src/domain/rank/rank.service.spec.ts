@@ -16,6 +16,8 @@ import {
   addTransactionalDataSource,
   initializeTransactionalContext,
 } from 'typeorm-transactional';
+import { GetRankLpAndImageDto } from './dto/get.rank.lp.and.image.dto';
+import { RankLpAndkImageResponseDto } from './dto/rank.lp.and.image.response.dto';
 
 describe('RankService', () => {
   let service: RankService;
@@ -272,5 +274,30 @@ describe('RankService', () => {
     expect(bottomRankResult.bottom[4].lp).toEqual(
       testData.currentSeasonRanks[7].ladderPoint,
     );
+  });
+
+  it('Lp User Image 반환', async () => {
+    await testData.createBasicRank();
+
+    const getDto: GetRankLpAndImageDto = {
+      userId: testData.users[0].id,
+    };
+    const getDto2: GetRankLpAndImageDto = {
+      userId: testData.users[1].id,
+    };
+
+    const response: RankLpAndkImageResponseDto =
+      await service.getRankLpAndImageByUserId(getDto);
+    const response2: RankLpAndkImageResponseDto =
+      await service.getRankLpAndImageByUserId(getDto2);
+
+    expect(response).toHaveProperty('lp');
+    expect(response).toHaveProperty('profileImgUrl');
+
+    expect(response.lp).toEqual(testData.ranks[0].ladderPoint);
+    expect(response.profileImgUrl).toEqual(testData.ranks[0].user.image.url);
+
+    expect(response2.lp).toEqual(testData.ranks[1].ladderPoint);
+    expect(response2.profileImgUrl).toEqual(testData.ranks[1].user.image.url);
   });
 });
