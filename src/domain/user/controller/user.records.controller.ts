@@ -15,6 +15,8 @@ import { GetUserGameRecordsDto } from '../../user-game/dto/get.user-game.records
 import { UserGameRecordsDto } from '../../user-game/dto/user-game.records.dto';
 import { GetUserGameByNicknameAndGameIdDto } from 'src/domain/user-game/dto/get.user-game.by.nickname.and.gameid.dto';
 import { UserGameByNicknameAndGameIdResponseDto } from 'src/domain/user-game/dto/get.user-game.game.response.dto';
+import { GetUserGameExpDto } from 'src/domain/user-game/dto/get.user-game.exp.dto';
+import { GetUserGameExpResponseDto } from 'src/domain/user-game/dto/get.user-game.exp.response.dto';
 
 @Controller('users')
 export class UserRecordsController {
@@ -67,6 +69,24 @@ export class UserRecordsController {
         response.me,
         response.you,
         response.rounds,
+      );
+    return responseDto;
+  }
+
+  @Get('/:nickname/records/:gameId/exp')
+  async userGameExp(
+    @Param('nickname') nickname: string,
+    @Param('gameId', ParseIntPipe) gameId: number,
+  ) {
+    const inputDto: GetUserGameExpDto = new GetUserGameExpDto(nickname, gameId);
+    const response =
+      await this.userGameService.getUserGameExpByNicknameAndGameId(inputDto);
+
+    const responseDto: GetUserGameExpResponseDto =
+      new GetUserGameExpResponseDto(
+        response.beforeExp,
+        response.expChange,
+        response.levelExp,
       );
     return responseDto;
   }

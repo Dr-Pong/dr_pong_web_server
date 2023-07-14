@@ -199,6 +199,7 @@ describe('UserController', () => {
         expect(response.statusCode).toBe(400);
       });
     });
+
     describe('/users/{nickname}/records/{gameId}', () => {
       it('유저의 게임 기록 반환', async () => {
         const userGame = await testService.createGameWithTouchLog(10);
@@ -235,6 +236,46 @@ describe('UserController', () => {
             testService.userGames[0].user.nickname +
             '/records/' +
             100,
+        );
+        expect(response.statusCode).toBe(404);
+      });
+    });
+
+    describe('/users/{nickname}/records/{gameId}/exp', () => {
+      it('유저의 게임 경험치 반환', async () => {
+        const userGame = await testService.createGameWithTouchLog(10);
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            userGame.user.nickname +
+            '/records/' +
+            userGame.game.id +
+            '/exp',
+        );
+        expect(response.statusCode).toBe(200);
+        //인자 있는지 확인
+        expect(response.body).toHaveProperty('beforeExp');
+        expect(response.body).toHaveProperty('expChange');
+        expect(response.body).toHaveProperty('levelExp');
+
+        // 값 확인
+        expect(response.body.expChange).toBe(Number(process.env.GAME_WIN_EXP));
+        expect(response.body.levelExp).toBe(Number(process.env.LEVEL_UP_EXP));
+      });
+      it('Error Cases Test: UserGame에 유저가 없는경우', async () => {
+        const userGame = await testService.createGameWithTouchLog(10);
+        const response = await request(app.getHttpServer()).get(
+          '/users/' + 'user00000' + '/records/' + userGame.game.id + '/exp',
+        );
+        expect(response.statusCode).toBe(404);
+      });
+      it('Error Cases Test: 찾는 gameId 가 없는경우', async () => {
+        await testService.createBasicGames();
+        const response = await request(app.getHttpServer()).get(
+          '/users/' +
+            testService.userGames[0].user.nickname +
+            '/records/' +
+            100 +
+            '/exp',
         );
         expect(response.statusCode).toBe(404);
       });

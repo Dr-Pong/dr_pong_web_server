@@ -1,9 +1,9 @@
 export class GetUserGameExpDto {
-  userId: number;
+  nickname: string;
   gameId: number;
 
-  constructor(userId: number, gameId: number) {
-    this.userId = userId;
+  constructor(nickname: string, gameId: number) {
+    this.nickname = nickname;
     this.gameId = gameId;
   }
 }
