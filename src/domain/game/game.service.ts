@@ -87,8 +87,8 @@ export class GameService {
       currentSeason.id,
     );
 
-    const user1Lp = user1Rank.ladderPoint + player1.lpChange;
-    const user2Lp = user2Rank.ladderPoint + player2.lpChange;
+    const user1Lp = Math.max(user1Rank.ladderPoint + player1.lpChange, 0);
+    const user2Lp = Math.max(user2Rank.ladderPoint + player2.lpChange, 0);
     await this.rankRepository.update(player1.id, currentSeason.id, user1Lp);
     await this.rankRepository.update(player2.id, currentSeason.id, user2Lp);
 
