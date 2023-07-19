@@ -121,8 +121,6 @@ export class TestService {
         email: i.toString() + '@mail.com',
         statusMessage: i.toString(),
         image: this.profileImages[0],
-        level: 9,
-        exp: 980,
       });
       this.users.push(user);
     }
