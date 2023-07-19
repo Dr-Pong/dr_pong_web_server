@@ -169,9 +169,7 @@ export class UserGameService {
 
     const increasedExp = expMapping[userGame.result];
     const beforeExp =
-      user.exp -
-      increasedExp -
-      (user.level - 1) * Number(process.env.LEVEL_UP_EXP);
+      (user.exp - increasedExp) % Number(process.env.LEVEL_UP_EXP);
 
     return new GetUserGameExpResponseDto(
       beforeExp,
