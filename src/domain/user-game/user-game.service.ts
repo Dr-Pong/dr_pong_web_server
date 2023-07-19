@@ -167,13 +167,13 @@ export class UserGameService {
       [GAMERESULT_TIE]: Number(process.env.GAME_TIE_EXP),
     };
 
-    const exp = expMapping[userGame.result];
-    const beforeExp =
+    const increasedExp = expMapping[userGame.result];
+    const userExp =
       user.exp - (user.level - 1) * Number(process.env.LEVEL_UP_EXP);
 
     return new GetUserGameExpResponseDto(
-      beforeExp,
-      exp,
+      userExp - increasedExp,
+      increasedExp,
       Number(process.env.LEVEL_UP_EXP),
     );
   }
