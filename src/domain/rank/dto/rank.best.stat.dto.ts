@@ -8,13 +8,13 @@ import {
 } from 'src/global/type/type.tier';
 
 export class RankBestStatDto {
-  record: number | null;
+  bestLp: number | null;
   rank: number | null;
   tier: TierType;
 
   static eggUser(): RankBestStatDto {
     return {
-      record: null,
+      bestLp: null,
       rank: null,
       tier: TIER_EGG,
     };
@@ -33,7 +33,7 @@ export class RankBestStatDto {
         tier = TIER_STUDENT;
     }
     return {
-      record,
+      bestLp: record,
       rank: null,
       tier,
     };
@@ -41,7 +41,7 @@ export class RankBestStatDto {
 
   static doctorUser(record: number, rank: number): RankBestStatDto {
     return {
-      record,
+      bestLp: record,
       rank,
       tier: TIER_DOCTOR,
     };
