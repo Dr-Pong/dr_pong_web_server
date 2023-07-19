@@ -111,8 +111,8 @@ describe('RankService', () => {
         testTier = 'student';
     }
     //랭크데이터가 잘 반환되는지 확인
-    expect(recordRankTier.record).toEqual(testData.ranks[0].ladderPoint);
-    expect(recordRankTier2.record).toEqual(testData.ranks[1].ladderPoint);
+    expect(recordRankTier.bestLp).toEqual(testData.ranks[0].ladderPoint);
+    expect(recordRankTier2.bestLp).toEqual(testData.ranks[1].ladderPoint);
     expect(recordRankTier.rank).toEqual(1);
     expect(recordRankTier2.rank).toEqual(2);
     expect(recordRankTier3.rank).toEqual(3);
@@ -191,7 +191,7 @@ describe('RankService', () => {
     }
 
     //랭크데이터가 잘 반환되는지 확인
-    expect(recordRankTier.record).toEqual(testData.ranks[0].highestPoint);
+    expect(recordRankTier.bestLp).toEqual(testData.ranks[0].highestPoint);
     expect(recordRankTier.rank).toEqual(null);
     expect(recordRankTier.tier).toEqual(testTier);
 
