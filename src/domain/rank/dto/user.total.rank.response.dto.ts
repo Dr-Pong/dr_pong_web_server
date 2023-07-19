@@ -2,7 +2,7 @@ import { TierType } from 'src/global/type/type.tier';
 import { RankBestStatDto } from './rank.best.stat.dto';
 
 export class UserTotalRankResponseDto {
-  record: number | null;
+  bestLp: number | null;
   rank: number | null;
   tier: TierType;
 
@@ -10,7 +10,7 @@ export class UserTotalRankResponseDto {
     userTotalRank: RankBestStatDto,
   ): UserTotalRankResponseDto {
     return {
-      record: userTotalRank.record,
+      bestLp: userTotalRank.bestLp,
       rank: userTotalRank.rank,
       tier: userTotalRank.tier,
     };
