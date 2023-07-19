@@ -89,8 +89,8 @@ export class GameService {
 
     const user1Lp = Math.max(user1Rank.ladderPoint + player1.lpChange, 0);
     const user2Lp = Math.max(user2Rank.ladderPoint + player2.lpChange, 0);
-    await this.rankRepository.update(player1.id, currentSeason.id, user1Lp);
-    await this.rankRepository.update(player2.id, currentSeason.id, user2Lp);
+    await this.updateRank(player1.id, currentSeason.id, user1Lp);
+    await this.updateRank(player2.id, currentSeason.id, user2Lp);
 
     const userGame1: UserGame = await this.saveUserGames(
       game,
@@ -127,6 +127,18 @@ export class GameService {
       title: usersTitles,
     };
     return responseDto;
+  }
+
+  async updateRank(userId: number, seasonId: number, userLp: number) {
+    const userHighestRank: Rank =
+      await this.rankRepository.findHighestRankByUserId(userId);
+    let userHighestLp: number;
+    if (userHighestRank.ladderPoint <= userLp) {
+      userHighestLp = userLp;
+    } else {
+      userHighestLp = userHighestRank.highestPoint;
+    }
+    await this.rankRepository.update(userId, seasonId, userLp, userHighestLp);
   }
 
   async saveGame(
