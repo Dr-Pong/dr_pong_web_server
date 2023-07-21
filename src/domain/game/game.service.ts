@@ -204,10 +204,12 @@ export class GameService {
 
       for (const mapping of achievementMapping) {
         if (player1WinCount === mapping.winCount) {
+          const achievement = achievements[mapping.achievementIndex]?.name;
           const achievementId = achievements[mapping.achievementIndex]?.id;
+          const imageUrl = achievements[mapping.achievementIndex]?.imageUrl;
           await this.userAchievementRepository.save(player1Id, achievementId);
           updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player1Id, achievementId),
+            new UpdateUserAchievementDto(player1Id, achievement, imageUrl),
           );
           break;
         }
@@ -223,10 +225,12 @@ export class GameService {
 
       for (const mapping of achievementMapping) {
         if (player2WinCount === mapping.winCount) {
+          const achievement = achievements[mapping.achievementIndex]?.name;
           const achievementId = achievements[mapping.achievementIndex]?.id;
+          const imageUrl = achievements[mapping.achievementIndex]?.imageUrl;
           await this.userAchievementRepository.save(player2Id, achievementId);
           updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player2Id, achievementId),
+            new UpdateUserAchievementDto(player2Id, achievement, imageUrl),
           );
           break;
         }
@@ -258,8 +262,18 @@ export class GameService {
           player1Id,
           player1AchievementId,
         );
+        const player1Achievement = achievements.find(
+          (achievement) => achievement.id === player1AchievementId,
+        )?.name;
+        const player1AchievementImageUrl = achievements.find(
+          (achievement) => achievement.id === player1AchievementId,
+        )?.imageUrl;
         updatedUserAchievements.updateAchievements.push(
-          new UpdateUserAchievementDto(player1Id, player1AchievementId),
+          new UpdateUserAchievementDto(
+            player1Id,
+            player1Achievement,
+            player1AchievementImageUrl,
+          ),
         );
       }
     }
@@ -274,8 +288,18 @@ export class GameService {
           player2Id,
           player2AchievementId,
         );
+        const player2Achievement = achievements.find(
+          (achievement) => achievement.id === player2AchievementId,
+        )?.name;
+        const player2AchievementImageUrl = achievements.find(
+          (achievement) => achievement.id === player2AchievementId,
+        )?.imageUrl;
         updatedUserAchievements.updateAchievements.push(
-          new UpdateUserAchievementDto(player2Id, player2AchievementId),
+          new UpdateUserAchievementDto(
+            player2Id,
+            player2Achievement,
+            player2AchievementImageUrl,
+          ),
         );
       }
     }
@@ -327,17 +351,17 @@ export class GameService {
     const updatePlayerTitles = (player: User) => {
       if (player.exp >= 10 * Number(process.env.LEVEL_UP_EXP)) {
         updateUserTitles.updateUserTitles.push(
-          new UpdateUserTitleDto(player.id, titles[0].id),
+          new UpdateUserTitleDto(player.id, titles[0].name),
         );
       }
       if (player.exp >= 42 * Number(process.env.LEVEL_UP_EXP)) {
         updateUserTitles.updateUserTitles.push(
-          new UpdateUserTitleDto(player.id, titles[1].id),
+          new UpdateUserTitleDto(player.id, titles[1].name),
         );
       }
       if (player.exp >= 100 * Number(process.env.LEVEL_UP_EXP)) {
         updateUserTitles.updateUserTitles.push(
-          new UpdateUserTitleDto(player.id, titles[2].id),
+          new UpdateUserTitleDto(player.id, titles[2].name),
         );
       }
     };
