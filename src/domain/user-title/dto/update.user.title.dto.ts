@@ -1,10 +1,10 @@
 export class UpdateUserTitleDto {
   userId: number;
-  titleId: number;
+  title: string;
 
-  constructor(userId: number, titleId: number) {
+  constructor(userId: number, titleId: string) {
     this.userId = userId;
-    this.titleId = titleId;
+    this.title = titleId;
   }
 }
 
