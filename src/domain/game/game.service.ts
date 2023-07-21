@@ -89,8 +89,8 @@ export class GameService {
 
     const user1Lp = Math.max(user1Rank.ladderPoint + player1.lpChange, 0);
     const user2Lp = Math.max(user2Rank.ladderPoint + player2.lpChange, 0);
-    await this.rankRepository.update(player1.id, currentSeason.id, user1Lp);
-    await this.rankRepository.update(player2.id, currentSeason.id, user2Lp);
+    await this.updateRank(player1.id, currentSeason.id, user1Lp);
+    await this.updateRank(player2.id, currentSeason.id, user2Lp);
 
     const userGame1: UserGame = await this.saveUserGames(
       game,
@@ -127,6 +127,18 @@ export class GameService {
       title: usersTitles,
     };
     return responseDto;
+  }
+
+  async updateRank(userId: number, seasonId: number, userLp: number) {
+    const userHighestRank: Rank =
+      await this.rankRepository.findHighestRankByUserId(userId);
+    let userHighestLp: number;
+    if (userHighestRank.ladderPoint <= userLp) {
+      userHighestLp = userLp;
+    } else {
+      userHighestLp = userHighestRank.highestPoint;
+    }
+    await this.rankRepository.update(userId, seasonId, userLp, userHighestLp);
   }
 
   async saveGame(
@@ -301,14 +313,14 @@ export class GameService {
     const player1Level = this.calculateLevel(player1, player1Exp);
     await this.userRepository.update(player1.id, player1Exp, player1Level);
     const updatedPlayer1: User = await this.userRepository.findById(player1Id);
-    this.updateTitle(updatedPlayer1, titles);
+    await this.updateTitle(updatedPlayer1, titles);
 
     // player2의 레벨 업 체크 및 경험치 추가
     const player2Exp = this.calculateExperiencePoints(player2Result);
     const player2Level = this.calculateLevel(player2, player2Exp);
     await this.userRepository.update(player2.id, player2Exp, player2Level);
     const updatedPlayer2: User = await this.userRepository.findById(player2Id);
-    this.updateTitle(updatedPlayer2, titles);
+    await this.updateTitle(updatedPlayer2, titles);
 
     // 업데이트된 유저 타이틀 정보를 반환합니다.
     const updateUserTitles: UpdateUserTitlesDto = new UpdateUserTitlesDto();

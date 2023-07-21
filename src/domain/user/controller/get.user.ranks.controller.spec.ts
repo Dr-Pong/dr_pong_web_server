@@ -65,7 +65,7 @@ describe('UserController', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('rank');
         expect(response.body).toHaveProperty('tier');
-        expect(response.body).toHaveProperty('record');
+        expect(response.body).toHaveProperty('bestLp');
       });
     });
 
@@ -79,7 +79,7 @@ describe('UserController', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toHaveProperty('rank');
         expect(response.body).toHaveProperty('tier');
-        expect(response.body).toHaveProperty('record');
+        expect(response.body).toHaveProperty('bestLp');
       });
     });
 

@@ -82,10 +82,14 @@ export class RankRepository {
     userId: number,
     seasonId: number,
     userLp: number,
+    userHighestLp: number,
   ): Promise<void> {
     await this.repository.update(
       { user: { id: userId }, season: { id: seasonId } },
-      { ladderPoint: userLp },
+      {
+        ladderPoint: userLp,
+        highestPoint: userHighestLp,
+      },
     );
   }
 

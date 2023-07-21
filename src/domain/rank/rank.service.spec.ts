@@ -197,7 +197,7 @@ describe('RankService', () => {
 
     //없는시즌 데이터는 null로 반환
     expect(invalidRecordRankTier).toEqual({
-      record: null,
+      bestLp: null,
       rank: null,
       tier: 'egg',
     });
