@@ -106,7 +106,6 @@ export class TestService {
       id: index + 2,
       nickname: 'user' + index.toString(),
       image: this.profileImages[0],
-      level: 1,
       exp: 0,
     });
     this.users.push(user);
