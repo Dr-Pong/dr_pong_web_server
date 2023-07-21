@@ -17,6 +17,7 @@ import { PostGatewayUserDto } from './dto/post.gateway.users.dto';
 import { RankRepository } from '../rank/rank.repository';
 import { SeasonRepository } from '../season/season.repository';
 import { Season } from '../season/season.entity';
+import { calculateLevel } from '../game/game.service';
 
 @Injectable()
 export class UserService {
@@ -42,7 +43,7 @@ export class UserService {
     const responseDto: UserDetailDto = {
       nickname: user.nickname,
       image,
-      level: user.level,
+      level: calculateLevel(user.exp),
       statusMessage: user.statusMessage,
     };
     return responseDto;

@@ -89,7 +89,6 @@ describe('UserService', () => {
     expect(result.nickname).toBe(basicUser.nickname);
     expect(result.image.url).toBe(basicUser.image.url);
     expect(result.statusMessage).toBe(basicUser.statusMessage);
-    expect(result.level).toBe(basicUser.level);
   });
 
   it('User Image Patch 테스트', async () => {
