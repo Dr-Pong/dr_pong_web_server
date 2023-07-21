@@ -49,7 +49,7 @@ export class UserRepository {
     });
   }
 
-  async update(userId: number, plusExp: number, level: number): Promise<void> {
+  async update(userId: number, plusExp: number): Promise<void> {
     const user = await this.repository.findOne({ where: { id: userId } });
     await this.repository.update(
       {
@@ -57,7 +57,6 @@ export class UserRepository {
       },
       {
         exp: user.exp + plusExp,
-        level: level,
       },
     );
   }

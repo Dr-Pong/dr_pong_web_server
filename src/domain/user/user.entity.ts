@@ -14,9 +14,6 @@ export class User extends BaseTimeEntity {
   @JoinColumn({ name: 'image_id' })
   image: ProfileImage;
 
-  @Column({ name: 'level', default: 1 })
-  level: number;
-
   @Column({ name: 'exp', default: 0 })
   exp: number;
 
