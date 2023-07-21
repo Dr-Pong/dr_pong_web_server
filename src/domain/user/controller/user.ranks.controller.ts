@@ -59,7 +59,7 @@ export class UserRanksController {
     return responseDto;
   }
 
-  @Get('/:id/rank/current')
+  @Get('/:id/ranks/current')
   async rankLpAndImageByUserIdGet(
     @Param('id') id: number,
   ): Promise<RankLpAndkImageResponseDto> {
