@@ -310,15 +310,13 @@ export class GameService {
 
     // player1의 레벨 업 체크 및 경험치 추가
     const player1Exp = this.calculateExperiencePoints(player1Result);
-    const player1Level = this.calculateLevel(player1, player1Exp);
-    await this.userRepository.update(player1.id, player1Exp, player1Level);
+    await this.userRepository.update(player1.id, player1Exp);
     const updatedPlayer1: User = await this.userRepository.findById(player1Id);
     await this.updateTitle(updatedPlayer1, titles);
 
     // player2의 레벨 업 체크 및 경험치 추가
     const player2Exp = this.calculateExperiencePoints(player2Result);
-    const player2Level = this.calculateLevel(player2, player2Exp);
-    await this.userRepository.update(player2.id, player2Exp, player2Level);
+    await this.userRepository.update(player2.id, player2Exp);
     const updatedPlayer2: User = await this.userRepository.findById(player2Id);
     await this.updateTitle(updatedPlayer2, titles);
 
@@ -327,17 +325,17 @@ export class GameService {
     updateUserTitles.updateUserTitles = [];
 
     const updatePlayerTitles = (player: User) => {
-      if (player.level >= 10) {
+      if (player.exp >= 10 * Number(process.env.LEVEL_UP_EXP)) {
         updateUserTitles.updateUserTitles.push(
           new UpdateUserTitleDto(player.id, titles[0].id),
         );
       }
-      if (player.level >= 42) {
+      if (player.exp >= 42 * Number(process.env.LEVEL_UP_EXP)) {
         updateUserTitles.updateUserTitles.push(
           new UpdateUserTitleDto(player.id, titles[1].id),
         );
       }
-      if (player.level >= 100) {
+      if (player.exp >= 100 * Number(process.env.LEVEL_UP_EXP)) {
         updateUserTitles.updateUserTitles.push(
           new UpdateUserTitleDto(player.id, titles[2].id),
         );
@@ -351,7 +349,7 @@ export class GameService {
   }
 
   private async updateTitle(player: User, titles: Title[]): Promise<void> {
-    const playerLevel = player.level;
+    const playerLevel = calculateLevel(player.exp);
 
     const titleMapping = [
       { level: 100, titleIndex: 2 },
@@ -386,13 +384,6 @@ export class GameService {
     return expMap[playerResult];
   }
 
-  private calculateLevel(player: User, exp: number): number {
-    const playerExp = player.exp;
-    exp += playerExp;
-    const level = Math.floor(exp / Number(process.env.LEVEL_UP_EXP));
-    return level + 1;
-  }
-
   private checkGameResult(
     player1Score: number,
     player2Score: number,
@@ -420,4 +411,9 @@ export class GameService {
       }
     }
   }
+}
+
+export function calculateLevel(exp: number): number {
+  const level = Math.floor(exp / Number(process.env.LEVEL_UP_EXP));
+  return level + 1;
 }
