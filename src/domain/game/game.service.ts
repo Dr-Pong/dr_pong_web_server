@@ -123,8 +123,8 @@ export class GameService {
     );
 
     const responseDto: PostGameResponseDto = {
-      achievement: usersAchievements,
-      title: usersTitles,
+      achievement: usersAchievements.updateAchievements,
+      title: usersTitles.updateUserTitles,
     };
     return responseDto;
   }
