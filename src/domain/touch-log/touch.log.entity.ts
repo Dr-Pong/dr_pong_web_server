@@ -23,7 +23,7 @@ export class TouchLog {
   @Column({ name: 'round', type: 'int' })
   round: number;
 
-  @Column({ name: 'ball_speed' })
+  @Column({ name: 'ball_speed', type: 'float' })
   ballSpeed: number;
 
   @Column({ name: 'ball_direction_x', type: 'float' })
