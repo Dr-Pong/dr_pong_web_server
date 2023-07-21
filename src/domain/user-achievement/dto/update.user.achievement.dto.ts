@@ -1,10 +1,12 @@
 export class UpdateUserAchievementDto {
   userId: number;
-  achievementId: number;
+  achievement: string;
+  imgUrl: string;
 
-  constructor(userId: number, achievementId: number) {
+  constructor(userId: number, achievement: string, imgUrl: string) {
     this.userId = userId;
-    this.achievementId = achievementId;
+    this.achievement = achievement;
+    this.imgUrl = imgUrl;
   }
 }
 
