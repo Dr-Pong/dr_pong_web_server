@@ -204,13 +204,20 @@ export class GameService {
 
       for (const mapping of achievementMapping) {
         if (player1WinCount === mapping.winCount) {
-          const achievement = achievements[mapping.achievementIndex]?.name;
           const achievementId = achievements[mapping.achievementIndex]?.id;
-          const imageUrl = achievements[mapping.achievementIndex]?.imageUrl;
-          await this.userAchievementRepository.save(player1Id, achievementId);
-          updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player1Id, achievement, imageUrl),
+          const hasAchievement = player1Achievements.some(
+            (achievement) => achievement.achievement.id === achievementId
           );
+  
+          if (!hasAchievement) {
+            const achievement = achievements[mapping.achievementIndex]?.name;
+            const imageUrl = achievements[mapping.achievementIndex]?.imageUrl;
+            await this.userAchievementRepository.save(player1Id, achievementId);
+            updatedUserAchievements.updateAchievements.push(
+              new UpdateUserAchievementDto(player1Id, achievement, imageUrl)
+            );
+          }
+  
           break;
         }
       }
@@ -225,13 +232,20 @@ export class GameService {
 
       for (const mapping of achievementMapping) {
         if (player2WinCount === mapping.winCount) {
-          const achievement = achievements[mapping.achievementIndex]?.name;
           const achievementId = achievements[mapping.achievementIndex]?.id;
-          const imageUrl = achievements[mapping.achievementIndex]?.imageUrl;
-          await this.userAchievementRepository.save(player2Id, achievementId);
-          updatedUserAchievements.updateAchievements.push(
-            new UpdateUserAchievementDto(player2Id, achievement, imageUrl),
+          const hasAchievement = player2Achievements.some(
+            (achievement) => achievement.achievement.id === achievementId
           );
+  
+          if (!hasAchievement) {
+            const achievement = achievements[mapping.achievementIndex]?.name;
+            const imageUrl = achievements[mapping.achievementIndex]?.imageUrl;
+            await this.userAchievementRepository.save(player2Id, achievementId);
+            updatedUserAchievements.updateAchievements.push(
+              new UpdateUserAchievementDto(player2Id, achievement, imageUrl)
+            );
+          }
+  
           break;
         }
       }
@@ -329,75 +343,62 @@ export class GameService {
     player2Result: GameResultType,
   ): Promise<UpdateUserTitlesDto> {
     const titles = await this.titleRepository.findAll();
-    const player1: User = await this.userRepository.findById(player1Id);
-    const player2: User = await this.userRepository.findById(player2Id);
+  const player1: User = await this.userRepository.findById(player1Id);
+  const player2: User = await this.userRepository.findById(player2Id);
 
-    // player1의 레벨 업 체크 및 경험치 추가
-    const player1Exp = this.calculateExperiencePoints(player1Result);
-    await this.userRepository.update(player1.id, player1Exp);
-    const updatedPlayer1: User = await this.userRepository.findById(player1Id);
-    await this.updateTitle(updatedPlayer1, titles);
+  // player1의 레벨 업 체크 및 경험치 추가
+  const player1Exp = this.calculateExperiencePoints(player1Result);
+  await this.userRepository.update(player1.id, player1Exp);
+  const updatedPlayer1: User = await this.userRepository.findById(player1Id);
 
-    // player2의 레벨 업 체크 및 경험치 추가
-    const player2Exp = this.calculateExperiencePoints(player2Result);
-    await this.userRepository.update(player2.id, player2Exp);
-    const updatedPlayer2: User = await this.userRepository.findById(player2Id);
-    await this.updateTitle(updatedPlayer2, titles);
+  // player2의 레벨 업 체크 및 경험치 추가
+  const player2Exp = this.calculateExperiencePoints(player2Result);
+  await this.userRepository.update(player2.id, player2Exp);
+  const updatedPlayer2: User = await this.userRepository.findById(player2Id);
 
-    // 업데이트된 유저 타이틀 정보를 반환합니다.
-    const updateUserTitles: UpdateUserTitlesDto = new UpdateUserTitlesDto();
-    updateUserTitles.updateUserTitles = [];
+  // 업데이트된 유저 타이틀 정보를 반환합니다.
+  const updateUserTitles: UpdateUserTitlesDto = new UpdateUserTitlesDto();
+  updateUserTitles.updateUserTitles = [];
 
-    const updatePlayerTitles = (player: User) => {
-      if (player.exp >= 10 * Number(process.env.LEVEL_UP_EXP)) {
-        updateUserTitles.updateUserTitles.push(
-          new UpdateUserTitleDto(player.id, titles[0].name),
-        );
-      }
-      if (player.exp >= 42 * Number(process.env.LEVEL_UP_EXP)) {
-        updateUserTitles.updateUserTitles.push(
-          new UpdateUserTitleDto(player.id, titles[1].name),
-        );
-      }
-      if (player.exp >= 100 * Number(process.env.LEVEL_UP_EXP)) {
-        updateUserTitles.updateUserTitles.push(
-          new UpdateUserTitleDto(player.id, titles[2].name),
-        );
-      }
-    };
+  this.addNewTitleIfNotExists(updatedPlayer1, titles, updateUserTitles);
+  this.addNewTitleIfNotExists(updatedPlayer2, titles, updateUserTitles);
 
-    updatePlayerTitles(updatedPlayer1);
-    updatePlayerTitles(updatedPlayer2);
-
-    return updateUserTitles;
+  return updateUserTitles;
   }
 
-  private async updateTitle(player: User, titles: Title[]): Promise<void> {
+  private async addNewTitleIfNotExists(
+    player: User,
+    titles: Title[],
+    updateUserTitles: UpdateUserTitlesDto
+  ): Promise<void> {
     const playerLevel = calculateLevel(player.exp);
-
+  
     const titleMapping = [
       { level: 100, titleIndex: 2 },
       { level: 42, titleIndex: 1 },
       { level: 10, titleIndex: 0 },
     ];
-
+  
     for (const mapping of titleMapping) {
       if (playerLevel >= mapping.level) {
         const titleExist: UserTitle =
           await this.userTitleRepository.findByUserIdAndTitleId(
             player.id,
-            titles[mapping.titleIndex].id,
+            titles[mapping.titleIndex].id
           );
         if (!titleExist) {
           await this.userTitleRepository.save(
             player.id,
-            titles[mapping.titleIndex].id,
+            titles[mapping.titleIndex].id
+          );
+          updateUserTitles.updateUserTitles.push(
+            new UpdateUserTitleDto(player.id, titles[mapping.titleIndex].name)
           );
         }
       }
     }
   }
-
+  
   private calculateExperiencePoints(playerResult: GameResultType): number {
     const expMap = {
       [GAMERESULT_WIN]: Number(process.env.GAME_WIN_EXP),
@@ -436,7 +437,7 @@ export class GameService {
     }
   }
 }
-
+``
 export function calculateLevel(exp: number): number {
   const level = Math.floor(exp / Number(process.env.LEVEL_UP_EXP));
   return level + 1;
