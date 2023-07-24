@@ -360,8 +360,8 @@ export class GameService {
   const updateUserTitles: UpdateUserTitlesDto = new UpdateUserTitlesDto();
   updateUserTitles.updateUserTitles = [];
 
-  this.addNewTitleIfNotExists(updatedPlayer1, titles, updateUserTitles);
-  this.addNewTitleIfNotExists(updatedPlayer2, titles, updateUserTitles);
+  await this.addNewTitleIfNotExists(updatedPlayer1, titles, updateUserTitles);
+  await this.addNewTitleIfNotExists(updatedPlayer2, titles, updateUserTitles);
 
   return updateUserTitles;
   }
