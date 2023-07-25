@@ -45,6 +45,7 @@ import {
 import { IsolationLevel, Transactional } from 'typeorm-transactional';
 import { PostGameResponseDto } from './dto/post.game.response.dto';
 import { UserTitle } from '../user-title/user-title.entity';
+import { GAMETYPE_NORMAL, GAMETYPE_RANK, GameType } from 'src/global/type/type.game';
 
 @Injectable()
 export class GameService {
@@ -63,7 +64,7 @@ export class GameService {
 
   @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async postGame(postGameDto: PostGameDto): Promise<PostGameResponseDto> {
-    const { player1, player2 } = postGameDto;
+    const { player1, player2 , type} = postGameDto;
     const currentSeason: Season =
       await this.seasonRepository.findCurrentSeason();
 
@@ -113,7 +114,7 @@ export class GameService {
     }
 
     const usersAchievements: UpdateUserAchievementsDto =
-      await this.updateAchievements(player1.id, player2.id, currentSeason.id);
+      await this.updateAchievements(player1.id, player2.id, currentSeason.id, type);
 
     const usersTitles: UpdateUserTitlesDto = await this.updateUserLevel(
       player1.id,
@@ -170,6 +171,7 @@ export class GameService {
     player1Id: number,
     player2Id: number,
     seasonId: number,
+    type: GameType,
   ): Promise<UpdateUserAchievementsDto> {
     const player1Games: UserGame[] =
       await this.userGameRepository.findAllByUserId(player1Id);
@@ -266,7 +268,7 @@ export class GameService {
 
     const player1Tier: TierType = await this.checkTier(player1ChangedLp);
     const player2Tier: TierType = await this.checkTier(player2ChangedLp);
-    if (player1Tier) {
+    if (player1Tier && type === GAMETYPE_RANK) {
       const player1AchievementId = getAchievementByLPCut(player1ChangedLp);
       const hasAchievement = player1Achievements.some(
         (achievement) => achievement.achievement.id === player1AchievementId,
@@ -292,7 +294,7 @@ export class GameService {
       }
     }
 
-    if (player2Tier) {
+    if (player2Tier && type === GAMETYPE_RANK) {
       const player2AchievementId = getAchievementByLPCut(player2ChangedLp);
       const hasAchievement = player2Achievements.some(
         (achievement) => achievement.achievement.id === player2AchievementId,
@@ -345,7 +347,7 @@ export class GameService {
     const titles = await this.titleRepository.findAll();
   const player1: User = await this.userRepository.findById(player1Id);
   const player2: User = await this.userRepository.findById(player2Id);
-
+ 
   // player1의 레벨 업 체크 및 경험치 추가
   const player1Exp = this.calculateExperiencePoints(player1Result);
   await this.userRepository.update(player1.id, player1Exp);
