@@ -20,16 +20,22 @@ import { Season } from '../season/season.entity';
 import { Rank } from '../rank/rank.entity';
 import { SeasonRepository } from '../season/season.repository';
 import { RankRepository } from '../rank/rank.repository';
+import { EmojiModule } from '../emoji/emoji.module';
+import { UserEmojiRepository } from '../user-emoji/user-emoji.repository';
+import { EmojiRepository } from '../emoji/emoji.repository';
+import { Emoji } from '../emoji/emoji.entity';
+import { UserEmoji } from '../user-emoji/user-emoji.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, ProfileImage, Season, Rank]),
+    TypeOrmModule.forFeature([User, ProfileImage, Season, Rank, Emoji, UserEmoji]),
     UsertitleModule,
     UserAchievementModule,
     UserEmojiModule,
     UsertitleModule,
     RankModule,
     UserGameModule,
+    EmojiModule,
   ],
   controllers: [
     UserCollectablesController,
@@ -45,6 +51,8 @@ import { RankRepository } from '../rank/rank.repository';
     ProfileImageRepository,
     SeasonRepository,
     RankRepository,
+    UserEmojiRepository,
+    EmojiRepository,
   ],
   exports: [UserService],
 })

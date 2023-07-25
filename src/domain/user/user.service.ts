@@ -18,6 +18,9 @@ import { RankRepository } from '../rank/rank.repository';
 import { SeasonRepository } from '../season/season.repository';
 import { Season } from '../season/season.entity';
 import { calculateLevel } from '../game/game.service';
+import { UserEmojiRepository } from '../user-emoji/user-emoji.repository';
+import { Emoji } from '../emoji/emoji.entity';
+import { EmojiRepository } from '../emoji/emoji.repository';
 
 @Injectable()
 export class UserService {
@@ -26,6 +29,8 @@ export class UserService {
     private rankRepository: RankRepository,
     private readonly seasonRepository: SeasonRepository,
     private profileImageRepository: ProfileImageRepository,
+    private userEmojiRepository: UserEmojiRepository,
+    private emojiRepository: EmojiRepository,
   ) {}
   users: Map<string, User> = new Map();
 
@@ -108,6 +113,15 @@ export class UserService {
   @Transactional({ isolationLevel: IsolationLevel.SERIALIZABLE })
   async postUser(postDto: PostGatewayUserDto): Promise<void> {
     const user: User = await this.userRepository.save(postDto);
+    //user image 추가하는부분
+    console.log('user', user);
+    const emoji: Emoji[] = await this.emojiRepository.findAll()
+    console.log('emoji', emoji);
+    if(emoji){
+      for(let i = 0; i <= 15; i++){
+        await this.userEmojiRepository.save(user.id, emoji[i].id);
+      }
+    }
     const season: Season = await this.seasonRepository.findCurrentSeason();
     await this.rankRepository.save(user.id, season.id);
   }

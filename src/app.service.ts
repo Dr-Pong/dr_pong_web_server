@@ -68,19 +68,67 @@ export class AppService implements OnApplicationBootstrap {
     if (emojis.length === 0) {
       await this.emojiRepository.save(
         'emoji1',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jaehwkim.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/1.svg',
       );
       await this.emojiRepository.save(
         'emoji2',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jiyun.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/2.svg',
       );
       await this.emojiRepository.save(
         'emoji3',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/sumsong.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/3.svg',
       );
       await this.emojiRepository.save(
         'emoji4',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/keokim.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/4.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji5',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/5.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji6',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/6.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji7',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/7.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji8',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/8.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji9',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/9.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji10',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/10.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji11',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/11.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji12',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/12.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji13',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/13.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji14',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/14.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji15',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/15.svg',
+      );
+      await this.emojiRepository.save(
+        'emoji16',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/16.svg',
       );
     }
     const savedEmojis = await this.emojiRepository.findAll();
@@ -111,37 +159,37 @@ export class AppService implements OnApplicationBootstrap {
       await this.achievementRepository.save(
         'seahorse',
         'first victory',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/junyopar.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/achievements/Seahorse.svg',
       );
       await this.achievementRepository.save(
         'octopus',
         '8th victory',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/daekim.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/achievements/Octopus.svg',
       );
       await this.achievementRepository.save(
         'squid',
         '10th victory',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jabae.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/achievements/Squid.svg',
       );
       await this.achievementRepository.save(
         'hatch',
         'reached student tier',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/him.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/achievements/Hatched.svg',
       );
       await this.achievementRepository.save(
         'summa cum laude',
         'reached bachelor tier',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jaekim.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/achievements/Summa+Pong+Laude.svg',
       );
       await this.achievementRepository.save(
         'transcendence',
         'reached master tier',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jaemjung.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/achievements/Transcendence.svg',
       );
       await this.achievementRepository.save(
         'dr.pong',
         'reached doctor tier',
-        'https://42gg-public-image.s3.ap-northeast-2.amazonaws.com/images/jujeon.jpeg',
+        'https://drpong.s3.ap-northeast-2.amazonaws.com/achievements/Dr.Pong.svg',
       );
     }
   }
