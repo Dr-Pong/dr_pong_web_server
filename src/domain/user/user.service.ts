@@ -18,6 +18,9 @@ import { RankRepository } from '../rank/rank.repository';
 import { SeasonRepository } from '../season/season.repository';
 import { Season } from '../season/season.entity';
 import { calculateLevel } from '../game/game.service';
+import { UserEmojiRepository } from '../user-emoji/user-emoji.repository';
+import { Emoji } from '../emoji/emoji.entity';
+import { EmojiRepository } from '../emoji/emoji.repository';
 
 @Injectable()
 export class UserService {
@@ -26,6 +29,8 @@ export class UserService {
     private rankRepository: RankRepository,
     private readonly seasonRepository: SeasonRepository,
     private profileImageRepository: ProfileImageRepository,
+    private userEmojiRepository: UserEmojiRepository,
+    private emojiRepository: EmojiRepository,
   ) {}
   users: Map<string, User> = new Map();
 
@@ -60,12 +65,19 @@ export class UserService {
       };
       return responseDto;
     }
-
+  
     const userFromDatabase = await this.userRepository.findByNickname(
       getDto.nickname,
     );
-    if (!userFromDatabase) throw new NotFoundException('No such User');
-
+  
+    if (!userFromDatabase) {
+      const responseDto: UserInfoDto = {
+        id: null,
+        nickname: null,
+      };
+      return responseDto;
+    }
+  
     this.users.set(userFromDatabase.nickname, userFromDatabase);
     const responseDto: UserInfoDto = {
       id: userFromDatabase.id,
@@ -73,6 +85,7 @@ export class UserService {
     };
     return responseDto;
   }
+  
 
   @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUserImage(patchDto: PatchUserImageDto): Promise<void> {
@@ -108,6 +121,12 @@ export class UserService {
   @Transactional({ isolationLevel: IsolationLevel.SERIALIZABLE })
   async postUser(postDto: PostGatewayUserDto): Promise<void> {
     const user: User = await this.userRepository.save(postDto);
+    const emoji: Emoji[] = await this.emojiRepository.findAll()
+    if(emoji){
+      for(let i = 0; i <= 15; i++){
+        await this.userEmojiRepository.save(user.id, emoji[i].id);
+      }
+    }
     const season: Season = await this.seasonRepository.findCurrentSeason();
     await this.rankRepository.save(user.id, season.id);
   }
