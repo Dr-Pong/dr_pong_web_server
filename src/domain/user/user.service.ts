@@ -65,12 +65,19 @@ export class UserService {
       };
       return responseDto;
     }
-
+  
     const userFromDatabase = await this.userRepository.findByNickname(
       getDto.nickname,
     );
-    if (!userFromDatabase) throw new NotFoundException('No such User');
-
+  
+    if (!userFromDatabase) {
+      const responseDto: UserInfoDto = {
+        id: null,
+        nickname: null,
+      };
+      return responseDto;
+    }
+  
     this.users.set(userFromDatabase.nickname, userFromDatabase);
     const responseDto: UserInfoDto = {
       id: userFromDatabase.id,
@@ -78,6 +85,7 @@ export class UserService {
     };
     return responseDto;
   }
+  
 
   @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUserImage(patchDto: PatchUserImageDto): Promise<void> {
@@ -113,10 +121,7 @@ export class UserService {
   @Transactional({ isolationLevel: IsolationLevel.SERIALIZABLE })
   async postUser(postDto: PostGatewayUserDto): Promise<void> {
     const user: User = await this.userRepository.save(postDto);
-    //user image 추가하는부분
-    console.log('user', user);
     const emoji: Emoji[] = await this.emojiRepository.findAll()
-    console.log('emoji', emoji);
     if(emoji){
       for(let i = 0; i <= 15; i++){
         await this.userEmojiRepository.save(user.id, emoji[i].id);
