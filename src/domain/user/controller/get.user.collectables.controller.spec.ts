@@ -341,32 +341,31 @@ describe('UserController', () => {
     });
 
     describe('Error Cases Test', () => {
-      it('GET /users/{nickname}/achievement?selected=false', async () => {
+      it('GET /users/{nickname}/achievements?selected=true', async () => {
         const response = await request(app.getHttpServer()).get(
-          '/users/' + 'notExistNickname' + '/achievement?selected=false',
+          '/users/' + 'notExistNickname' + '/achievements?selected=true',
         );
-        expect(response.statusCode).toBe(404);
+
+        expect(response.body.achievements).toStrictEqual([null, null, null]);
+        expect(response.statusCode).toBe(200);
       });
 
       it('GET /users/{nickname}/emojis?selected=true', async () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + 'notExistNickname' + '/emojis?selected=true',
         );
-        expect(response.statusCode).toBe(404);
-      });
 
-      it('GET /users/{nickname}/emojis?selected=false', async () => {
-        const response = await request(app.getHttpServer()).get(
-          '/users/' + 'notExistNickname' + '/emojis?selected=false',
-        );
-        expect(response.statusCode).toBe(404);
+        expect(response.body.emojis).toStrictEqual([null, null, null, null]);
+        expect(response.statusCode).toBe(200);
       });
 
       it('GET /users/{nickname}/titles', async () => {
         const response = await request(app.getHttpServer()).get(
           '/users/' + 'notExistNickname' + '/titles',
         );
-        expect(response.statusCode).toBe(404);
+
+        expect(response.body.titles).toStrictEqual([]);
+        expect(response.statusCode).toBe(200);
       });
     });
   });

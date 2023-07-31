@@ -85,11 +85,17 @@ describe('UserController', () => {
 
     describe('Error Cases Test', () => {
       it('GET /users/{nickname}/ranks/season ', async () => {
+        await testService.createBasicSeasons(1);
         const response = await request(app.getHttpServer()).get(
           '/users/' + 'nononon ' + '/ranks/season',
         );
 
-        expect(response.statusCode).toBe(404);
+        expect(response.body).toStrictEqual({
+          bestLp: null,
+          rank: null,
+          tier: 'egg',
+        });
+        expect(response.statusCode).toBe(200);
       });
     });
   });
