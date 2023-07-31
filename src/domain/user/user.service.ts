@@ -65,11 +65,11 @@ export class UserService {
       };
       return responseDto;
     }
-  
+
     const userFromDatabase = await this.userRepository.findByNickname(
       getDto.nickname,
     );
-  
+
     if (!userFromDatabase) {
       const responseDto: UserInfoDto = {
         id: null,
@@ -77,7 +77,7 @@ export class UserService {
       };
       return responseDto;
     }
-  
+
     this.users.set(userFromDatabase.nickname, userFromDatabase);
     const responseDto: UserInfoDto = {
       id: userFromDatabase.id,
@@ -85,7 +85,6 @@ export class UserService {
     };
     return responseDto;
   }
-  
 
   @Transactional({ isolationLevel: IsolationLevel.REPEATABLE_READ })
   async patchUserImage(patchDto: PatchUserImageDto): Promise<void> {
@@ -121,9 +120,9 @@ export class UserService {
   @Transactional({ isolationLevel: IsolationLevel.SERIALIZABLE })
   async postUser(postDto: PostGatewayUserDto): Promise<void> {
     const user: User = await this.userRepository.save(postDto);
-    const emoji: Emoji[] = await this.emojiRepository.findAll()
-    if(emoji){
-      for(let i = 0; i <= 15; i++){
+    const emoji: Emoji[] = await this.emojiRepository.findAll();
+    if (emoji.length > 0) {
+      for (let i = 0; i < emoji.length; i++) {
         await this.userEmojiRepository.save(user.id, emoji[i].id);
       }
     }
