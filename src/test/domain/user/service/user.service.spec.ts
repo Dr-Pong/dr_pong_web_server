@@ -1,21 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './user.entity';
-import { UserService } from './user.service';
-import { PatchUserImageDto } from './dto/patch.user.image.dto';
-import { TestService } from 'src/test/test.service';
-import { GetUserDetailDto } from './dto/get.user.detail.dto';
-import { TestModule } from 'src/test/test.module';
+import { TestService } from 'src/test/data/test.service';
+import { TestModule } from 'src/test/data/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
-import { UserDetailDto } from './dto/user.detail.dto';
-import { UserModule } from './user.module';
-import { PatchUserMessageDto } from './dto/patch.user.message.dto';
 import {
   addTransactionalDataSource,
   initializeTransactionalContext,
 } from 'typeorm-transactional';
-import { PostGatewayUserDto } from './dto/post.gateway.users.dto';
+import { UserService } from 'src/domain/user/user.service';
+import { User } from 'src/domain/user/user.entity';
+import { UserModule } from 'src/domain/user/user.module';
+import { GetUserDetailDto } from 'src/domain/user/dto/get.user.detail.dto';
+import { UserDetailDto } from 'src/domain/user/dto/user.detail.dto';
+import { PatchUserImageDto } from 'src/domain/user/dto/patch.user.image.dto';
+import { PatchUserMessageDto } from 'src/domain/user/dto/patch.user.message.dto';
+import { PostGatewayUserDto } from 'src/domain/user/dto/post.gateway.users.dto';
 
 describe('UserService', () => {
   let service: UserService;

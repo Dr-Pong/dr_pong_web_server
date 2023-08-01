@@ -3,11 +3,10 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { DataSource } from 'typeorm';
-import { TestService } from 'src/test/test.service';
+import { TestService } from 'src/test/data/test.service';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import { UserService } from '../user.service';
-import { User } from '../user.entity';
-import { PostGatewayUserDto } from '../dto/post.gateway.users.dto';
+import { UserService } from 'src/domain/user/user.service';
+import { PostGatewayUserDto } from 'src/domain/user/dto/post.gateway.users.dto';
 
 describe('UserGatewayController', () => {
   let app: INestApplication;

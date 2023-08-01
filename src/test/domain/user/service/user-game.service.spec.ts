@@ -1,14 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
-import { UserGame } from './user-game.entity';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { typeORMConfig } from 'src/configs/typeorm.config';
-import { TestModule } from 'src/test/test.module';
-import { TestService } from 'src/test/test.service';
-import { GetUserGameTotalStatDto } from './dto/get.user-game.total.stat.dto';
-import { UserGameModule } from './user-game.module';
-import { UserGameService } from './user-game.service';
-import { GetUserGameSeasonStatDto } from './dto/get.user-game.season.stat.dto';
+import { TestModule } from 'src/test/data/test.module';
+import { TestService } from 'src/test/data/test.service';
 import {
   GAMERESULT_LOSE,
   GAMERESULT_TIE,
@@ -19,12 +14,17 @@ import {
   initializeTransactionalContext,
 } from 'typeorm-transactional';
 import { User } from 'src/domain/user/user.entity';
-import { UserGameRecordsDto } from './dto/user-game.records.dto';
-import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
-import { GetUserGameByNicknameAndGameIdDto } from './dto/get.user-game.by.nickname.and.gameid.dto';
-import { UserGameByNicknameAndGameIdResponseDto } from './dto/get.user-game.game.response.dto';
-import { GetUserGameExpDto } from './dto/get.user-game.exp.dto';
-import { GetUserGameExpResponseDto } from './dto/get.user-game.exp.response.dto';
+import { UserGameService } from 'src/domain/user-game/user-game.service';
+import { UserGame } from 'src/domain/user-game/user-game.entity';
+import { UserGameModule } from 'src/domain/user-game/user-game.module';
+import { GetUserGameTotalStatDto } from 'src/domain/user-game/dto/get.user-game.total.stat.dto';
+import { GetUserGameSeasonStatDto } from 'src/domain/user-game/dto/get.user-game.season.stat.dto';
+import { GetUserGameRecordsDto } from 'src/domain/user-game/dto/get.user-game.records.dto';
+import { UserGameRecordsDto } from 'src/domain/user-game/dto/user-game.records.dto';
+import { GetUserGameByNicknameAndGameIdDto } from 'src/domain/user-game/dto/get.user-game.by.nickname.and.gameid.dto';
+import { UserGameByNicknameAndGameIdResponseDto } from 'src/domain/user-game/dto/get.user-game.game.response.dto';
+import { GetUserGameExpDto } from 'src/domain/user-game/dto/get.user-game.exp.dto';
+import { GetUserGameExpResponseDto } from 'src/domain/user-game/dto/get.user-game.exp.response.dto';
 
 describe('UserGameService', () => {
   let service: UserGameService;

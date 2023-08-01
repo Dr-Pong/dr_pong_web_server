@@ -4,12 +4,12 @@ import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { UserTitle } from 'src/domain/user-title/user-title.entity';
 import { UsertitleModule } from 'src/domain/user-title/user-title.module';
-import { UserTitleService } from './user-title.service';
-import { GetUserTitlesDto } from './dto/get.user.titles.dto';
-import { TestService } from 'src/test/test.service';
-import { TestModule } from 'src/test/test.module';
+import { TestService } from 'src/test/data/test.service';
+import { TestModule } from 'src/test/data/test.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { initializeTransactionalContext } from 'typeorm-transactional';
+import { UserTitleService } from 'src/domain/user-title/user-title.service';
+import { GetUserTitlesDto } from 'src/domain/user-title/dto/get.user.titles.dto';
 
 describe('UserTitleService', () => {
   let service: UserTitleService;

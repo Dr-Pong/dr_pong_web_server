@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserEmojiService } from './user-emoji.service';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
-import { GetUserEmojisDto } from './dto/get.user.emojis.dto';
-import { PatchUserEmojisDto } from './dto/patch.user.emojis.dto';
 import { BadRequestException } from '@nestjs/common';
-import { TestService } from 'src/test/test.service';
+import { TestService } from 'src/test/data/test.service';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
-import { UserEmoji } from './user-emoji.entity';
 import { typeORMConfig } from 'src/configs/typeorm.config';
-import { UserEmojiModule } from './user-emoji.module';
-import { TestModule } from 'src/test/test.module';
+import { TestModule } from 'src/test/data/test.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { initializeTransactionalContext } from 'typeorm-transactional';
+import { UserEmojiService } from 'src/domain/user-emoji/user-emoji.service';
+import { UserEmoji } from 'src/domain/user-emoji/user-emoji.entity';
+import { UserEmojiModule } from 'src/domain/user-emoji/user-emoji.module';
+import { GetUserEmojisDto } from 'src/domain/user-emoji/dto/get.user.emojis.dto';
+import { PatchUserEmojisDto } from 'src/domain/user-emoji/dto/patch.user.emojis.dto';
 
 describe('UserEmojiService', () => {
   let service: UserEmojiService;

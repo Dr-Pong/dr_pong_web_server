@@ -3,14 +3,14 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { DataSource } from 'typeorm';
-import { TestService } from 'src/test/test.service';
+import { TestService } from 'src/test/data/test.service';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import {
   GAMERESULT_LOSE,
   GAMERESULT_TIE,
   GAMERESULT_WIN,
 } from 'src/global/type/type.game.result';
-import { UserService } from '../user.service';
+import { UserService } from 'src/domain/user/user.service';
 
 describe('UserController', () => {
   let app: INestApplication;

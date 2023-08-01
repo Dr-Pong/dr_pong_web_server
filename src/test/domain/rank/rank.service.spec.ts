@@ -1,23 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RankService } from './rank.service';
 import { DataSource, Repository } from 'typeorm';
-import { Rank } from './rank.entity';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
-import { GetUserRankStatDto } from './dto/get.user.rank.stat.dto';
-import { GetUserBestRankStatDto } from './dto/get.user.best.rank.stat.dto';
-import { TestService } from 'src/test/test.service';
-import { TestModule } from 'src/test/test.module';
+import { TestService } from 'src/test/data/test.service';
+import { TestModule } from 'src/test/data/test.module';
 import { typeORMConfig } from 'src/configs/typeorm.config';
-import { RankModule } from './rank.module';
-import { RanksTopDto } from './dto/ranks.top.dto';
-import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
-import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
 import {
   addTransactionalDataSource,
   initializeTransactionalContext,
 } from 'typeorm-transactional';
-import { GetRankLpAndImageDto } from './dto/get.rank.lp.and.image.dto';
-import { RankLpAndkImageResponseDto } from './dto/rank.lp.and.image.response.dto';
+import { RankService } from 'src/domain/rank/rank.service';
+import { RankModule } from 'src/domain/rank/rank.module';
+import { Rank } from 'src/domain/rank/rank.entity';
+import { GetUserRankStatDto } from 'src/domain/rank/dto/get.user.rank.stat.dto';
+import { GetUserBestRankStatDto } from 'src/domain/rank/dto/get.user.best.rank.stat.dto';
+import { GetRanksTopDto } from 'src/domain/rank/dto/get.ranks.top.count.dto';
+import { RanksTopDto } from 'src/domain/rank/dto/ranks.top.dto';
+import { GetRanksBottomDto } from 'src/domain/rank/dto/get.ranks.bottom.dto';
+import { GetRankLpAndImageDto } from 'src/domain/rank/dto/get.rank.lp.and.image.dto';
+import { RankLpAndkImageResponseDto } from 'src/domain/rank/dto/rank.lp.and.image.response.dto';
 
 describe('RankService', () => {
   let service: RankService;

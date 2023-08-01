@@ -3,15 +3,15 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { DataSource } from 'typeorm';
-import { TestService } from 'src/test/test.service';
+import { TestService } from 'src/test/data/test.service';
 import {
   COLLECTABLE_ACHIEVED,
   COLLECTABLE_SELECTED,
   COLLECTABLE_UNACHIEVED,
 } from 'src/global/type/type.collectable.status';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import { UserService } from '../user.service';
-import { User } from '../user.entity';
+import { UserService } from '../../../../domain/user/user.service';
+import { User } from '../../../../domain/user/user.entity';
 
 describe('UserController', () => {
   let app: INestApplication;

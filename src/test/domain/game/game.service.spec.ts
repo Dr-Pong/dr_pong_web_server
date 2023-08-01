@@ -1,5 +1,5 @@
-import { TestService } from 'src/test/test.service';
-import { GameService } from './game.service';
+import { TestService } from 'src/test/data/test.service';
+import { GameService } from '../../../domain/game/game.service';
 import { DataSource, Repository } from 'typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
@@ -8,20 +8,20 @@ import {
   addTransactionalDataSource,
   initializeTransactionalContext,
 } from 'typeorm-transactional';
-import { GameModule } from './game.module';
-import { TestModule } from 'src/test/test.module';
-import { Game } from './game.entity';
-import { PostGameDto } from './dto/post.game.dto';
+import { GameModule } from '../../../domain/game/game.module';
+import { TestModule } from 'src/test/data/test.module';
+import { Game } from '../../../domain/game/game.entity';
+import { PostGameDto } from '../../../domain/game/dto/post.game.dto';
 import { GAMEMODE_SFINAE } from 'src/global/type/type.game.mode';
 import { GAMETYPE_RANK } from 'src/global/type/type.game';
 import {
   GAMEEVENT_SCORE,
   GAMEEVENT_TOUCH,
 } from 'src/global/type/type.game.event';
-import { UserGame } from '../user-game/user-game.entity';
-import { TouchLog } from '../touch-log/touch.log.entity';
-import { UserAchievement } from '../user-achievement/user-achievement.entity';
-import { UserTitle } from '../user-title/user-title.entity';
+import { UserGame } from '../../../domain/user-game/user-game.entity';
+import { TouchLog } from '../../../domain/touch-log/touch.log.entity';
+import { UserAchievement } from '../../../domain/user-achievement/user-achievement.entity';
+import { UserTitle } from '../../../domain/user-title/user-title.entity';
 
 describe('GameService', () => {
   let service: GameService;

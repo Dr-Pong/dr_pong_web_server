@@ -4,7 +4,7 @@ import { AppModule } from 'src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import { TestService } from 'src/test/test.service';
+import { TestService } from 'src/test/data/test.service';
 
 describe('RankController', () => {
   let app: INestApplication;

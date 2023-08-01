@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserAchievementService } from './user-achievement.service';
+import { UserAchievementService } from '../../../../domain/user-achievement/user-achievement.service';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
-import { UserAchievement } from './user-achievement.entity';
-import { GetUserAchievementsDto } from './dto/get.user.achievements.dto';
-import { PatchUserAchievementsDto } from './dto/patch.user.achievements.dto';
+import { UserAchievement } from '../../../../domain/user-achievement/user-achievement.entity';
+import { GetUserAchievementsDto } from '../../../../domain/user-achievement/dto/get.user.achievements.dto';
+import { PatchUserAchievementsDto } from '../../../../domain/user-achievement/dto/patch.user.achievements.dto';
 import { BadRequestException } from '@nestjs/common';
-import { TestService } from 'src/test/test.service';
+import { TestService } from 'src/test/data/test.service';
 import { typeORMConfig } from 'src/configs/typeorm.config';
-import { TestModule } from 'src/test/test.module';
-import { UserAchievementModule } from './user-achievement.module';
+import { TestModule } from 'src/test/data/test.module';
+import { UserAchievementModule } from '../../../../domain/user-achievement/user-achievement.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 
