@@ -112,21 +112,7 @@ export class TestService {
     return user;
   }
 
-  async createLevel9Users(): Promise<void> {
-    for (let i = 0; i < 10; i++) {
-      const user = await this.userRepository.save({
-        id: i + 1,
-        nickname: 'user' + i.toString(),
-        email: i.toString() + '@mail.com',
-        statusMessage: i.toString(),
-        image: this.profileImages[0],
-      });
-      this.users.push(user);
-    }
-  }
-
   async createBasicUsers(): Promise<void> {
-    // 해결
     for (let i = 0; i < 10; i++) {
       const user = await this.userRepository.save({
         id: i + 1,

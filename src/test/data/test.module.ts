@@ -15,6 +15,7 @@ import { ProfileImage } from 'src/domain/profile-image/profile-image.entity';
 import { UserGame } from 'src/domain/user-game/user-game.entity';
 import { AuthModule } from 'src/domain/auth/auth.module';
 import { TouchLog } from 'src/domain/touch-log/touch.log.entity';
+import { UserTestService } from './user.test.service';
 
 @Module({
   imports: [
@@ -35,7 +36,7 @@ import { TouchLog } from 'src/domain/touch-log/touch.log.entity';
     ]),
     AuthModule,
   ],
-  providers: [TestService],
-  exports: [TestService],
+  providers: [TestService, UserTestService],
+  exports: [TestService, UserTestService],
 })
 export class TestModule {}

@@ -16,12 +16,14 @@ import { UserDetailDto } from 'src/domain/user/dto/user.detail.dto';
 import { PatchUserImageDto } from 'src/domain/user/dto/patch.user.image.dto';
 import { PatchUserMessageDto } from 'src/domain/user/dto/patch.user.message.dto';
 import { PostGatewayUserDto } from 'src/domain/user/dto/post.gateway.users.dto';
+import { UserTestService } from 'src/test/data/user.test.service';
 
 describe('UserService', () => {
   let service: UserService;
   let userRepository: Repository<User>;
   let dataSources: DataSource;
   let testData: TestService;
+  let userTestData: UserTestService;
 
   beforeAll(async () => {
     initializeTransactionalContext();
@@ -55,11 +57,12 @@ describe('UserService', () => {
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     dataSources = module.get<DataSource>(DataSource);
     testData = module.get<TestService>(TestService);
+    userTestData = module.get<UserTestService>(UserTestService);
     await dataSources.synchronize(true);
   });
 
   beforeEach(async () => {
-    await testData.createProfileImages();
+    await userTestData.createProfileImages();
   });
 
   afterEach(async () => {
@@ -75,8 +78,8 @@ describe('UserService', () => {
   });
 
   it('User Detail Get 정보 테스트 ', async () => {
-    await testData.createProfileImages();
-    const basicUser: User = await testData.createBasicUser();
+    await userTestData.createProfileImages();
+    const basicUser: User = await userTestData.createBasicUser();
 
     const getUserDetailRequest: GetUserDetailDto = {
       nickname: basicUser.nickname,
@@ -92,12 +95,12 @@ describe('UserService', () => {
   });
 
   it('User Image Patch 테스트', async () => {
-    await testData.createProfileImages();
-    const basicUser: User = await testData.createBasicUser();
+    await userTestData.createProfileImages();
+    const basicUser: User = await userTestData.createBasicUser();
 
     const patchUserImageRequest: PatchUserImageDto = {
       userId: basicUser.id,
-      imageId: testData.profileImages[1].id,
+      imageId: userTestData.profileImages[1].id,
     };
 
     await service.patchUserImage(patchUserImageRequest);
@@ -111,8 +114,8 @@ describe('UserService', () => {
   });
 
   it('User Message Patch 테스트', async () => {
-    await testData.createProfileImages();
-    const basicUser: User = await testData.createBasicUser();
+    await userTestData.createProfileImages();
+    const basicUser: User = await userTestData.createBasicUser();
 
     const patchUserMessageRequest: PatchUserMessageDto = {
       userId: basicUser.id,
@@ -130,23 +133,22 @@ describe('UserService', () => {
   });
 
   it('User Image Get Service 테스트', async () => {
-    await testData.createProfileImages();
+    await userTestData.createProfileImages();
     const basicCase = await service.getUserImages();
 
-    expect(basicCase.images.length).toBe(testData.profileImages.length);
-    expect(basicCase.images[0].id).toBe(testData.profileImages[0].id);
-    expect(basicCase.images[0].url).toBe(testData.profileImages[0].url);
+    expect(basicCase.images[0].id).toBe(userTestData.profileImages[0].id);
+    expect(basicCase.images[0].url).toBe(userTestData.profileImages[0].url);
   });
 
   it('GateWay User 저장 테스트', async () => {
-    await testData.createProfileImages();
+    await userTestData.createProfileImages();
     await testData.createBasicSeasons(1);
 
     const gateWayUser: PostGatewayUserDto = {
       id: 1,
       nickname: 'test',
-      imgId: testData.profileImages[0].id,
-      imgUrl: testData.profileImages[0].url,
+      imgId: userTestData.profileImages[0].id,
+      imgUrl: userTestData.profileImages[0].url,
     };
 
     await service.postUser(gateWayUser);

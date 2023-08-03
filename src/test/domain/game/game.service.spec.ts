@@ -376,7 +376,7 @@ describe('GameService', () => {
     it('타이틀이 잘 저장되는지', async () => {
       // 타이틀 저장 되는지 테스트 게임 서비스 레벨 1 로 해보셈
       await testData.createBasicCollectable();
-      await testData.createLevel9Users();
+      await testData.createBasicUsers();
       await testData.createCurrentSeasonRank();
       const postDto: PostGameDto = {
         player1: {

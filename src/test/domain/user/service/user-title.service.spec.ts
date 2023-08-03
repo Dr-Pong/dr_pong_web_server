@@ -10,11 +10,13 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { UserTitleService } from 'src/domain/user-title/user-title.service';
 import { GetUserTitlesDto } from 'src/domain/user-title/dto/get.user.titles.dto';
+import { UserTestService } from 'src/test/data/user.test.service';
 
 describe('UserTitleService', () => {
   let service: UserTitleService;
   let testData: TestService;
   let dataSources: DataSource;
+  let userTestData: UserTestService;
 
   initializeTransactionalContext();
   beforeAll(async () => {
@@ -47,11 +49,12 @@ describe('UserTitleService', () => {
     service = module.get<UserTitleService>(UserTitleService);
     dataSources = module.get<DataSource>(DataSource);
     testData = module.get<TestService>(TestService);
+    userTestData = module.get<UserTestService>(UserTestService);
     await dataSources.synchronize(true);
   });
 
   beforeEach(async () => {
-    await testData.createProfileImages();
+    await userTestData.createProfileImages();
     await testData.createBasicCollectable();
   });
 
