@@ -205,7 +205,7 @@ export class AppService implements OnApplicationBootstrap {
         'https://drpong.s3.ap-northeast-2.amazonaws.com/achievements/Transcendence.svg',
       );
       await this.achievementRepository.save(
-        'dr.pong',
+        'drpong',
         'reached doctor tier',
         'https://drpong.s3.ap-northeast-2.amazonaws.com/achievements/Dr.Pong.svg',
       );
