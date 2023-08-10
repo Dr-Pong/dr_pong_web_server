@@ -35,6 +35,7 @@ export class TouchLogRepository {
   async findAllByUserGameId(gameId: number): Promise<TouchLog[]> {
     return await this.touchLogRepository.find({
       where: { userGame: { game: { id: gameId } } },
+      order: { id: 'ASC' },
     });
   }
 }
