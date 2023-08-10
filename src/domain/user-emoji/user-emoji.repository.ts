@@ -10,12 +10,16 @@ export class UserEmojiRepository {
     private readonly repository: Repository<UserEmoji>,
   ) {}
   async findAllByUserId(userId: number): Promise<UserEmoji[]> {
-    return await this.repository.find({ where: { user: { id: userId } } });
+    return await this.repository.find({
+      where: { user: { id: userId } },
+      order: { id: 'ASC' },
+    });
   }
 
   async findAllByUserIdAndSelected(userId: number): Promise<UserEmoji[]> {
     return await this.repository.find({
       where: { user: { id: userId }, selectedOrder: Not(IsNull()) },
+      order: { selectedOrder: 'ASC' },
     });
   }
 
@@ -25,6 +29,7 @@ export class UserEmojiRepository {
   ): Promise<UserEmoji[]> {
     return await this.repository.find({
       where: { user: { id: userId }, emoji: { id: In(emojiIds) } },
+      order: { id: 'ASC' },
     });
   }
 
