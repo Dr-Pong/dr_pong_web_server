@@ -17,6 +17,7 @@ export class UserGameRepository {
   async findAllByUserId(userId: number): Promise<UserGame[]> {
     return await this.repository.find({
       where: { user: { id: userId } },
+      order: { id: 'DESC' },
       loadEagerRelations: false,
     });
   }
@@ -29,6 +30,7 @@ export class UserGameRepository {
         user: { id: getDto.userId },
         game: { season: { id: getDto.seasonId } },
       },
+      order: { id: 'DESC' },
       loadEagerRelations: false,
     });
   }

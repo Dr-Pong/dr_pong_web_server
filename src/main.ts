@@ -8,7 +8,7 @@ async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: [process.env.GATEWAY_URL],
+    origin: [process.env.GATEWAY_URL, process.env.GAME_SERVER_URL, process.env.CHATSERVER_URL],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
