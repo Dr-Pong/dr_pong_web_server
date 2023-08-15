@@ -12,6 +12,7 @@ export class UserTitleRepository {
   async findAllByUserId(userId: number): Promise<UserTitle[]> {
     const userTitles: UserTitle[] = await this.repository.find({
       where: { user: { id: userId } },
+      order: { id: 'ASC' },
     });
     return userTitles;
   }

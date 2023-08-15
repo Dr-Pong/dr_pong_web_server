@@ -10,12 +10,16 @@ export class UserAchievementRepository {
     private readonly repository: Repository<UserAchievement>,
   ) {}
   async findAllByUserId(userId: number): Promise<UserAchievement[]> {
-    return await this.repository.find({ where: { user: { id: userId } } });
+    return await this.repository.find({
+      where: { user: { id: userId } },
+      order: { id: 'ASC' },
+    });
   }
 
   async findAllByUserIdAndSelected(userId: number): Promise<UserAchievement[]> {
     return await this.repository.find({
       where: { user: { id: userId }, selectedOrder: Not(IsNull()) },
+      order: { selectedOrder: 'ASC' },
     });
   }
 
@@ -24,7 +28,11 @@ export class UserAchievementRepository {
     achievementIds: number[],
   ): Promise<UserAchievement[]> {
     return await this.repository.find({
-      where: { user: { id: userId }, achievement: { id: In(achievementIds) } },
+      where: {
+        user: { id: userId },
+        achievement: { id: In(achievementIds) },
+      },
+      order: { id: 'ASC' },
     });
   }
 
