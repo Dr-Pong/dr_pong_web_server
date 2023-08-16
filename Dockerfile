@@ -10,8 +10,6 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-RUN npm run build
-
 # Copy source code
 COPY . .
 
@@ -19,4 +17,4 @@ COPY . .
 EXPOSE 4444
 
 # Run the server
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "npm", "run", "start" ]
