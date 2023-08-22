@@ -25,50 +25,17 @@ export class AppService implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<void> {
     const images: ProfileImage[] = await this.imageRepository.findAll();
     if (images.length === 0) {
-      await this.imageRepository.save(
-        {
-          id: 1,
-          url: 'https://drpong.s3.ap-northeast-2.amazonaws.com/developers/hakim.png',
+      for (let i = 1; i <= 8; i++) {
+        await this.imageRepository.save({
+          id: i,
+          url:
+            'https://drpong.s3.ap-northeast-2.amazonaws.com/fishes/' +
+            i.toString() +
+            '.jpg',
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
-        {
-          id: 2,
-          url: 'https://drpong.s3.ap-northeast-2.amazonaws.com/developers/jiyun.png',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 3,
-          url: 'https://drpong.s3.ap-northeast-2.amazonaws.com/developers/jihyukim.png',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 4,
-          url: 'https://drpong.s3.ap-northeast-2.amazonaws.com/developers/jaehwkim.png',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 5,
-          url: 'https://drpong.s3.ap-northeast-2.amazonaws.com/developers/junyopar.png',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 6,
-          url: 'https://drpong.s3.ap-northeast-2.amazonaws.com/developers/keokim.png',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 7,
-          url: 'https://drpong.s3.ap-northeast-2.amazonaws.com/developers/nheo.png',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      );
+        });
+      }
     }
     const season = await this.seasonRepository.findCurrentSeason();
     if (!season)
@@ -84,77 +51,23 @@ export class AppService implements OnApplicationBootstrap {
 
     const emojis = await this.emojiRepository.findAll();
     if (emojis.length === 0) {
-      await this.emojiRepository.save(
-        'emoji1',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/1.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji2',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/2.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji3',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/3.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji4',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/4.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji5',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/5.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji6',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/6.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji7',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/7.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji8',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/8.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji9',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/9.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji10',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/10.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji11',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/11.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji12',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/12.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji13',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/13.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji14',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/14.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji15',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/15.svg',
-      );
-      await this.emojiRepository.save(
-        'emoji16',
-        'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/16.svg',
-      );
+      for (let i = 1; i <= 16; i++) {
+        await this.emojiRepository.save(
+          'emoji' + i.toString(),
+          'https://drpong.s3.ap-northeast-2.amazonaws.com/emojis/' +
+            i.toString() +
+            '.svg',
+        );
+      }
     }
     const savedEmojis = await this.emojiRepository.findAll();
     if (emojis.length === 0) {
       const users = await this.userRepository.findAll();
       for (const c of users) {
         for (const d of savedEmojis) {
-          await this.userEmojiRepository.save(c.id, d.id);
+          if (d.id <= 4)
+            await this.userEmojiRepository.save(c.id, d.id, d.id - 1);
+          else await this.userEmojiRepository.save(c.id, d.id, null);
         }
       }
     }
