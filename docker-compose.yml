@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  webserver:
+    container_name: webserver
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 4444:4444
+    networks:
+      - my-network
+    depends_on:
+      - web-db
+    env_file:
+      - ./.env
+    volumes:
+      - web-db-data:/var/lib/postgresql/data
+    environment:
+      - TYPEORM_HOST=web-db
+
+  web-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${WEB_DB_USER}
+      POSTGRES_PASSWORD: ${WEB_DB_PASSWORD}
+      POSTGRES_DB: ${WEB_DB_NAME}
+    ports:
+      - 5434:5432
+    networks:
+      - my-network
+    volumes:
+      - web-db-data:/var/lib/postgresql/data
+
+networks:
+  my-network:
+    name: my-network
+    driver: bridge
+
+volumes:
+  web-db-data:
