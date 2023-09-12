@@ -46,10 +46,15 @@ export class UserEmojiRepository {
     await this.repository.save(userEmoji);
   }
 
-  async save(userId: number, emojiId: number): Promise<void> {
+  async save(
+    userId: number,
+    emojiId: number,
+    selectedOrder: number,
+  ): Promise<void> {
     await this.repository.save({
       user: { id: userId },
       emoji: { id: emojiId },
+      selectedOrder: selectedOrder,
     });
   }
 }

@@ -123,7 +123,8 @@ export class UserService {
     const emoji: Emoji[] = await this.emojiRepository.findAll();
     if (emoji.length > 0) {
       for (let i = 0; i < emoji.length; i++) {
-        await this.userEmojiRepository.save(user.id, emoji[i].id);
+        if (i < 4) await this.userEmojiRepository.save(user.id, emoji[i].id, i);
+        else await this.userEmojiRepository.save(user.id, emoji[i].id, null);
       }
     }
     const season: Season = await this.seasonRepository.findCurrentSeason();
