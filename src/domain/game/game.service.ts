@@ -183,9 +183,9 @@ export class GameService {
     type: GameType,
   ): Promise<UpdateUserAchievementsDto> {
     const player1Games: UserGame[] =
-      await this.userGameRepository.findAllByUserId(player1Id);
+      await this.userGameRepository.findAllRankGamesByUserId(player1Id);
     const player2Games: UserGame[] =
-      await this.userGameRepository.findAllByUserId(player2Id);
+      await this.userGameRepository.findAllRankGamesByUserId(player2Id);
 
     const player1Achievements: UserAchievement[] =
       await this.userAchievementRepository.findAllByUserId(player1Id);
