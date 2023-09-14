@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { Rank } from './rank.entity';
 import { GetRanksTopDto } from './dto/get.ranks.top.count.dto';
 import { GetRanksBottomDto } from './dto/get.ranks.bottom.dto';
@@ -37,7 +37,10 @@ export class RankRepository {
     nowSeason: Season,
   ): Promise<Rank[]> {
     return await this.repository.find({
-      where: { season: { id: nowSeason.id } },
+      where: {
+        season: { id: nowSeason.id },
+        ladderPoint: MoreThanOrEqual(1000),
+      },
       take: getDto.count,
       order: { ladderPoint: 'DESC' },
     });
@@ -49,7 +52,10 @@ export class RankRepository {
     nowSeason: Season,
   ): Promise<Rank[]> {
     return await this.repository.find({
-      where: { season: { id: nowSeason.id } },
+      where: {
+        season: { id: nowSeason.id },
+        ladderPoint: MoreThanOrEqual(+process.env.DOCTOR_CUT),
+      },
       take: getDto.count,
       skip: getDto.offset - 1,
       order: { ladderPoint: 'DESC' },
@@ -65,7 +71,8 @@ export class RankRepository {
     FROM (
       SELECT user_id, ROW_NUMBER() OVER (ORDER BY ladder_point DESC) as ranking
       FROM "rank"
-      WHERE season_id = $1
+      WHERE (season_id = $1 AND ladder_point >= 1000)
+      LIMIT 200
     ) ranking
     WHERE user_id = $2
   `;
