@@ -94,12 +94,8 @@ jobs:
       - name: Run Docker Container
         run: docker-compose up -d
 
-      - name: Install wait-for-it
-        run: wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/local/bin/wait-for-it.sh && chmod +x /usr/local/bin/wait-for-it.sh
-      - name: check installed 
-        run: cat /usr/local/bin/wait-for-it.sh
       - name: Wait for Database
-        run: wait-for-it.sh -t 60 web_db:5434
+        run: dockerize -wait tcp://web-db:5432 -timeout 1m
       
       - name: Test 
         run: npm test -- --bail
