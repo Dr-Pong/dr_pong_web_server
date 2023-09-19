@@ -93,6 +93,12 @@ jobs:
       
       - name: Run Docker Container
         run: docker-compose up -d
+
+      - name: Install wait-for-it
+        run: wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/local/bin/wait-for-it.sh && chmod +x /usr/local/bin/wait-for-it.sh
+
+      - name: Wait for Database
+        run: wait-for-it.sh -t 60 web-db:5434
       
       - name: Test 
         run: npm test -- --bail
