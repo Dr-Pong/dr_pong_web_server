@@ -99,7 +99,7 @@ jobs:
       - name: check installed 
         run: cat /usr/local/bin/wait-for-it.sh
       - name: Wait for Database
-        run: wait-for-it.sh -t 60 web-db:5434
+        run: wait-for-it.sh -t 60 web_db:5434
       
       - name: Test 
         run: npm test -- --bail
