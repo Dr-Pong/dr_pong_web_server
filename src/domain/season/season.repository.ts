@@ -19,7 +19,11 @@ export class SeasonRepository {
     )[0];
   }
 
-  async save(...seasons: Season[]): Promise<Season[]> {
-    return this.repository.save(seasons);
+  async save(name: string): Promise<Season> {
+    return this.repository.save({
+      name,
+      startTime: new Date(),
+      endTime: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000 - 1),
+    });
   }
 }

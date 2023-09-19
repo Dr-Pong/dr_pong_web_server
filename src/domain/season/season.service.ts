@@ -6,8 +6,7 @@ import { Cron } from '@nestjs/schedule';
 export class SeasonService {
   constructor(private readonly seasonRepository: SeasonRepository) {}
 
-  // every 7 days
-  @Cron('0 0 0 */7 * *')
+  @Cron('0 0 0 * * MON')
   async createSeason(): Promise<void> {
     const season = await this.seasonRepository.findCurrentSeason();
     await this.seasonRepository.save(
