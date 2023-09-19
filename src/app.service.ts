@@ -38,7 +38,7 @@ export class AppService implements OnApplicationBootstrap {
       }
     }
     const season = await this.seasonRepository.findCurrentSeason();
-    if (!season) await this.seasonRepository.save('season1');
+    if (!season) await this.seasonRepository.save();
 
     const emojis = await this.emojiRepository.findAll();
     if (emojis.length === 0) {
