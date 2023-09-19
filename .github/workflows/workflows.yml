@@ -99,7 +99,8 @@ jobs:
           tar -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
           sudo mv dockerize /usr/local/bin
           rm dockerize-linux-amd64-v0.6.1.tar.gz
-
+      - name: Docker ps 
+        run: docker ps
       - name: Wait for Database
         run: dockerize -wait tcp://web_db:5434 -timeout 1m
       
