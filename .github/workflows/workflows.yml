@@ -101,7 +101,7 @@ jobs:
           rm dockerize-linux-amd64-v0.6.1.tar.gz
 
       - name: Wait for Database
-        run: dockerize -wait tcp://web-db:5432 -timeout 1m
+        run: dockerize -wait tcp://web_db:5434 -timeout 1m
       
       - name: Test 
         run: npm test -- --bail
