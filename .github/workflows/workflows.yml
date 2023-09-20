@@ -102,7 +102,7 @@ jobs:
       - name: Docker ps 
         run: docker ps
       - name: Wait for Database
-        run: dockerize -wait tcp://dr_pong_web_server_web_db_1:5434 -timeout 1m
+        run: dockerize -wait tcp://dr_pong_web_server_web_db_1:5432 -timeout 1m
       
       - name: Test 
         run: npm test -- --bail
