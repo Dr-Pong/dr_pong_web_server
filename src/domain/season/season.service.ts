@@ -22,4 +22,8 @@ export class SeasonService {
       await this.rankRepository.save(user.id, newSeason.id);
     }
   }
+
+  async getCurrentSeason(): Promise<{ name: string }> {
+    return { name: (await this.seasonRepository.findCurrentSeason()).name };
+  }
 }
