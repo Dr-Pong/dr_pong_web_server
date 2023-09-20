@@ -289,12 +289,13 @@ export class TestService {
       this.seasons.push(
         await this.seasonRepository.save({
           name: i.toString(),
-          startTime: '2021-01-0' + i.toString(),
-          endTime: '2022-01-0' + i.toString(),
+          startTime: new Date('2021-01-0' + i.toString()),
+          endTime: new Date('2022-01-0' + i.toString()),
           imageUrl: 'SeasonImage' + i.toString(),
         }),
       );
     }
+    this.currentSeason = this.seasons[n - 1];
     return this.seasons;
   }
 
@@ -486,7 +487,7 @@ export class TestService {
           season: this.currentSeason,
           startTime: '2021-01-01',
           playTime: 10000,
-          type: GAMETYPE_NORMAL,
+          type: GAMETYPE_RANK,
           mode: GAMEMODE_SFINAE,
         }),
       );
@@ -515,7 +516,7 @@ export class TestService {
           season: this.seasons[0],
           startTime: '2021-01-01',
           playTime: 10,
-          type: GAMETYPE_NORMAL,
+          type: GAMETYPE_RANK,
           mode: GAMEMODE_SFINAE,
         }),
       );
@@ -665,7 +666,7 @@ export class TestService {
       this.games.push(
         await this.gameRepository.save({
           season: this.currentSeason,
-          startTime: '2021-01-01',
+          startTime: new Date(2020, 1, 1),
           playTime: 10,
           type: GAMETYPE_RANK,
           mode: GAMEMODE_SFINAE,
