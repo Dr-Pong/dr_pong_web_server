@@ -14,7 +14,4 @@ export class Season extends BaseTimeEntity {
 
   @Column({ name: 'end_time', type: 'timestamp' })
   endTime: Date;
-
-  @Column({ name: 'image_url', type: 'varchar' })
-  imageUrl: string;
 }
