@@ -33,6 +33,7 @@ import { TitleRepository } from './domain/title/title.repository';
 import { UserTitleRepository } from './domain/user-title/user-title.repository';
 import { Achievement } from './domain/achievement/achievement.entity';
 import { AchievementRepository } from './domain/achievement/achievement.repository';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { AchievementRepository } from './domain/achievement/achievement.reposito
     UserGameModule,
     AuthModule,
     GameModule,
+    ScheduleModule.forRoot(),
     TypeOrmModule.forFeature([
       ProfileImage,
       Season,
