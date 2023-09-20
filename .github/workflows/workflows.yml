@@ -93,16 +93,6 @@ jobs:
       
       - name: Run Docker Container
         run: docker-compose up -d
-      - name: Install dockerize
-        run: |
-          wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
-          tar -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
-          sudo mv dockerize /usr/local/bin
-          rm dockerize-linux-amd64-v0.6.1.tar.gz
-      - name: Docker ps 
-        run: docker ps
-      - name: Wait for Database
-        run: dockerize -wait tcp://dr_pong_web_server_web_db_1:5432 -timeout 1m
-      
+
       - name: Test 
         run: npm test -- --bail
