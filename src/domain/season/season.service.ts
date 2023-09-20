@@ -22,4 +22,10 @@ export class SeasonService {
       await this.rankRepository.save(user.id, newSeason.id);
     }
   }
+
+  async getCurrentSeason(): Promise<{ seasonName: string }> {
+    return {
+      seasonName: (await this.seasonRepository.findCurrentSeason()).name,
+    };
+  }
 }
