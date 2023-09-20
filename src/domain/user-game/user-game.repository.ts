@@ -6,6 +6,7 @@ import { GetUserGameRecordsDto } from './dto/get.user-game.records.dto';
 import { FindUserGameSeasonStatDto } from './dto/find.user-game.season.stat.dto';
 import { Game } from '../game/game.entity';
 import { GameResultType } from 'src/global/type/type.game.result';
+import { GAMETYPE_RANK } from 'src/global/type/type.game';
 
 @Injectable()
 export class UserGameRepository {
@@ -14,21 +15,21 @@ export class UserGameRepository {
     private readonly repository: Repository<UserGame>,
   ) {}
 
-  async findAllByUserId(userId: number): Promise<UserGame[]> {
+  async findAllRankGamesByUserId(userId: number): Promise<UserGame[]> {
     return await this.repository.find({
-      where: { user: { id: userId } },
+      where: { user: { id: userId }, game: { type: GAMETYPE_RANK } },
       order: { id: 'DESC' },
       loadEagerRelations: false,
     });
   }
 
-  async findAllByUserIdAndSeasonId(
+  async findAllRankGamesByUserIdAndSeasonId(
     getDto: FindUserGameSeasonStatDto,
   ): Promise<UserGame[]> {
     return await this.repository.find({
       where: {
         user: { id: getDto.userId },
-        game: { season: { id: getDto.seasonId } },
+        game: { season: { id: getDto.seasonId }, type: GAMETYPE_RANK },
       },
       order: { id: 'DESC' },
       loadEagerRelations: false,

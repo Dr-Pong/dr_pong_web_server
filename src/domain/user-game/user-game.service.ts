@@ -41,7 +41,7 @@ export class UserGameService {
     getDto: GetUserGameTotalStatDto,
   ): Promise<UserGameTotalStatDto> {
     const totalUserGameRecords: UserGame[] =
-      await this.userGameRepository.findAllByUserId(getDto.userId);
+      await this.userGameRepository.findAllRankGamesByUserId(getDto.userId);
     const responseDto: UserGameTotalStatDto =
       UserGameTotalStatDto.fromUserGames(totalUserGameRecords);
     return responseDto;
@@ -55,7 +55,7 @@ export class UserGameService {
       await this.seasonRepository.findCurrentSeason();
 
     const totalUserGameRecords: UserGame[] =
-      await this.userGameRepository.findAllByUserIdAndSeasonId({
+      await this.userGameRepository.findAllRankGamesByUserIdAndSeasonId({
         userId: getDto.userId,
         seasonId: currentSeason.id,
       });
