@@ -23,7 +23,9 @@ export class SeasonService {
     }
   }
 
-  async getCurrentSeason(): Promise<{ name: string }> {
-    return { name: (await this.seasonRepository.findCurrentSeason()).name };
+  async getCurrentSeason(): Promise<{ seasonName: string }> {
+    return {
+      seasonName: (await this.seasonRepository.findCurrentSeason()).name,
+    };
   }
 }
