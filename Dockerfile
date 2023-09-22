@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the desired port (replace 3000 with your server's port)
-EXPOSE 4444
+EXPOSE 3000
 
 # Run the server
 CMD [ "npm", "run", "start" ]
