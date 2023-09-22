@@ -39,10 +39,10 @@ export class RankRepository {
     return await this.repository.find({
       where: {
         season: { id: nowSeason.id },
-        ladderPoint: MoreThanOrEqual(1000),
+        ladderPoint: MoreThanOrEqual(+process.env.DOCTOR_CUT),
       },
       take: getDto.count,
-      order: { ladderPoint: 'DESC' },
+      order: { ladderPoint: 'DESC', updatedAt: 'ASC' },
     });
   }
 
@@ -58,7 +58,7 @@ export class RankRepository {
       },
       take: getDto.count,
       skip: getDto.offset - 1,
-      order: { ladderPoint: 'DESC' },
+      order: { ladderPoint: 'DESC', updatedAt: 'ASC' },
     });
   }
 
@@ -69,7 +69,7 @@ export class RankRepository {
     const query = `
     SELECT user_id, ranking
     FROM (
-      SELECT user_id, ROW_NUMBER() OVER (ORDER BY ladder_point DESC) as ranking
+      SELECT user_id, ROW_NUMBER() OVER (ORDER BY ladder_point DESC, updated_at ASC) as ranking
       FROM "rank"
       WHERE (season_id = $1 AND ladder_point >= ${process.env.DOCTOR_CUT})
       LIMIT 200
