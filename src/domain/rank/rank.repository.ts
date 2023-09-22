@@ -71,7 +71,7 @@ export class RankRepository {
     FROM (
       SELECT user_id, ROW_NUMBER() OVER (ORDER BY ladder_point DESC) as ranking
       FROM "rank"
-      WHERE (season_id = $1 AND ladder_point >= 1000)
+      WHERE (season_id = $1 AND ladder_point >= ${process.env.DOCTOR_CUT})
       LIMIT 200
     ) ranking
     WHERE user_id = $2
