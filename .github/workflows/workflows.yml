@@ -87,12 +87,18 @@ jobs:
           echo "CRYPTO_ALGORITHM=${{ secrets.CRYPTO_ALGORITHM }}" >> .env
           echo "CRYPTO_SECRET_IV=${{ secrets.CRYPTO_SECRET_IV }}" >> .env
           echo "CRYPTO_SECRET_KEY=${{ secrets.CRYPTO_SECRET_KEY }}" >> .env
+          echo "WEB_DB_HOST=${{ secrets.WEB_DB_HOST }}" >> .env
+      - name: Docker clean
+        run: |
+          docker system prune -af &&
+          docker image prune -af &&
+          docker volume prune -af
 
       - name: Build Docker Image
-        run: docker-compose build
+        run: docker-compose build web-db
       
       - name: Run Docker Container
-        run: docker-compose up -d
-      
-      # - name: Test 
-      #   run: npm test -- --bail
+        run: docker-compose up -d web-db
+        
+      - name: Npm test
+        run: npm test -- --bail
