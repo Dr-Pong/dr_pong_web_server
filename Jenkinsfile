@@ -40,7 +40,7 @@ pipeline {
         stage('Deploy to AWS') {
             steps {
                 sh 'chmod +x deploy/deploy.sh'
-                sh 'cp -r /var/jenkins_home/workspace/drpong_web/dist package.json package-lock.json tsconfig.build.json docker-compose.yml .env deploy'
+                sh 'cp -r /var/jenkins_home/workspace/drpong_web/dist package.json package-lock.json tsconfig.build.json docker-compose.yml .env nginx deploy'
                 sh 'ssh -i /var/local/deploy-api-key.pem ec2-user@${AWS_WEB} "cd /home/ec2-user/drpong_web && rm -rf deploy"'
                 sh 'scp -i /var/local/deploy-api-key.pem -r /var/jenkins_home/workspace/drpong_web/deploy ec2-user@${AWS_WEB}:/home/ec2-user/drpong_web'
 
