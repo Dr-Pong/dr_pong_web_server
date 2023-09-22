@@ -87,7 +87,11 @@ jobs:
           echo "CRYPTO_ALGORITHM=${{ secrets.CRYPTO_ALGORITHM }}" >> .env
           echo "CRYPTO_SECRET_IV=${{ secrets.CRYPTO_SECRET_IV }}" >> .env
           echo "CRYPTO_SECRET_KEY=${{ secrets.CRYPTO_SECRET_KEY }}" >> .env
-
+      - name: Docker clean
+        run: |
+          docker container prune -f &&
+          docker image prune -f &&
+          docker volume prune -f
       - name: Build Docker Image
         run: docker-compose build
       
