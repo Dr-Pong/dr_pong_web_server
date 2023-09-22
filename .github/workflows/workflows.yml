@@ -89,11 +89,11 @@ jobs:
           echo "CRYPTO_SECRET_KEY=${{ secrets.CRYPTO_SECRET_KEY }}" >> .env
       - name: Docker clean
         run: |
-          docker container prune -f &&
-          docker image prune -f &&
-          docker volume prune -f
+          docker system prune -af &&
+          docker image prune -af &&
+          docker volume prune -af
       - name: Build Docker Image
-        run: docker-compose build
+        run: docker-compose build webserver web-db
       
       - name: Run Docker Container
         run: docker-compose up -d webserver web-db
