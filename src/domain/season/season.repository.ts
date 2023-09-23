@@ -24,7 +24,8 @@ export class SeasonRepository {
     const date: Date = new Date();
 
     return await this.repository.save({
-      name: name ?? date.getMonth().toString() + '-' + getWeekNumber(date),
+      name:
+        name ?? (date.getMonth() + 1).toString() + '-' + getWeekNumber(date),
       startTime: date,
       endTime: new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000 - 1),
     });

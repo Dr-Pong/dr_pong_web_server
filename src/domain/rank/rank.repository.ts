@@ -27,7 +27,7 @@ export class RankRepository {
   async findHighestRankByUserId(userId: number): Promise<Rank> {
     return await this.repository.findOne({
       where: { user: { id: userId } },
-      order: { highestPoint: 'ASC' },
+      order: { highestPoint: 'DESC' },
     });
   }
 
