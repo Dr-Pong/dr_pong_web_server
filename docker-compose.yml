@@ -17,6 +17,7 @@ services:
       - web-db-data:/var/lib/postgresql/data
     environment:
       - TYPEORM_HOST=web-db
+      - TZ=Asia/Seoul
 
   web-db:
     image: postgres:latest
@@ -24,6 +25,7 @@ services:
       POSTGRES_USER: ${WEB_DB_USER}
       POSTGRES_PASSWORD: ${WEB_DB_PASSWORD}
       POSTGRES_DB: ${WEB_DB_NAME}
+      TZ: Asia/Seoul
     ports:
       - 5434:5432
     networks:
