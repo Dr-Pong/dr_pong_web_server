@@ -141,14 +141,10 @@ export class GameService {
 
   async updateRank(userId: number, seasonId: number, userLp: number) {
     const userHighestRank: Rank =
-      await this.rankRepository.findHighestRankByUserId(userId);
-    let userHighestLp: number;
+      await this.rankRepository.findByUserIdAndSeasonId(userId, seasonId);
     if (userHighestRank.ladderPoint <= userLp) {
-      userHighestLp = userLp;
-    } else {
-      userHighestLp = userHighestRank.highestPoint;
+      await this.rankRepository.update(userId, seasonId, userLp, userLp);
     }
-    await this.rankRepository.update(userId, seasonId, userLp, userHighestLp);
   }
 
   async saveGame(
