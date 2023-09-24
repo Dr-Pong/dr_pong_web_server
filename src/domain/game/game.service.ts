@@ -144,7 +144,13 @@ export class GameService {
       await this.rankRepository.findByUserIdAndSeasonId(userId, seasonId);
     if (userHighestRank.ladderPoint <= userLp) {
       await this.rankRepository.update(userId, seasonId, userLp, userLp);
-    }
+    } else
+      await this.rankRepository.update(
+        userId,
+        seasonId,
+        userLp,
+        userHighestRank.highestPoint,
+      );
   }
 
   async saveGame(
