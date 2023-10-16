@@ -80,7 +80,7 @@ export class RankRepository {
       await this.repository.query(query, [seasonId, userId])
     )[0];
 
-    const ranking = Number(userRank.ranking);
+    const ranking = Number(userRank?.ranking);
 
     return ranking;
   }
